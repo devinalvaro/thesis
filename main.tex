@@ -1,0 +1,40 @@
+\documentclass[12pt, a4paper, onecolumn, oneside, final]{report}
+
+\input{style/main.sty}
+
+% Macros
+
+\newcommand{\en}[1]
+  {\foreignlanguage{english}{\textit{#1}}}
+
+% Properties
+
+\title{Tugas Akhir}
+\author{Devin Alvaro}
+
+\begin{document}
+
+  % Prefaces
+
+  \pagenumbering{roman}
+  \setcounter{page}{1}
+
+  \input{cover}
+
+  \tableofcontents
+  \listoffigures
+  \listoftables
+
+  % Chapters
+
+  \pagenumbering{arabic}
+  \setcounter{page}{1}
+
+  \renewcommand{\chaptername}{BAB}
+  \renewcommand{\thechapter}{\Roman{chapter}}
+
+  \input{chapters/introduction}
+
+  \input{chapters/literature-study}
+
+\end{document}

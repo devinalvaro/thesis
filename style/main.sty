@@ -1,0 +1,39 @@
+% Paper size
+\special{papersize=210mm,297mm}
+
+% Margin
+\usepackage[top=3cm,bottom=2.5cm,left=4cm,right=2.5cm]{geometry}
+
+\usepackage{mathptmx}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{titling}
+\usepackage{blindtext}
+\usepackage{sectsty}
+\usepackage{chngcntr}
+\usepackage{etoolbox}
+\usepackage{hyperref}       % Hyperlinks in table of contents
+\usepackage{titlesec}       % Heading formatter
+\usepackage{parskip}
+
+% Language: EN, ID
+\usepackage[english,bahasa]{babel}
+\selectlanguage{bahasa}
+
+% Citation
+\usepackage[backend=biber,babel=other]{biblatex}
+
+% Line spacing: 1.5
+\renewcommand{\baselinestretch}{1.5}
+
+% Headings
+\chapterfont{\centering \Large}
+\titleformat{\chapter}[display]
+  {\Large\centering\bfseries}
+  {\chaptertitlename\ \thechapter}{0pt}
+    {\Large\bfseries\uppercase}
+\titlespacing*{\chapter}{0pt}{0pt}{40pt}
+
+% Counters
+\counterwithin{figure}{section}
+\counterwithin{table}{section}
