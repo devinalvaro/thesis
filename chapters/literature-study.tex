@@ -1,1 +1,36 @@
 \chapter{Studi Literatur}
+
+\section{Deep Learning}
+
+\en{Deep learning} adalah suatu teknik \en{machine learning} menggunakan \en{artificial neural network} (ANN) dengan jumlah \en{hidden layer} lebih dari satu.
+
+Berbagai penelitian menunjukkan bahwa pada model \en{deep learning}, menambah jumlah \en{neuron} dan \en{hidden layer} dapat meningkatkan performa model$^{[citation\ needed]}$. Tetapi, meningkatkan kompleksitas model seperti demikian juga memperbesar \en{training cost}, seperti waktu training dan memori yang dibutuhkan. Berikut akan dibahas beberapa penyebab meningkatnya kebutuhan memori pada model \en{deep learning} seiring meningkatnya kompleksitas model.
+
+\textbf{Feature Map.} Jumlah feature map meningkat seiring bertambahnya \en{hidden layer}, karena setiap \en{layer} membutuhkan \en{mapping} ke \en{layer} selanjutnya. Sedangkan ukuran \en{feature map} ditentukan oleh berbagai faktor, seperti ukuran \en{batch}, \en{stride}, dan \en{output channel}. Gambar ~\ref{fig:ResNet50Memory} menunjukkan penggunaan memori model ResNet-50 pada satu iterasi \en{mini-batch training} pada \en{dataset} ImageNet. Penggunaan memory ResNet-50 mengalami \en{peak} pada sekitar 5GB, kemudian mengalami penurunan karena \en{feature map} yang sudah tidak dibutuhkan didealokasi.
+
+\begin{figure}[h]
+    \caption{[citation needed]}
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/ResNet50-memory.png}
+    \label{fig:ResNet50Memory}
+\end{figure}
+
+\textbf{Bias.} Jumlah \en{bias} meningkat dengan bertambahnya \en{hidden layer}, karena setiap \en{neuron} pada setiap \en{hidden layer} memiliki \en{bias} sendiri. Akan tetapi, bila dibandingkan dengan \en{feature map}, penggunaan memori dari \en{bias} relatif sedikit. Hanya saja, tidak seperti \en{feature map}, bias tidak pernah dialokasi di sepanjang proses \en{training}.
+
+\textbf{Temporary memory.} Beberapa algoritma komputasi pada training \en{deep learning} membutuhkan memori, seperti FFT (fast Fourier transform). Tetapi, penggunaan memori seperti ini relatif kecil dan cepat didealokasi, tepatnya setelah algoritma selesai dieksekusi.
+
+Dari beberapa penyebab penggunaan memori pada \en{deep learning} tersebut, \en{feature map} merupakan pengguna memori tertinggi. Selain itu, \en{feature map} memiliki beberapa properti khusus yang dapat dimanfaatkan untuk optimisasi. Salah satu properti tersebut adalah sifatnya yang berbasis \en{layer}, sehingga bila pada \en{feed-forward} proses \en{training} telah maju ke layer selanjutnya, \en{feature map} dari \en{layer-layer} sebelumnya tidak digunakan hingga \en{backpropagation}.
+
+\section{TensorFlow}
+
+TensorFlow adalah sistem \en{machine learning} yang didesain untuk menangani training model berskala besar dan secara terdistribusi, baik untuk kebutuhan \en{research} maupun \en{production}. Dirilis secara \en{open source}, TensorFlow dikembangkan oleh tim Google Brain yang menggunakannya secara ekstensif bersama dengan tim-tim Google lainnya untuk berbagai proyek \en{machine learning}.
+
+Pada dasarnya, TensorFlow adalah \en{library} yang menyediakan operasi-operasi komputasi matematika (terutama aljabar linear dan kalkulus), dengan fungsi-fungsi tambahan yang memudahkan pendefinisian proses \en{machine learning}. Dengan TensorFlow, eksekusi operasi-operasi tersebut dapat dilakukan secara terdistribusi menggunakan CPU, GPU, maupun TPU (Tensor Processing Units) yang terdapat pada satu atau lebih \en{machine} yang terletak pada satu atau lebih \en{cluster}. Selain itu, TensorFlow juga berjalan di berbagai macam \en{devices}, dari \en{data center} hingga \en{smartphone}.
+
+\subsection{Graf Komputasi}
+
+Seluruh operasi dan data pada program TensorFlow merupakan bagian dari sebuah graf yang merepresentasikan hubungan antar operasi dan data pada program, di mana operasi direpresentasikan sebagai vertices.
+
+\subsection{Eksekusi Komputasi}
+
+\subsection{Peluang Optimisasi}
