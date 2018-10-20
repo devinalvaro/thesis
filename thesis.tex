@@ -7,7 +7,7 @@
 % Macros
 
 \newcommand{\en}[1]
-  {\foreignlanguage{english}{\textit{#1}}}
+    {\foreignlanguage{english}{\textit{#1}}}
 
 % Properties
 
@@ -16,41 +16,41 @@
 
 \begin{document}
 
-  % Hyphenation
+    % Hyphenation
 
-  \input{config/hyphenation-id}
+    \input{config/hyphenation-id}
 
-  % Namings
+    % Namings
 
-  \renewcommand{\chaptername}{BAB}
+    \renewcommand{\chaptername}{BAB}
 
-  % Numberings
+    % Numberings
 
-  \renewcommand{\thechapter}{\Roman{chapter}}
-  \renewcommand{\thefigure}{\arabic{chapter}.\arabic{figure}}
-  \renewcommand{\thetable}{\arabic{chapter}.\arabic{table}}
+    \renewcommand{\thechapter}{\Roman{chapter}}
+    \renewcommand{\thefigure}{\arabic{chapter}.\arabic{figure}}
+    \renewcommand{\thetable}{\arabic{chapter}.\arabic{table}}
 
-  % Prefaces
+    % Prefaces
 
-  \newpage
+    \newpage
 
-  \pagenumbering{roman}
-  \setcounter{page}{1}
+    \pagenumbering{roman}
+    \setcounter{page}{1}
 
-  \input{miscs/cover}
+    \input{miscs/cover}
 
-  \tableofcontents
-  \listoffigures
-  \listoftables
+    \tableofcontents
+    \listoffigures
+    \listoftables
 
-  % Chapters
+    % Chapters
 
-  \newpage
+    \newpage
 
-  \pagenumbering{arabic}
-  \setcounter{page}{1}
+    \pagenumbering{arabic}
+    \setcounter{page}{1}
 
-  \input{chapters/introduction}
-  \input{chapters/literature-study}
+    \input{chapters/introduction}
+    \input{chapters/literature-study}
 
 \end{document}
