@@ -4,14 +4,14 @@
 
 \en{Deep learning} adalah suatu teknik \en{machine learning} menggunakan \en{artificial neural network} (ANN) dengan jumlah \en{hidden layer} lebih dari satu.
 
-Berbagai penelitian menunjukkan bahwa pada model \en{deep learning}, menambah jumlah \en{neuron} dan \en{hidden layer} dapat meningkatkan performa model$^{[citation\ needed]}$. Tetapi, meningkatkan kompleksitas model seperti demikian juga memperbesar \en{training cost}, seperti waktu training dan memori yang dibutuhkan. Berikut akan dibahas beberapa penyebab meningkatnya kebutuhan memori pada model \en{deep learning} seiring meningkatnya kompleksitas model.
+Berbagai penelitian menunjukkan bahwa pada model \en{deep learning}, menambah jumlah \en{neuron} dan \en{hidden layer} dapat meningkatkan performa model \cite{dean2012large}. Tetapi, meningkatkan kompleksitas model seperti demikian juga memperbesar \en{training cost}, seperti waktu training dan memori yang dibutuhkan. Berikut akan dibahas beberapa penyebab meningkatnya kebutuhan memori pada model \en{deep learning} seiring meningkatnya kompleksitas model.
 
 \textbf{Feature Map.} Jumlah feature map meningkat seiring bertambahnya \en{hidden layer}, karena setiap \en{layer} membutuhkan \en{mapping} ke \en{layer} selanjutnya. Sedangkan ukuran \en{feature map} ditentukan oleh berbagai faktor, seperti ukuran \en{batch}, \en{stride}, dan \en{output channel}. Gambar ~\ref{fig:ResNet50Memory} menunjukkan penggunaan memori model ResNet-50 pada satu iterasi \en{mini-batch training} pada \en{dataset} ImageNet. Penggunaan memory ResNet-50 mengalami \en{peak} pada sekitar 5GB, kemudian mengalami penurunan karena \en{feature map} yang sudah tidak dibutuhkan didealokasi.
 
 \begin{figure}[h]
-    \caption{[citation needed]}
     \centering
     \includegraphics[width=0.8\linewidth]{figures/ResNet50-memory.png}
+    \caption{Penggunaan memori pada model ResNet-50 \cite{meng2017training}}
     \label{fig:ResNet50Memory}
 \end{figure}
 
