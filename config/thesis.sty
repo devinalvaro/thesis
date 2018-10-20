@@ -1,9 +1,17 @@
 % Paper size
 \special{papersize=210mm,297mm}
 
+% Citation
+\usepackage[backend=biber,babel=other]{biblatex}
+
+% Language: EN, ID
+\usepackage[english,bahasa]{babel}
+\selectlanguage{bahasa}
+
 % Margin
 \usepackage[top=3cm,bottom=2.5cm,left=4cm,right=2.5cm]{geometry}
 
+% Other Packages
 \usepackage{mathptmx}
 \usepackage[utf8]{inputenc}
 \usepackage{graphicx}
@@ -12,16 +20,9 @@
 \usepackage{sectsty}
 \usepackage{chngcntr}
 \usepackage{etoolbox}
-\usepackage{hyperref}       % Hyperlinks in table of contents
-\usepackage{titlesec}       % Heading formatter
+\usepackage{hyperref}
+\usepackage{titlesec}
 \usepackage{parskip}
-
-% Language: EN, ID
-\usepackage[english,bahasa]{babel}
-\selectlanguage{bahasa}
-
-% Citation
-\usepackage[backend=biber,babel=other]{biblatex}
 
 % Line spacing: 1.5
 \renewcommand{\baselinestretch}{1.5}

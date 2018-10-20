@@ -1,4 +1,6 @@
-\documentclass[12pt, a4paper, onecolumn, oneside, final]{report}
+\documentclass[12pt, a4paper]{report}
+
+% Configs
 
 \input{config/thesis.sty}
 
@@ -14,7 +16,23 @@
 
 \begin{document}
 
+  % Hyphenation
+
+  \input{config/hyphenation-id}
+
+  % Namings
+
+  \renewcommand{\chaptername}{BAB}
+
+  % Numberings
+
+  \renewcommand{\thechapter}{\Roman{chapter}}
+  \renewcommand{\thefigure}{\arabic{chapter}.\arabic{figure}}
+  \renewcommand{\thetable}{\arabic{chapter}.\arabic{table}}
+
   % Prefaces
+
+  \newpage
 
   \pagenumbering{roman}
   \setcounter{page}{1}
@@ -27,14 +45,12 @@
 
   % Chapters
 
+  \newpage
+
   \pagenumbering{arabic}
   \setcounter{page}{1}
 
-  \renewcommand{\chaptername}{BAB}
-  \renewcommand{\thechapter}{\Roman{chapter}}
-
   \input{chapters/introduction}
-
   \input{chapters/literature-study}
 
 \end{document}
