@@ -2,20 +2,59 @@
 
 \section{Deep Learning}
 
-\en{Deep learning} adalah suatu teknik \en{machine learning} menggunakan \en{artificial neural network} (ANN) dengan jumlah \en{hidden layer} lebih dari satu.
+\en{Deep learning} adalah suatu teknik \en{machine learning} yang menggunakan \en{deep neural network} (DNN), yaitu \en{artificial neural network} (ANN) dengan jumlah \en{hidden layer} lebih dari satu. Berbagai arsitektur \en{deep learning} seperti \en{convolutional neural network} (CNN) dan \en{recurrent neural network} (RNN) telah banyak diaplikasikan pada berbagai bidang, seperti \en{computer vision} dan \en{speech recognition}.
 
-Berbagai penelitian menunjukkan bahwa pada model \en{deep learning}, menambah jumlah \en{neuron} dan \en{hidden layer} dapat meningkatkan performa model \cite{dean2012large}. Tetapi, meningkatkan kompleksitas model seperti demikian juga memperbesar \en{training cost}, seperti waktu training dan memori yang dibutuhkan. Berikut akan dibahas beberapa penyebab meningkatnya kebutuhan memori pada model \en{deep learning} seiring meningkatnya kompleksitas model.
+\subsection{Arsitektur}
 
-\textbf{Feature Map.} Jumlah feature map meningkat seiring bertambahnya \en{hidden layer}, karena setiap \en{layer} membutuhkan \en{mapping} ke \en{layer} selanjutnya. Sedangkan ukuran \en{feature map} ditentukan oleh berbagai faktor, seperti ukuran \en{batch}, \en{stride}, dan \en{output channel}. Gambar ~\ref{fig:ResNet50Memory} menunjukkan penggunaan memori model ResNet-50 pada satu iterasi \en{mini-batch training} pada \en{dataset} ImageNet. Penggunaan memory ResNet-50 mengalami \en{peak} pada sekitar 5GB, kemudian mengalami penurunan karena \en{feature map} yang sudah tidak dibutuhkan didealokasi.
+Arsitektur \en{deep learning} sangat beragam sehingga tidak dapat semuanya dibahas secara detil, oleh karena itu hanya akan dibahas secara singkat salah satu arsitektur \en{deep learning} yang paling relevan dengan tulisan ini, yaitu CNN.
+
+Pada CNN, neuron-neuron pada suatu \en{layer} tidak selalu tersusun secara 1 dimensi, namun dapat tersusun secara n-dimensi. Selain itu, suatu neuron tidak memiliki hubungan satu-satu dengan neuron-neuron di \en{layer} selanjutnya. Melainkan, kumpulan \en{weight} dan \en{bias} beberapa neuron sekaligus menjadi input dari fungsi aktivasi ke sebuah neuron di \en{layer} selanjutnya. Hubungan antar layer pada CNN diilustrasikan oleh Gambar ~\ref{fig:FeatureMap}. Inilah yang disebut \en{feature map}, yaitu \en{mapping} dari kumpulan neuron di suatu layer ke suatu neuron di \en{layer} selanjutnya.
+
+Secara intuitif, kegunaan \en{feature map} adalah mengenali fitur pada suatu \en{layer}, untuk kemudian diserahkan ke \en{layer} selanjutnya. Maka dari itu, pada umumnya setiap layer menggunakan banyak \en{feature map} yang diinisialisasi secara acak, dengan harapan bahwa setelah \en{training}, setiap \en{feature map} mengenali fitur-fitur yang berbeda pada suatu \en{layer}.
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.8\linewidth]{figures/ResNet50-memory.png}
+    \includegraphics[width=0.75\linewidth]{figures/feature-map.png}
+    \caption{\en{Feature map} pada CNN \cite{nielsen2015neural}}
+    \label{fig:FeatureMap}
+\end{figure}
+
+Sebagai contoh, arsitektur CNN untuk MNIST ditunjukkan oleh Gambar ~\ref{fig:CNN}. Pada \en{input layer}, terdapat 28x28 neuron (1 neuron untuk setiap pixel pada gambar berukuran 28x28 pixel). Pada gambar tersebut, \en{input layer} terhubung ke \en{layer} selanjutnya dengan 3 \en{feature map}, begitu seterusnya hingga \en{output layer}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.75\linewidth]{figures/cnn.png}
+    \caption{Contoh arsitektur CNN untuk MNIST \cite{nielsen2015neural}}
+    \label{fig:CNN}
+\end{figure}
+
+\subsection{Proses Training}
+
+Ada berbagai macam metode \en{training} DNN, tetapi akan dibahas salah satu metode yang paling populer, yaitu \en{stochastic gradient descent} (SGD). Pada SGD, keseluruhan dataset dibagi menjadi beberapa \en{mini-batch} (atau \en{batch}). Pada setiap \en{batch}, gradien dihitung kemudian digunakan untuk \en{update} parameter, agar menurunkan \en{loss function}.
+
+Apabila \en{training} telah selesai memproses seluruh \en{batch}, maka disebut telah menyelesaikan satu \en{epoch}. Biasanya \en{training} terdiri dari banyak \en{epoch}. Tujuan SGD membagi dataset ke \en{batch}-\en{batch} adalah mempercepat konvergen dan menghemat memori karena pada satu waktu hanya perlu diproses sebagian \en{training sample} saja. Sayangnya, karena gradien yang didapat pada suatu \en{batch} hanya berdasarkan beberapa \en{training sample} saja, maka gradien ini sejatinya adalah estimasi dari gradien sebenarnya. Hal ini dapat menyebabkan penurunan performa, namun pada praktiknya fakta ini dapat diterima,
+
+\subsection{Penggunaan Memori}
+
+Berbagai penelitian menunjukkan bahwa pada model \en{deep learning}, menambah jumlah neuron dan \en{hidden layer} dapat meningkatkan performa model \cite{dean2012large} \cite{nielsen2015neural}. Tetapi, meningkatkan kompleksitas model seperti demikian juga meningkatkan \en{training cost}, seperti waktu training dan memori yang dibutuhkan. Gambar ~\ref{fig:MemoryVSBatchSize} menunjukkan utilisasi memori beberapa model \en{deep learning} populer terhadap \en{batch size}. Berikutnya, akan dibahas beberapa penyebab meningkatnya kebutuhan memori pada model \en{deep learning} seiring meningkatnya kompleksitas model.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.75\linewidth]{figures/memory-vs-batch-size.png}
+    \caption{Utilisasi memori berbagai model \en{deep learning} terhadap \en{batch size} \cite{canziani2016analysis}}
+    \label{fig:MemoryVSBatchSize}
+\end{figure}
+
+\textbf{Feature Map.} Jumlah feature map meningkat seiring bertambahnya \en{hidden layer}, karena setiap \en{layer} membutuhkan \en{mapping} ke \en{layer} selanjutnya. Sedangkan ukuran \en{feature map} ditentukan oleh berbagai faktor, seperti ukuran \en{batch} dan \en{stride}}. Gambar ~\ref{fig:ResNet50Memory} menunjukkan penggunaan memori model ResNet-50 pada satu iterasi \en{mini-batch training} pada \en{dataset} ImageNet. Penggunaan memory ResNet-50 mengalami \en{peak} pada sekitar 5GB, kemudian mengalami penurunan karena \en{feature map} yang sudah tidak dibutuhkan akan didealokasi.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.75\linewidth]{figures/ResNet50-memory.png}
     \caption{Penggunaan memori pada model ResNet-50 \cite{meng2017training}}
     \label{fig:ResNet50Memory}
 \end{figure}
 
-\textbf{Bias.} Jumlah \en{bias} meningkat dengan bertambahnya \en{hidden layer}, karena setiap \en{neuron} pada setiap \en{hidden layer} memiliki \en{bias} sendiri. Akan tetapi, bila dibandingkan dengan \en{feature map}, penggunaan memori dari \en{bias} relatif sedikit. Hanya saja, tidak seperti \en{feature map}, bias tidak pernah dialokasi di sepanjang proses \en{training}.
+\textbf{Bias.} Jumlah \en{bias} meningkat dengan bertambahnya \en{hidden layer}, karena setiap neuron pada setiap \en{hidden layer} memiliki \en{bias} sendiri. Akan tetapi, bila dibandingkan dengan \en{feature map}, penggunaan memori dari \en{bias} relatif sedikit. Hanya saja, tidak seperti \en{feature map}, bias tidak pernah dialokasi di sepanjang proses \en{training}.
 
 \textbf{Temporary memory.} Beberapa algoritma komputasi pada training \en{deep learning} membutuhkan memori, seperti FFT (fast Fourier transform). Tetapi, penggunaan memori seperti ini relatif kecil dan cepat didealokasi, tepatnya setelah algoritma selesai dieksekusi.
 
@@ -27,10 +66,16 @@ TensorFlow adalah sistem \en{machine learning} yang didesain untuk menangani tra
 
 Pada dasarnya, TensorFlow adalah \en{library} yang menyediakan operasi-operasi komputasi matematika (terutama aljabar linear dan kalkulus), dengan fungsi-fungsi tambahan yang memudahkan pendefinisian proses \en{machine learning}. Dengan TensorFlow, eksekusi operasi-operasi tersebut dapat dilakukan secara terdistribusi menggunakan CPU, GPU, maupun TPU (Tensor Processing Units) yang terdapat pada satu atau lebih \en{machine} yang terletak pada satu atau lebih \en{cluster}. Selain itu, TensorFlow juga berjalan di berbagai macam \en{devices}, dari \en{data center} hingga \en{smartphone}.
 
-\subsection{Graf Komputasi}
-
 Seluruh operasi dan data pada program TensorFlow merupakan bagian dari sebuah graf yang merepresentasikan hubungan antar operasi dan data pada program, di mana operasi direpresentasikan sebagai vertices.
 
-\subsection{Eksekusi Komputasi}
+\section{Graphics Processing Unit}
 
-\subsection{Peluang Optimisasi}
+Penggunaan GPU pada proses \en{machine learning}/\en{deep learning} meningkatkan kecepatan \en{training} secara signifikan. Sayangnya, memori GPU lebih terbatas dibanding memori CPU. Sebagai gambaran, \en{high-end} GPU dilengkapi 12-16GB memori, sedangkan CPU server memorinya dapat mencapai 128GB.
+
+Padahal, peningkatan kecepatan \en{training} dengan GPU menjadi kecil apabila memori GPU tidak cukup, karena terjadi \en{memory bottleneck} \cite{dean2012large}. Solusi yang biasa digunakan adalah mengurangi ukuran \en{dataset} atau parameter model, meskipun hal ini dapat menurunkan performa.
+
+\subsection{Arsitektur}
+
+TBD.
+
+\section{Penelitian Terkait}
