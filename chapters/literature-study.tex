@@ -6,7 +6,7 @@
 
 \subsection{Arsitektur}
 
-Arsitektur \en{deep learning} sangat beragam sehingga tidak semuanya dapat dibahas secara detil, oleh karena itu hanya akan dibahas secara singkat salah satu arsitektur \en{deep learning} yang paling relevan dengan tulisan ini, yaitu CNN.
+Arsitektur \en{deep learning} sangat beragam sehingga tidak semuanya dapat dibahas secara detail, oleh karena itu hanya akan dibahas secara singkat salah satu arsitektur \en{deep learning} yang paling relevan dengan tulisan ini, yaitu CNN.
 
 Pada CNN, neuron-neuron pada suatu \en{layer} tidak selalu tersusun secara 1 dimensi, namun dapat tersusun secara n-dimensi. Selain itu, suatu neuron tidak memiliki hubungan satu-satu dengan neuron-neuron di \en{layer} selanjutnya. Melainkan, kumpulan \en{weight} dan \en{bias} beberapa neuron sekaligus menjadi input dari fungsi aktivasi ke sebuah neuron di \en{layer} selanjutnya. Hubungan antar layer pada CNN tersebut diilustrasikan oleh Gambar ~\ref{fig:FeatureMap}. Inilah yang disebut \en{feature map}, yaitu \en{mapping} dari kumpulan neuron di suatu layer ke suatu neuron di \en{layer} selanjutnya.
 
@@ -15,7 +15,7 @@ Secara intuitif, kegunaan \en{feature map} adalah mengenali fitur pada suatu \en
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.75\linewidth]{figures/feature-map.png}
-    \caption{\en{Feature map} pada CNN \cite{nielsen2015neural}}
+    \caption{\en{Feature map} pada CNN \cite{nielsen2015neural}}.
     \label{fig:FeatureMap}
 \end{figure}
 
@@ -24,7 +24,7 @@ Sebagai contoh, arsitektur CNN untuk MNIST ditunjukkan oleh Gambar ~\ref{fig:CNN
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.75\linewidth]{figures/cnn.png}
-    \caption{Contoh arsitektur CNN untuk MNIST \cite{nielsen2015neural}}
+    \caption{Contoh arsitektur CNN untuk MNIST \cite{nielsen2015neural}}.
     \label{fig:CNN}
 \end{figure}
 
@@ -41,7 +41,7 @@ Berbagai penelitian menunjukkan bahwa pada model \en{deep learning}, menambah ju
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.75\linewidth]{figures/memory-vs-batch-size.png}
-    \caption{Utilisasi memori berbagai model \en{deep learning} terhadap \en{batch size} \cite{canziani2016analysis}}
+    \caption{Utilisasi memori berbagai model \en{deep learning} terhadap \en{batch size} \cite{canziani2016analysis}}.
     \label{fig:MemoryVSBatchSize}
 \end{figure}
 
@@ -50,7 +50,7 @@ Berbagai penelitian menunjukkan bahwa pada model \en{deep learning}, menambah ju
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.75\linewidth]{figures/ResNet50-memory.png}
-    \caption{Penggunaan memori pada model ResNet-50 \cite{meng2017training}}
+    \caption{Penggunaan memori pada model ResNet-50 \cite{meng2017training}}.
     \label{fig:ResNet50Memory}
 \end{figure}
 
@@ -85,7 +85,7 @@ Salah satu tujuan representasi program dengan \en{dataflow graph} adalah memudah
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.75\linewidth]{figures/tensorflow-graph.png}
-    \caption{\en{Dataflow graph} dari program TensorFlow \cite{geron2017hands}}
+    \caption{\en{Dataflow graph} dari program TensorFlow \cite{geron2017hands}}.
     \label{fig:TensorFlowGraph}
 \end{figure}
 
@@ -96,7 +96,7 @@ Gambar ~\ref{fig:TensorFlowArch} menunjukkan arsitektur umum TensorFlow. Berikut
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.50\linewidth]{figures/tensorflow-arch.png}
-    \caption{Arsitektur umum TensorFlow \cite{tensorflow18}}
+    \caption{Arsitektur umum TensorFlow \cite{tensorflow18}}.
     \label{fig:TensorFlowArch}
 \end{figure}
 
@@ -113,7 +113,7 @@ Gambar ~\ref{fig:TensorFlowDist} mengilustrasikan hubungan antar bagian TensorFl
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.75\linewidth]{figures/tensorflow-dist.png}
-    \caption{Hubungan bagian-bagian terdistribusi di TensorFlow \cite{tensorflow18}}
+    \caption{Hubungan bagian-bagian terdistribusi di TensorFlow \cite{tensorflow18}}.
     \label{fig:TensorFlowDist}
 \end{figure}
 
@@ -130,7 +130,7 @@ Untuk itu, diimplementasikan operasi baru disebut (\textbf{swap out/in}) untuk m
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.75\linewidth]{figures/swap-out-in.png}
-    \caption{Graf yang dimodifikasi dengan menysipkan operasi \textbf{swap out/in} \cite{meng2017training}}
+    \caption{Graf yang dimodifikasi dengan menysipkan operasi \textbf{swap out/in} \cite{meng2017training}}.
     \label{fig:SwapOutIn}
 \end{figure}
 
@@ -141,6 +141,6 @@ Menurut eksperimen \en{paper} tersebut, didapatkan bahwa pada model-model popule
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.75\linewidth]{figures/swap-out-in-result.png}
-    \caption{Perbandingan penggunaan memori dengan \textbf{swap out/in} \cite{meng2017training}}
+    \caption{Perbandingan penggunaan memori dengan \textbf{swap out/in} \cite{meng2017training}}.
     \label{fig:SwapOutInResult}
 \end{figure}
