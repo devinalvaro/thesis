@@ -2,7 +2,7 @@
 
 \section{Deep Learning}
 
-\en{Deep learning} adalah suatu teknik \en{machine learning} yang menggunakan \en{deep neural network} (DNN), yaitu \en{artificial neural network} (ANN) dengan jumlah \en{hidden layer} lebih dari satu. Berbagai arsitektur \en{deep learning} seperti \en{convolutional neural network} (CNN) dan \en{recurrent neural network} (RNN) telah banyak diaplikasikan pada berbagai bidang AI, seperti \en{computer vision} dan \en{speech recognition}.
+\en{Deep learning} adalah suatu bagian dari bidang \en{machine learning}, di mana pembelajaran mesin dilakukan dengan unit-unit dalam layer berjumlah banyak \cite{deng2014deep}. Berbagai arsitektur \en{deep learning} seperti \en{convolutional neural network} (CNN) dan \en{recurrent neural network} (RNN) telah banyak diaplikasikan pada berbagai bidang AI, seperti \en{computer vision} dan \en{speech recognition}.
 
 \subsection{Arsitektur}
 
@@ -30,13 +30,13 @@ Sebagai contoh, arsitektur CNN untuk MNIST ditunjukkan oleh Gambar ~\ref{fig:CNN
 
 \subsection{Proses Training}
 
-Ada berbagai macam metode \en{training} DNN, tetapi akan dibahas salah satu metode yang paling populer, yaitu \en{stochastic gradient descent} (SGD). Pada SGD, keseluruhan dataset dibagi menjadi beberapa \en{mini-batch} (atau \en{batch}). Pada setiap \en{batch}, gradien dihitung kemudian digunakan untuk \en{update} parameter, agar menurunkan \en{loss function}.
+Ada berbagai macam metode \en{training} \en{deep learning}, tetapi akan dibahas salah satu metode yang paling populer, yaitu \en{stochastic gradient descent} (SGD). Pada SGD, keseluruhan dataset dibagi menjadi beberapa \en{mini-batch} (atau \en{batch}). Pada setiap \en{batch}, gradien dihitung kemudian digunakan untuk \en{update} parameter, agar menurunkan \en{loss function}.
 
-Apabila \en{training} telah selesai memproses seluruh \en{batch}, maka disebut telah menyelesaikan satu \en{epoch}. Biasanya \en{training} terdiri dari banyak \en{epoch}. Tujuan SGD membagi dataset ke \en{batch}-\en{batch} adalah mempercepat konvergen dan menghemat memori karena pada satu waktu hanya perlu diproses sebagian \en{training sample} saja. Sayangnya, karena gradien yang didapat pada suatu \en{batch} hanya berdasarkan beberapa \en{training sample} saja, maka gradien ini sejatinya adalah estimasi dari gradien sebenarnya. Hal ini dapat menyebabkan penurunan performa, namun pada praktiknya fakta ini dapat diterima,
+Apabila \en{training} telah selesai memproses seluruh \en{batch}, maka disebut telah menyelesaikan satu \en{epoch}. Biasanya \en{training} terdiri dari banyak \en{epoch}. Tujuan SGD membagi dataset ke \en{batch}-\en{batch} adalah mempercepat konvergen dan menghemat memori karena pada satu waktu hanya perlu diproses sebagian \en{training sample} saja. Sayangnya, karena gradien yang didapat pada suatu \en{batch} hanya berdasarkan beberapa \en{training sample} saja, maka gradien ini sejatinya adalah estimasi dari gradien sebenarnya. Hal ini dapat menyebabkan penurunan kinerja model, namun pada praktiknya fakta ini dapat diterima,
 
 \subsection{Penggunaan Memori}
 
-Berbagai penelitian menunjukkan bahwa pada model \en{deep learning}, menambah jumlah neuron dan \en{hidden layer} dapat meningkatkan performa model \citep{dean2012large,nielsen2015neural}. Tetapi, meningkatkan kompleksitas model seperti demikian juga meningkatkan \en{training cost}, seperti waktu training dan memori yang dibutuhkan. Gambar ~\ref{fig:MemoryVSBatchSize} menunjukkan utilisasi memori beberapa model \en{deep learning} populer terhadap \en{batch size}. Berikutnya, akan dibahas beberapa penyebab meningkatnya kebutuhan memori pada model \en{deep learning} seiring meningkatnya kompleksitas model.
+Berbagai penelitian menunjukkan bahwa pada model \en{deep learning}, menambah jumlah neuron dan \en{hidden layer} dapat meningkatkan kinerja model \citep{dean2012large,nielsen2015neural}. Tetapi, meningkatkan kompleksitas model seperti demikian juga meningkatkan \en{training cost}, seperti waktu training dan memori yang dibutuhkan. Gambar ~\ref{fig:MemoryVSBatchSize} menunjukkan utilisasi memori beberapa model \en{deep learning} populer terhadap \en{batch size}. Berikutnya, akan dibahas beberapa penyebab meningkatnya kebutuhan memori pada model \en{deep learning} seiring meningkatnya kompleksitas model.
 
 \begin{figure}[h]
     \centering
@@ -64,7 +64,7 @@ Dari beberapa penyebab penggunaan memori pada \en{deep learning} tersebut, \en{f
 
 Penggunaan GPU pada proses \en{machine learning}/\en{deep learning} meningkatkan kecepatan \en{training} secara signifikan. Sayangnya, memori GPU lebih terbatas dibanding memori CPU. Sebagai gambaran, \en{high-end} GPU dilengkapi 12-16GB memori, sedangkan CPU server memorinya dapat mencapai 128GB.
 
-Padahal, peningkatan kecepatan \en{training} dengan GPU menjadi kecil apabila memori GPU tidak cukup, karena terjadinya \en{memory bottleneck} \citep{dean2012large}. Solusi yang biasa digunakan adalah mengurangi ukuran \en{dataset} atau parameter model, meskipun hal ini dapat menurunkan performa.
+Padahal, peningkatan kecepatan \en{training} dengan GPU menjadi kecil apabila memori GPU tidak cukup, karena terjadinya \en{memory bottleneck} \citep{dean2012large}. Solusi yang biasa digunakan adalah mengurangi ukuran \en{dataset} atau parameter model, meskipun hal ini dapat menurunkan kinerja model.
 
 \subsection{Arsitektur}
 
@@ -123,7 +123,7 @@ TensorFlow mendukung penambahan jenis operasi baru, apabila jenis-jenis operasi 
 
 \section{Penelitian Terkait}
 
-Terdapat sebuah \en{paper} mengenai penelitian mengoptimisasi penggunaan memori pada TensorFlow \citep{meng2017training}. Ide dari \en{paper} tersebut adalah menyimpan \en{feature map} model dari memori ke \en{hard disk} saat \en{training} untuk mengurangi penggunaan memori.
+"Training deeper models by GPU memory optimization on TensorFlow" (Meng, 2017) melakukan penelitian untuk mengoptimisasi penggunaan memori pada TensorFlow \citep{meng2017training}. Ide dari \en{paper} tersebut adalah menyimpan \en{feature map} model dari memori ke \en{hard disk} saat \en{training} untuk mengurangi penggunaan memori.
 
 Untuk itu, diimplementasikan operasi baru disebut (\textbf{swap out/in}) untuk men-\en{swap} \en{feature map} dari memori ke \en{hard disk}. Dengan operasi baru ini, graf TensorFlow yang sudah ada dimodifikasi sehingga operasi disisipkan ke hubungan \en{vertice} yang mengalirkan tensor berukuran besar. Seperti diilustrasikan oleh Gambar ~\ref{fig:SwapOutIn}.
 
@@ -134,7 +134,7 @@ Untuk itu, diimplementasikan operasi baru disebut (\textbf{swap out/in}) untuk m
     \label{fig:SwapOutIn}
 \end{figure}
 
-Agar dapat mengoptimisasi dengan baik, perlu dipertimbangkan \en{feature map} mana yang di-\en{swap out}. Apabila semua \en{feature map} di-\en{swap out}, akan menyebabkan penurunan performa karena \en{data transfer overhead}. Maka, \en{feature map} terbaik untuk di-\en{swap out} adalah yang interval hingga diperlukannya kembali cukup lama.
+Agar dapat mengoptimisasi dengan baik, perlu dipertimbangkan \en{feature map} mana yang di-\en{swap out}. Apabila semua \en{feature map} di-\en{swap out}, akan menyebabkan penurunan kinerja model karena \en{data transfer overhead}. Maka, \en{feature map} terbaik untuk di-\en{swap out} adalah yang interval hingga diperlukannya kembali cukup lama.
 
 Menurut eksperimen \en{paper} tersebut, didapatkan bahwa pada model-model populer, \en{batch size} dapat ditingkatkan hingga 3 kali. Sedangkan penggunaan memori maksimum menurun hingga 2-3 kali lipat. Bahkan, model-model yang sebelumnya tidak dapat di-\en{train} dengan memori 12GB karena \en{out of memory} (OOM), menjadi dapat di-\en{train}. Di sisi lain, \en{training speed} mengalami penurunan kurang dari 10\%, karena adanya \en{data transfer overhead}.
 
