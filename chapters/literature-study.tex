@@ -15,7 +15,7 @@ Secara intuitif, kegunaan \en{feature map} adalah mengenali fitur pada suatu \en
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.75\linewidth]{figures/feature-map.png}
-    \caption{\en{Feature map} pada CNN \cite{nielsen2015neural}}.
+    \caption{\en{Feature map} pada CNN \citep{nielsen2015neural}}.
     \label{fig:FeatureMap}
 \end{figure}
 
@@ -24,7 +24,7 @@ Sebagai contoh, arsitektur CNN untuk MNIST ditunjukkan oleh Gambar ~\ref{fig:CNN
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.75\linewidth]{figures/cnn.png}
-    \caption{Contoh arsitektur CNN untuk MNIST \cite{nielsen2015neural}}.
+    \caption{Contoh arsitektur CNN untuk MNIST \citep{nielsen2015neural}}.
     \label{fig:CNN}
 \end{figure}
 
@@ -36,12 +36,12 @@ Apabila \en{training} telah selesai memproses seluruh \en{batch}, maka disebut t
 
 \subsection{Penggunaan Memori}
 
-Berbagai penelitian menunjukkan bahwa pada model \en{deep learning}, menambah jumlah neuron dan \en{hidden layer} dapat meningkatkan performa model \cite{dean2012large} \cite{nielsen2015neural}. Tetapi, meningkatkan kompleksitas model seperti demikian juga meningkatkan \en{training cost}, seperti waktu training dan memori yang dibutuhkan. Gambar ~\ref{fig:MemoryVSBatchSize} menunjukkan utilisasi memori beberapa model \en{deep learning} populer terhadap \en{batch size}. Berikutnya, akan dibahas beberapa penyebab meningkatnya kebutuhan memori pada model \en{deep learning} seiring meningkatnya kompleksitas model.
+Berbagai penelitian menunjukkan bahwa pada model \en{deep learning}, menambah jumlah neuron dan \en{hidden layer} dapat meningkatkan performa model \citep{dean2012large,nielsen2015neural}. Tetapi, meningkatkan kompleksitas model seperti demikian juga meningkatkan \en{training cost}, seperti waktu training dan memori yang dibutuhkan. Gambar ~\ref{fig:MemoryVSBatchSize} menunjukkan utilisasi memori beberapa model \en{deep learning} populer terhadap \en{batch size}. Berikutnya, akan dibahas beberapa penyebab meningkatnya kebutuhan memori pada model \en{deep learning} seiring meningkatnya kompleksitas model.
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.75\linewidth]{figures/memory-vs-batch-size.png}
-    \caption{Utilisasi memori berbagai model \en{deep learning} terhadap \en{batch size} \cite{canziani2016analysis}}.
+    \caption{Utilisasi memori berbagai model \en{deep learning} terhadap \en{batch size} \citep{canziani2016analysis}}.
     \label{fig:MemoryVSBatchSize}
 \end{figure}
 
@@ -50,7 +50,7 @@ Berbagai penelitian menunjukkan bahwa pada model \en{deep learning}, menambah ju
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.75\linewidth]{figures/ResNet50-memory.png}
-    \caption{Penggunaan memori pada model ResNet-50 \cite{meng2017training}}.
+    \caption{Penggunaan memori pada model ResNet-50 \citep{meng2017training}}.
     \label{fig:ResNet50Memory}
 \end{figure}
 
@@ -64,7 +64,7 @@ Dari beberapa penyebab penggunaan memori pada \en{deep learning} tersebut, \en{f
 
 Penggunaan GPU pada proses \en{machine learning}/\en{deep learning} meningkatkan kecepatan \en{training} secara signifikan. Sayangnya, memori GPU lebih terbatas dibanding memori CPU. Sebagai gambaran, \en{high-end} GPU dilengkapi 12-16GB memori, sedangkan CPU server memorinya dapat mencapai 128GB.
 
-Padahal, peningkatan kecepatan \en{training} dengan GPU menjadi kecil apabila memori GPU tidak cukup, karena terjadinya \en{memory bottleneck} \cite{dean2012large}. Solusi yang biasa digunakan adalah mengurangi ukuran \en{dataset} atau parameter model, meskipun hal ini dapat menurunkan performa.
+Padahal, peningkatan kecepatan \en{training} dengan GPU menjadi kecil apabila memori GPU tidak cukup, karena terjadinya \en{memory bottleneck} \citep{dean2012large}. Solusi yang biasa digunakan adalah mengurangi ukuran \en{dataset} atau parameter model, meskipun hal ini dapat menurunkan performa.
 
 \subsection{Arsitektur}
 
@@ -85,7 +85,7 @@ Salah satu tujuan representasi program dengan \en{dataflow graph} adalah memudah
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.75\linewidth]{figures/tensorflow-graph.png}
-    \caption{\en{Dataflow graph} dari program TensorFlow \cite{geron2017hands}}.
+    \caption{\en{Dataflow graph} dari program TensorFlow \citep{geron2017hands}}.
     \label{fig:TensorFlowGraph}
 \end{figure}
 
@@ -96,7 +96,7 @@ Gambar ~\ref{fig:TensorFlowArch} menunjukkan arsitektur umum TensorFlow. Berikut
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.50\linewidth]{figures/tensorflow-arch.png}
-    \caption{Arsitektur umum TensorFlow \cite{tensorflow18}}.
+    \caption{Arsitektur umum TensorFlow \citep{tensorflow18}}.
     \label{fig:TensorFlowArch}
 \end{figure}
 
@@ -113,7 +113,7 @@ Gambar ~\ref{fig:TensorFlowDist} mengilustrasikan hubungan antar bagian TensorFl
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.75\linewidth]{figures/tensorflow-dist.png}
-    \caption{Hubungan bagian-bagian terdistribusi di TensorFlow \cite{tensorflow18}}.
+    \caption{Hubungan bagian-bagian terdistribusi di TensorFlow \citep{tensorflow18}}.
     \label{fig:TensorFlowDist}
 \end{figure}
 
@@ -123,14 +123,14 @@ TensorFlow mendukung penambahan jenis operasi baru, apabila jenis-jenis operasi 
 
 \section{Penelitian Terkait}
 
-Terdapat sebuah \en{paper} mengenai penelitian mengoptimisasi penggunaan memori pada TensorFlow \cite{meng2017training}. Ide dari \en{paper} tersebut adalah menyimpan \en{feature map} model dari memori ke \en{hard disk} saat \en{training} untuk mengurangi penggunaan memori.
+Terdapat sebuah \en{paper} mengenai penelitian mengoptimisasi penggunaan memori pada TensorFlow \citep{meng2017training}. Ide dari \en{paper} tersebut adalah menyimpan \en{feature map} model dari memori ke \en{hard disk} saat \en{training} untuk mengurangi penggunaan memori.
 
 Untuk itu, diimplementasikan operasi baru disebut (\textbf{swap out/in}) untuk men-\en{swap} \en{feature map} dari memori ke \en{hard disk}. Dengan operasi baru ini, graf TensorFlow yang sudah ada dimodifikasi sehingga operasi disisipkan ke hubungan \en{vertice} yang mengalirkan tensor berukuran besar. Seperti diilustrasikan oleh Gambar ~\ref{fig:SwapOutIn}.
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.75\linewidth]{figures/swap-out-in.png}
-    \caption{Graf yang dimodifikasi dengan menysipkan operasi \textbf{swap out/in} \cite{meng2017training}}.
+    \caption{Graf yang dimodifikasi dengan menyisipkan operasi \textbf{swap out/in} \citep{meng2017training}}.
     \label{fig:SwapOutIn}
 \end{figure}
 
@@ -141,6 +141,6 @@ Menurut eksperimen \en{paper} tersebut, didapatkan bahwa pada model-model popule
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.75\linewidth]{figures/swap-out-in-result.png}
-    \caption{Perbandingan penggunaan memori dengan \textbf{swap out/in} \cite{meng2017training}}.
+    \caption{Perbandingan penggunaan memori dengan \textbf{swap out/in} \citep{meng2017training}}.
     \label{fig:SwapOutInResult}
 \end{figure}
