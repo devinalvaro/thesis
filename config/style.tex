@@ -1,35 +1,3 @@
-% Document type
-\documentclass[12pt, a4paper]{report}
-
-% Paper size
-\special{papersize=210mm,297mm}
-
-% Citation
-\usepackage[backend=biber]{biblatex}
-\addbibresource{miscs/references.bib}
-
-% Language: EN, ID
-\usepackage[english,bahasa]{babel}
-
-% Margin
-\usepackage[top=3cm,bottom=2.5cm,left=4cm,right=2.5cm]{geometry}
-
-% Packages
-\usepackage[utf8]{inputenc}
-\usepackage{blindtext}
-\usepackage{chngcntr}
-\usepackage{etoolbox}
-\usepackage{graphicx}
-\usepackage{hyperref}
-\usepackage{mathptmx}
-\usepackage{parskip}
-\usepackage{sectsty}
-\usepackage{titlesec}
-\usepackage{titling}
-
-% Line spacing: 1.5
-\renewcommand{\baselinestretch}{1.5}
-
 % Headings
 \chapterfont{\centering \Large}
 \titleformat{\chapter}[display]
@@ -38,6 +6,10 @@
         {\Large\bfseries\uppercase}
 \titlespacing*{\chapter}{0pt}{0pt}{40pt}
 
-% Counters
-\counterwithin{figure}{section}
-\counterwithin{table}{section}
+% Line spacing: 1.5
+\renewcommand{\baselinestretch}{1.5}
+
+% Numberings
+\renewcommand{\thechapter}{\Roman{chapter}}
+\renewcommand{\thefigure}{\arabic{chapter}.\arabic{figure}}
+\renewcommand{\thetable}{\arabic{chapter}.\arabic{table}}
