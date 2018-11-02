@@ -15,7 +15,7 @@ Secara intuitif, kegunaan \en{feature map} adalah mengenali fitur pada suatu \en
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.75\linewidth]{figures/feature-map.png}
-    \caption{\en{Feature map} pada CNN \citep{nielsen2015neural}}.
+    \caption{\en{Feature map} pada CNN \citep{nielsen2015neural}.}
     \label{fig:FeatureMap}
 \end{figure}
 
@@ -24,7 +24,7 @@ Sebagai contoh, arsitektur CNN untuk MNIST ditunjukkan oleh Gambar ~\ref{fig:CNN
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.75\linewidth]{figures/cnn.png}
-    \caption{Contoh arsitektur CNN untuk MNIST \citep{nielsen2015neural}}.
+    \caption{Contoh arsitektur CNN untuk MNIST \citep{nielsen2015neural}.}
     \label{fig:CNN}
 \end{figure}
 
@@ -32,16 +32,16 @@ Sebagai contoh, arsitektur CNN untuk MNIST ditunjukkan oleh Gambar ~\ref{fig:CNN
 
 Ada berbagai macam metode \en{training} \en{deep learning}, tetapi akan dibahas salah satu metode yang paling populer, yaitu \en{stochastic gradient descent} (SGD). Pada SGD, keseluruhan dataset dibagi menjadi beberapa \en{mini-batch} (atau \en{batch}). Pada setiap \en{batch}, gradien dihitung kemudian digunakan untuk \en{update} parameter, agar menurunkan \en{loss function}.
 
-Apabila \en{training} telah selesai memproses seluruh \en{batch}, maka disebut telah menyelesaikan satu \en{epoch}. Biasanya \en{training} terdiri dari banyak \en{epoch}. Tujuan SGD membagi dataset ke \en{batch}-\en{batch} adalah mempercepat konvergen dan menghemat memori karena pada satu waktu hanya perlu diproses sebagian \en{training sample} saja. Sayangnya, karena gradien yang didapat pada suatu \en{batch} hanya berdasarkan beberapa \en{training sample} saja, maka gradien ini sejatinya adalah estimasi dari gradien sebenarnya. Hal ini dapat menyebabkan penurunan kinerja model, namun pada praktiknya fakta ini dapat diterima,
+Apabila \en{training} telah selesai memproses seluruh \en{batch}, maka disebut telah menyelesaikan satu \en{epoch}. Biasanya \en{training} terdiri dari banyak \en{epoch}. Tujuan SGD membagi dataset ke \en{batch}-\en{batch} adalah mempercepat konvergen dan menghemat memori karena pada satu waktu hanya perlu diproses sebagian \en{training sample} saja. Sayangnya, karena gradien yang didapat pada suatu \en{batch} hanya berdasarkan beberapa \en{training sample} saja, maka gradien ini sejatinya adalah estimasi dari gradien sebenarnya. Hal ini dapat menyebabkan penurunan kinerja model, namun pada praktiknya penurunan ini dapat diterima,
 
 \subsection{Penggunaan Memori}
 
-Berbagai penelitian menunjukkan bahwa pada model \en{deep learning}, menambah jumlah neuron dan \en{hidden layer} dapat meningkatkan kinerja model \citep{dean2012large,nielsen2015neural}. Tetapi, meningkatkan kompleksitas model seperti demikian juga meningkatkan \en{training cost}, seperti waktu training dan memori yang dibutuhkan. Gambar ~\ref{fig:MemoryVSBatchSize} menunjukkan utilisasi memori beberapa model \en{deep learning} populer terhadap \en{batch size}. Berikutnya, akan dibahas beberapa penyebab meningkatnya kebutuhan memori pada model \en{deep learning} seiring meningkatnya kompleksitas model.
+Berbagai penelitian menunjukkan bahwa pada model \en{deep learning}, menambah jumlah neuron dan \en{hidden layer} dapat meningkatkan kinerja model \citep{dean2012large,nielsen2015neural}. Tetapi, meningkatkan kompleksitas model seperti demikian juga meningkatkan \en{training cost}, seperti waktu training dan memori yang dibutuhkan. Gambar ~\ref{fig:MemoryVSBatchSize} menunjukkan utilisasi memori beberapa \en{pre-trained model} terhadap \en{batch size}. Berikutnya, akan dibahas beberapa penyebab meningkatnya kebutuhan memori pada model \en{deep learning} seiring meningkatnya kompleksitas model.
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.75\linewidth]{figures/memory-vs-batch-size.png}
-    \caption{Utilisasi memori berbagai model \en{deep learning} terhadap \en{batch size} \citep{canziani2016analysis}}.
+    \caption{Utilisasi memori berbagai model \en{deep learning} terhadap \en{batch size} \citep{canziani2016analysis}.}
     \label{fig:MemoryVSBatchSize}
 \end{figure}
 
@@ -50,7 +50,7 @@ Berbagai penelitian menunjukkan bahwa pada model \en{deep learning}, menambah ju
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.75\linewidth]{figures/ResNet50-memory.png}
-    \caption{Penggunaan memori pada model ResNet-50 \citep{meng2017training}}.
+    \caption{Penggunaan memori pada model ResNet-50 \citep{meng2017training}.}
     \label{fig:ResNet50Memory}
 \end{figure}
 
@@ -62,11 +62,11 @@ Dari beberapa penyebab penggunaan memori pada \en{deep learning} tersebut, \en{f
 
 \section{Graphics Processing Unit}
 
-Penggunaan GPU pada proses \en{machine learning}/\en{deep learning} meningkatkan kecepatan \en{training} secara signifikan. Sayangnya, memori GPU lebih terbatas dibanding memori CPU. Sebagai gambaran, \en{high-end} GPU dilengkapi 12-16GB memori, sedangkan CPU server memorinya dapat mencapai 128GB.
+Penggunaan GPU pada proses \en{machine learning}/\en{deep learning} meningkatkan kecepatan \en{training} secara signifikan. Sayangnya, memori GPU lebih terbatas dibanding memori CPU. Sebagai gambaran, \en{high-end} GPU dilengkapi 12-16GB memori, sedangkan memori dari CPU server dapat mencapai 128GB.
 
 Padahal, peningkatan kecepatan \en{training} dengan GPU menjadi kecil apabila memori GPU tidak cukup, karena terjadinya \en{memory bottleneck} \citep{dean2012large}. Solusi yang biasa digunakan adalah mengurangi ukuran \en{dataset} atau parameter model, meskipun hal ini dapat menurunkan kinerja model.
 
-\subsection{Arsitektur}
+\subsection{Memori}
 
 TBD.
 
@@ -85,7 +85,7 @@ Salah satu tujuan representasi program dengan \en{dataflow graph} adalah memudah
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.75\linewidth]{figures/tensorflow-graph.png}
-    \caption{\en{Dataflow graph} dari program TensorFlow \citep{geron2017hands}}.
+    \caption{\en{Dataflow graph} dari program TensorFlow \citep{geron2017hands}.}
     \label{fig:TensorFlowGraph}
 \end{figure}
 
@@ -96,7 +96,7 @@ Gambar ~\ref{fig:TensorFlowArch} menunjukkan arsitektur umum TensorFlow. Berikut
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.50\linewidth]{figures/tensorflow-arch.png}
-    \caption{Arsitektur umum TensorFlow \citep{tensorflow18}}.
+    \caption{Arsitektur umum TensorFlow \citep{tensorflow18}.}
     \label{fig:TensorFlowArch}
 \end{figure}
 
@@ -113,7 +113,7 @@ Gambar ~\ref{fig:TensorFlowDist} mengilustrasikan hubungan antar bagian TensorFl
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.75\linewidth]{figures/tensorflow-dist.png}
-    \caption{Hubungan bagian-bagian terdistribusi di TensorFlow \citep{tensorflow18}}.
+    \caption{Hubungan bagian-bagian terdistribusi di TensorFlow \citep{tensorflow18}.}
     \label{fig:TensorFlowDist}
 \end{figure}
 
@@ -123,24 +123,24 @@ TensorFlow mendukung penambahan jenis operasi baru, apabila jenis-jenis operasi 
 
 \section{Penelitian Terkait}
 
-"Training deeper models by GPU memory optimization on TensorFlow" (Meng, 2017) melakukan penelitian untuk mengoptimisasi penggunaan memori pada TensorFlow \citep{meng2017training}. Ide dari \en{paper} tersebut adalah menyimpan \en{feature map} model dari memori ke \en{hard disk} saat \en{training} untuk mengurangi penggunaan memori.
+"Training deeper models by GPU memory optimization on TensorFlow" (Meng, 2017) melakukan penelitian untuk mengoptimisasi penggunaan memori GPU saat \en{training} model \en{deep learning} pada TensorFlow \citep{meng2017training}. Penelitian tersebut terbatas pada sebuah komputer dengan satu GPU. Ide dari \en{paper} tersebut adalah menyimpan \en{feature map} model dari memori ke \en{hard disk} saat \en{training} untuk mengurangi penggunaan memori.
 
-Untuk itu, diimplementasikan operasi baru disebut (\textbf{swap out/in}) untuk men-\en{swap} \en{feature map} dari memori ke \en{hard disk}. Dengan operasi baru ini, graf TensorFlow yang sudah ada dimodifikasi sehingga operasi disisipkan ke hubungan \en{vertice} yang mengalirkan tensor berukuran besar. Seperti diilustrasikan oleh Gambar ~\ref{fig:SwapOutIn}.
+Untuk itu, diimplementasikan operasi baru yang disebut (\textbf{swap out/in}) untuk men-\en{swap} \en{feature map} dari memori ke \en{hard disk}. Dengan operasi baru ini, graf TensorFlow yang sudah ada dimodifikasi sehingga operasi disisipkan ke hubungan \en{vertice} yang mengalirkan tensor berukuran besar. Seperti diilustrasikan oleh Gambar ~\ref{fig:SwapOutIn}.
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.75\linewidth]{figures/swap-out-in.png}
-    \caption{Graf yang dimodifikasi dengan menyisipkan operasi \textbf{swap out/in} \citep{meng2017training}}.
+    \caption{Graf yang dimodifikasi dengan menyisipkan operasi \textbf{swap out/in} \citep{meng2017training}.}
     \label{fig:SwapOutIn}
 \end{figure}
 
 Agar dapat mengoptimisasi dengan baik, perlu dipertimbangkan \en{feature map} mana yang di-\en{swap out}. Apabila semua \en{feature map} di-\en{swap out}, akan menyebabkan penurunan kinerja model karena \en{data transfer overhead}. Maka, \en{feature map} terbaik untuk di-\en{swap out} adalah yang interval hingga diperlukannya kembali cukup lama.
 
-Menurut eksperimen \en{paper} tersebut, didapatkan bahwa pada model-model populer, \en{batch size} dapat ditingkatkan hingga 3 kali. Sedangkan penggunaan memori maksimum menurun hingga 2-3 kali lipat. Bahkan, model-model yang sebelumnya tidak dapat di-\en{train} dengan memori 12GB karena \en{out of memory} (OOM), menjadi dapat di-\en{train}. Di sisi lain, \en{training speed} mengalami penurunan kurang dari 10\%, karena adanya \en{data transfer overhead}.
+Eksperimen pada \en{paper} dilakukan dengan beberapa \en{pre-trained CNN model} pada sebuah komputer dengan satu GPU (Tesla M40) dengan ukuran memori 12GB. Menurut eksperimen tersebut, didapatkan bahwa pada model-model yang diuji, \en{batch size} dapat ditingkatkan hingga 3 kali. Sedangkan penggunaan memori maksimum menurun hingga 2-3 kali lipat. Bahkan, model-model seperti ResNet-1001 dan ResNet-2000 yang sebelumnya tidak dapat di-\en{train} karena \en{out of memory} (OOM), menjadi dapat di-\en{train}. Di sisi lain, \en{training speed} mengalami penurunan kurang dari 10\%, karena adanya \en{data transfer overhead}.
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.75\linewidth]{figures/swap-out-in-result.png}
-    \caption{Perbandingan penggunaan memori dengan \textbf{swap out/in} \citep{meng2017training}}.
+    \caption{Perbandingan penggunaan memori dengan \textbf{swap out/in} \citep{meng2017training}.}
     \label{fig:SwapOutInResult}
 \end{figure}
