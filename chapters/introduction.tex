@@ -1,36 +1,50 @@
 \chapter{Pendahuluan}
 
-Bab Pendahuluan secara umum yang dijadikan landasan kerja dan arah kerja penulis tugas akhir, berfungsi mengantar pembaca untuk membaca laporan tugas akhir secara keseluruhan.
+% Bab Pendahuluan secara umum yang dijadikan landasan kerja dan arah kerja penulis tugas akhir, berfungsi mengantar pembaca untuk membaca laporan tugas akhir secara keseluruhan.
 
 \section{Latar Belakang}
 
-Latar Belakang berisi dasar pemikiran, kebutuhan atau alasan yang menjadi ide dari topik tugas akhir. Tujuan utamanya adalah untuk memberikan informasi secukupnya kepada pembaca agar memahami topik yang akan dibahas.  Saat menuliskan bagian ini, posisikan anda sebagai pembaca --- apakah anda tertarik untuk terus membaca?
+% Latar Belakang berisi dasar pemikiran, kebutuhan atau alasan yang menjadi ide dari topik tugas akhir. Tujuan utamanya adalah untuk memberikan informasi secukupnya kepada pembaca agar memahami topik yang akan dibahas.  Saat menuliskan bagian ini, posisikan anda sebagai pembaca --- apakah anda tertarik untuk terus membaca?
+
+Saat ini, \en{deep learning} semakin populer dan banyak digunakan oleh berbagai kalangan baik dalam penelitian maupun industri. Salah satu alasannya adalah performa \en{deep learning} yang mampu mengalahkan metode-metode \en{machine learning} lainnya dalam berbagai permasalahan AI seperti \en{computer vision}, \en{speech recognition}, dan \en{language translation}.
+
+Namun, \en{deep learning} cenderung membutuhkan banyak \en{layer}, \en{parameter}, dan \en{training dataset} untuk mendapatkan performa optimal. Faktor-faktor ini menyebabkan kesulitan pada saat \en{training} model, seperti lamanya waktu training dan besarnya sumber daya komputasi yang dibutuhkan.
+
+Salah satu sumber daya yang krusial adalah memori. \en{Training} model \en{deep learning} membutuhkan semakin banyak memori seiring bertambahnya jumlah \en{layer}, \en{parameter}, dan \en{training dataset}. Ditambah lagi, melatih model \en{deep learning} sering menggunakan GPU untuk meningkatkan performa karena kemampuannya untuk melakukan komputasi paralel. Sayangnya, kapasitas memori GPU cenderung lebih kecil dibandingkan dengan kapasitas memori CPU (RAM).
 
 \section{Rumusan Masalah}
 
-Rumusan Masalah, berisi masalah utama yang dibahas dalam tugas akhir. Rumusan masalah yang baik memiliki struktur sebagai berikut:
+% Rumusan Masalah, berisi masalah utama yang dibahas dalam tugas akhir. Rumusan masalah yang baik memiliki struktur sebagai berikut:
 
-\begin{enumerate}
-    \item Penjelasan ringkas tentang kondisi/situasi yang ada sekarang terkait dengan topik utama yang dibahas Tugas Akhir.
-    \item Pokok persoalan dari kondisi/situasi yang ada, dapat dilihat dari kelemahan atau kekurangannya. \textbf{Bagian ini merupakan inti dari rumusan masalah.}
-    \item Elaborasi lebih lanjut yang menekankan pentingnya untuk menyelesaikan pokok persoalan tersebut.
-    \item Usulan singkat terkait dengan solusi yang ditawarkan untuk menyelesaikan persoalan.
-\end{enumerate}
+% \begin{enumerate}
+%     \item Penjelasan ringkas tentang kondisi/situasi yang ada sekarang terkait dengan topik utama yang dibahas Tugas Akhir.
+%     \item Pokok persoalan dari kondisi/situasi yang ada, dapat dilihat dari kelemahan atau kekurangannya. \textbf{Bagian ini merupakan inti dari rumusan masalah.}
+%     \item Elaborasi lebih lanjut yang menekankan pentingnya untuk menyelesaikan pokok persoalan tersebut.
+%     \item Usulan singkat terkait dengan solusi yang ditawarkan untuk menyelesaikan persoalan.
+% \end{enumerate}
 
-Penting untuk diperhatikan bahwa persoalan yang dideskripsikan pada subbab ini akan dipertanggungjawabkan di akhir pelaksanaan tugas akhir apakah terselesaikan atau tidak.
+% Penting untuk diperhatikan bahwa persoalan yang dideskripsikan pada subbab ini akan dipertanggungjawabkan di akhir pelaksanaan tugas akhir apakah terselesaikan atau tidak.
 
 \section{Tujuan}
 
-Tuliskan tujuan utama dan/atau tujuan detil yang akan dicapai dalam pelaksanaan tugas akhir. Fokuskan pada hasil akhir yang ingin diperoleh setelah tugas akhir diselesaikan, terkait dengan penyelesaian persoalan pada rumusan masalah. Penting untuk diperhatikan bahwa tujuan yang dideskripsikan pada subbab ini akan dipertanggungjawabkan di akhir pelaksanaan tugas akhir apakah tercapai atau tidak.
+% Tuliskan tujuan utama dan/atau tujuan detil yang akan dicapai dalam pelaksanaan tugas akhir. Fokuskan pada hasil akhir yang ingin diperoleh setelah tugas akhir diselesaikan, terkait dengan penyelesaian persoalan pada rumusan masalah. Penting untuk diperhatikan bahwa tujuan yang dideskripsikan pada subbab ini akan dipertanggungjawabkan di akhir pelaksanaan tugas akhir apakah tercapai atau tidak.
+
+Secara garis besar, tugas akhir ini bertujuan mengoptimisasi penggunaan memori GPU pada \en{training} model \en{deep learning}, yakni mengurangi utilisasi memori GPU maksimum pada suatu waktu. Harapan tercapainya tujuan ini adalah dengan sumber daya yang sama, dapat dilatih lebih banyak model pada suatu waktu, dapat dilatih model dengan lebih banyak \en{layer} dan \en{parameter}, dan dapat dilatih model-model yang sebelumnya tidak dapat dilatih karena kekurangan memori.
 
 \section{Batasan Masalah}
 
-Tuliskan batasan-batasan yang diambil dalam pelaksanaan tugas akhir. Batasan ini dapat dihindari (tidak perlu ada) jika topik/judul tugas akhir dibuat cukup spesifik.
+% Tuliskan batasan-batasan yang diambil dalam pelaksanaan tugas akhir. Batasan ini dapat dihindari (tidak perlu ada) jika topik/judul tugas akhir dibuat cukup spesifik.
+
+Tugas akhir ini memiliki batasan-batasan masalah seperti berikut. \en{Training} model dilakukan pada sebuah komputer dengan \en{single GPU} (tidak terdistribusi). Model \en{deep learning} utama yang digunakan adalah LSTM atau model lain berbasis RNN, namun jenis model lain dapat digunakan untuk perbandingan atau eksperimen. \en{Framework} \en{deep learning} yang digunakan dan akan dioptimisasi adalah TensorFlow.
 
 \section{Metodologi}
 
-Tuliskan semua tahapan yang akan dilalui selama pelaksanaan tugas akhir. Tahapan ini spesifik untuk menyelesaikan persoalan tugas akhir. Tahapan studi literatur tidak perlu dituliskan karena ini adalah pekerjaan yang harus Anda lakukan selama proses pelaksanaan tugas akhir.
+% Tuliskan semua tahapan yang akan dilalui selama pelaksanaan tugas akhir. Tahapan ini spesifik untuk menyelesaikan persoalan tugas akhir. Tahapan studi literatur tidak perlu dituliskan karena ini adalah pekerjaan yang harus Anda lakukan selama proses pelaksanaan tugas akhir.
+
+Tahapan tugas akhir ini diawali dengan melakukan analisis dan merumuskan permasalahan yang akan dipecahkan. Selanjutnya melakukan pencarian terhadap solusi yang tepat untuk memecahkan permasalahan tersebut, salah satunya dengan melakukan studi literatur. Setelah memutuskan solusi yang tepat, merancang desain eksperimen serta implementasi yang akan digunakan untuk melakukan eksperimen. Langkah selanjutnya adalah mengimplementasi solusi dan melakukan eksperimen sesuai rancangan desain. Sesudahnya, menganalisis dan mengevaluasi hasil eksperimen hingga akhirnya menarik kesimpulan terhadap permasalahan dan solusi yang diajukan.
 
 \section{Jadwal Pelaksanaan Tugas Akhir}
 
-Tuliskan rencana kegiatan dan jadwal (dirinci sampai per minggu) mulai dari awal pelaksanaan Tugas Akhir I s.d.\ sidang tugas akhir berikut \en{milestones} dan \en{deliverables} yang harus diberikan. Jadwal ini dapat dibantu dengan membuat sebuah tabel \en{timeline.}
+% Tuliskan rencana kegiatan dan jadwal (dirinci sampai per minggu) mulai dari awal pelaksanaan Tugas Akhir I s.d.\ sidang tugas akhir berikut \en{milestones} dan \en{deliverables} yang harus diberikan. Jadwal ini dapat dibantu dengan membuat sebuah tabel \en{timeline.}
+
+TBD.

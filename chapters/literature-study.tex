@@ -136,7 +136,7 @@ Untuk itu, diimplementasikan operasi baru yang disebut (\textbf{swap out/in}) un
 
 Agar dapat mengoptimisasi dengan baik, perlu dipertimbangkan \en{feature map} mana yang di-\en{swap out}. Apabila semua \en{feature map} di-\en{swap out}, akan menyebabkan penurunan kinerja model karena \en{data transfer overhead}. Maka, \en{feature map} terbaik untuk di-\en{swap out} adalah yang interval hingga diperlukannya kembali cukup lama.
 
-Eksperimen pada \en{paper} dilakukan dengan beberapa \en{pre-trained CNN model} pada sebuah komputer dengan satu GPU (Tesla M40) dengan ukuran memori 12GB. Menurut eksperimen tersebut, didapatkan bahwa pada model-model yang diuji, \en{batch size} dapat ditingkatkan hingga 3 kali. Sedangkan penggunaan memori maksimum menurun hingga 2-3 kali lipat. Bahkan, model-model seperti ResNet-1001 dan ResNet-2000 yang sebelumnya tidak dapat di-\en{train} karena \en{out of memory} (OOM), menjadi dapat di-\en{train}. Di sisi lain, \en{training speed} mengalami penurunan kurang dari 10\%, karena adanya \en{data transfer overhead}.
+Eksperimen pada \en{paper} dilakukan dengan beberapa \en{pre-trained CNN model} pada sebuah komputer dengan satu GPU (Tesla M40) dengan kapasitas memori 12GB. Menurut eksperimen tersebut, didapatkan bahwa pada model-model yang diuji, \en{batch size} dapat ditingkatkan hingga 3 kali. Sedangkan penggunaan memori maksimum menurun hingga 2-3 kali lipat. Bahkan, model-model seperti ResNet-1001 dan ResNet-2000 yang sebelumnya tidak dapat di-\en{train} karena \en{out of memory} (OOM), menjadi dapat di-\en{train}. Di sisi lain, \en{training speed} mengalami penurunan kurang dari 10\%, karena adanya \en{data transfer overhead}.
 
 \begin{figure}[h]
     \centering
