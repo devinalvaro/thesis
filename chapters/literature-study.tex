@@ -2,15 +2,15 @@
 
 \section{Deep Learning}
 
-\en{Deep learning} adalah suatu bagian dari bidang \en{machine learning}, di mana pembelajaran mesin dilakukan dengan unit-unit dalam layer berjumlah banyak \cite{deng2014deep}. Berbagai arsitektur \en{deep learning} seperti \en{convolutional neural network} (CNN) dan \en{recurrent neural network} (RNN) telah banyak diaplikasikan pada berbagai bidang AI, seperti \en{computer vision} dan \en{speech recognition}.
+\en{Deep learning} adalah suatu bagian dari bidang \en{machine learning}, di mana pembelajaran mesin dilakukan dengan unit-unit dalam \en{layer} berjumlah banyak \cite{deng2014deep}. Berbagai arsitektur \en{deep learning} seperti \en{convolutional neural network} (CNN) dan \en{recurrent neural network} (RNN) telah banyak diaplikasikan pada berbagai bidang AI, seperti \en{computer vision} dan \en{speech recognition}.
 
 \subsection{Arsitektur}
 
-Arsitektur \en{deep learning} sangat beragam sehingga tidak semuanya dapat dibahas secara detail, oleh karena itu hanya akan dibahas secara singkat salah satu arsitektur \en{deep learning} yang paling relevan dengan tulisan ini, yaitu CNN.
+Arsitektur \en{deep learning} sangat beragam sehingga tidak semuanya dapat dibahas secara detail, oleh karena itu hanya akan dibahas secara singkat beberapa arsitektur \en{deep learning} yang relevan dengan tulisan ini, yaitu CNN.
 
-Pada CNN, neuron-neuron pada suatu \en{layer} tidak selalu tersusun secara 1 dimensi, namun dapat tersusun secara n-dimensi. Selain itu, suatu neuron tidak memiliki hubungan satu-satu dengan neuron-neuron di \en{layer} selanjutnya. Melainkan, kumpulan \en{weight} dan \en{bias} beberapa neuron sekaligus menjadi input dari fungsi aktivasi ke sebuah neuron di \en{layer} selanjutnya. Hubungan antar layer pada CNN tersebut diilustrasikan oleh Gambar ~\ref{fig:FeatureMap}. Inilah yang disebut \en{feature map}, yaitu \en{mapping} dari kumpulan neuron di suatu layer ke suatu neuron di \en{layer} selanjutnya.
+Pada CNN, neuron-neuron pada suatu \en{layer} tidak selalu tersusun secara 1 dimensi, namun dapat tersusun secara n-dimensi. Selain itu, suatu neuron tidak memiliki hubungan satu-satu dengan neuron-neuron di \en{layer} selanjutnya. Melainkan, kumpulan \en{weight} dan \en{bias} beberapa neuron sekaligus menjadi input dari fungsi aktivasi ke sebuah neuron di \en{layer} selanjutnya. Hubungan antar \en{layer} pada CNN tersebut diilustrasikan oleh Gambar ~\ref{fig:FeatureMap}. Inilah yang disebut \en{feature map}, yaitu \en{mapping} dari kumpulan neuron di suatu \en{layer} ke suatu neuron di \en{layer} selanjutnya.
 
-Secara intuitif, kegunaan \en{feature map} adalah mengenali fitur pada suatu \en{layer}, untuk kemudian diserahkan ke \en{layer} selanjutnya. Maka dari itu, pada umumnya setiap layer menggunakan banyak \en{feature map} yang diinisialisasi secara acak, dengan harapan bahwa setelah \en{training}, setiap \en{feature map} mengenali fitur-fitur yang berbeda pada suatu \en{layer}.
+Secara intuitif, kegunaan \en{feature map} adalah mengenali fitur pada suatu \en{layer}, untuk kemudian diserahkan ke \en{layer} selanjutnya. Maka dari itu, pada umumnya setiap \en{layer} menggunakan banyak \en{feature map} yang diinisialisasi secara acak, dengan harapan bahwa setelah \en{training}, setiap \en{feature map} mengenali fitur-fitur yang berbeda pada suatu \en{layer}.
 
 \begin{figure}[h]
     \centering
@@ -30,18 +30,18 @@ Sebagai contoh, arsitektur CNN untuk MNIST ditunjukkan oleh Gambar ~\ref{fig:CNN
 
 \subsection{Proses Training}
 
-Ada berbagai macam metode \en{training} \en{deep learning}, tetapi akan dibahas salah satu metode yang paling populer, yaitu \en{stochastic gradient descent} (SGD). Pada SGD, keseluruhan dataset dibagi menjadi beberapa \en{mini-batch} (atau \en{batch}). Pada setiap \en{batch}, gradien dihitung kemudian digunakan untuk \en{update} parameter, agar menurunkan \en{loss function}.
+Ada berbagai macam metode pelatihan model \en{deep learning}, tetapi akan dibahas salah satu metode yang paling populer, yaitu \en{stochastic gradient descent} (SGD). Pada SGD, keseluruhan \en{dataset} dibagi menjadi beberapa \en{mini-batch} (atau \en{batch}). Pada setiap \en{batch}, gradien dihitung kemudian digunakan untuk \en{update} parameter, agar menurunkan \en{loss} atau \en{error}.
 
-Apabila \en{training} telah selesai memproses seluruh \en{batch}, maka disebut telah menyelesaikan satu \en{epoch}. Biasanya \en{training} terdiri dari banyak \en{epoch}. Tujuan SGD membagi dataset ke \en{batch}-\en{batch} adalah mempercepat konvergen dan menghemat memori karena pada satu waktu hanya perlu diproses sebagian \en{training sample} saja. Sayangnya, karena gradien yang didapat pada suatu \en{batch} hanya berdasarkan beberapa \en{training sample} saja, maka gradien ini sejatinya adalah estimasi dari gradien sebenarnya. Hal ini dapat menyebabkan penurunan kinerja model, namun pada praktiknya penurunan ini dapat diterima,
+Apabila \en{training} telah selesai memproses seluruh \en{batch}, maka disebut telah menyelesaikan satu \en{epoch}. Biasanya, \en{training} terdiri dari banyak \en{epoch}. Tujuan SGD membagi \en{dataset} ke \en{batch}-\en{batch} adalah mempercepat konvergen dan menghemat memori karena pada satu waktu hanya perlu diproses sebagian \en{training sample} saja. Sayangnya, karena gradien yang didapat pada suatu \en{batch} hanya berdasarkan beberapa \en{training sample} saja, maka gradien ini sejatinya adalah estimasi dari gradien sebenarnya. Hal ini dapat menyebabkan penurunan kinerja model, namun pada praktiknya penurunan ini dapat diterima,
 
 \subsection{Penggunaan Memori}
 
-Berbagai penelitian menunjukkan bahwa pada model \en{deep learning}, menambah jumlah neuron dan \en{hidden layer} dapat meningkatkan kinerja model \citep{dean2012large,nielsen2015neural}. Tetapi, meningkatkan kompleksitas model seperti demikian juga meningkatkan \en{training cost}, seperti waktu training dan memori yang dibutuhkan. Gambar ~\ref{fig:MemoryVSBatchSize} menunjukkan utilisasi memori beberapa \en{pre-trained model} terhadap \en{batch size}. Berikutnya, akan dibahas beberapa penyebab meningkatnya kebutuhan memori pada model \en{deep learning} seiring meningkatnya kompleksitas model.
+Berbagai penelitian menunjukkan bahwa pada model \en{deep learning}, menambah jumlah neuron dan \en{hidden layer} dapat meningkatkan kinerja model \citep{dean2012large,nielsen2015neural}. Tetapi, meningkatkan kompleksitas model seperti demikian juga meningkatkan \en{training cost}, seperti waktu \en{training} dan memori yang dibutuhkan. Gambar ~\ref{fig:MemoryVSBatchSize} menunjukkan utilisasi memori beberapa \en{pre-trained model} terhadap ukuran \en{batch}. Berikutnya, akan dibahas beberapa penyebab meningkatnya kebutuhan memori pada model \en{deep learning} seiring meningkatnya kompleksitas model.
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.75\linewidth]{figures/memory-vs-batch-size.png}
-    \caption{Utilisasi memori berbagai model \en{deep learning} terhadap \en{batch size} \citep{canziani2016analysis}.}
+    \caption{Utilisasi memori berbagai model \en{deep learning} terhadap ukuran \en{batch} \citep{canziani2016analysis}.}
     \label{fig:MemoryVSBatchSize}
 \end{figure}
 
@@ -58,7 +58,7 @@ Berbagai penelitian menunjukkan bahwa pada model \en{deep learning}, menambah ju
 
 \textbf{Temporary memory.} Beberapa algoritma komputasi pada training \en{deep learning} membutuhkan memori, seperti FFT (fast Fourier transform). Tetapi, penggunaan memori seperti ini relatif kecil dan cepat didealokasi, tepatnya setelah algoritma selesai dieksekusi.
 
-Dari beberapa penyebab penggunaan memori pada \en{deep learning} tersebut, \en{feature map} merupakan pengguna memori tertinggi. Selain itu, \en{feature map} memiliki beberapa properti khusus yang dapat dimanfaatkan untuk optimisasi. Salah satu properti tersebut adalah sifatnya yang berbasis \en{layer}, sehingga bila pada \en{feed-forward} proses \en{training} telah maju ke layer selanjutnya, \en{feature map} dari \en{layer-layer} sebelumnya tidak digunakan hingga \en{backpropagation}.
+Dari beberapa penyebab penggunaan memori pada \en{deep learning} tersebut, \en{feature map} merupakan pengguna memori tertinggi. Selain itu, \en{feature map} memiliki beberapa properti khusus yang dapat dimanfaatkan untuk optimisasi. Salah satu properti tersebut adalah sifatnya yang berbasis \en{layer}, sehingga bila pada \en{feed-forward} proses \en{training} telah maju ke \en{layer} selanjutnya, \en{feature map} dari \en{layer-layer} sebelumnya tidak digunakan hingga \en{backpropagation}.
 
 \section{Graphics Processing Unit}
 
@@ -136,7 +136,7 @@ Untuk itu, diimplementasikan operasi baru yang disebut (\textbf{swap out/in}) un
 
 Agar dapat mengoptimisasi dengan baik, perlu dipertimbangkan \en{feature map} mana yang di-\en{swap out}. Apabila semua \en{feature map} di-\en{swap out}, akan menyebabkan penurunan kinerja model karena \en{data transfer overhead}. Maka, \en{feature map} terbaik untuk di-\en{swap out} adalah yang interval hingga diperlukannya kembali cukup lama.
 
-Eksperimen pada \en{paper} dilakukan dengan beberapa \en{pre-trained CNN model} pada sebuah komputer dengan satu GPU (Tesla M40) dengan kapasitas memori 12GB. Menurut eksperimen tersebut, didapatkan bahwa pada model-model yang diuji, \en{batch size} dapat ditingkatkan hingga 3 kali. Sedangkan penggunaan memori maksimum menurun hingga 2-3 kali lipat. Bahkan, model-model seperti ResNet-1001 dan ResNet-2000 yang sebelumnya tidak dapat di-\en{train} karena \en{out of memory} (OOM), menjadi dapat di-\en{train}. Di sisi lain, \en{training speed} mengalami penurunan kurang dari 10\%, karena adanya \en{data transfer overhead}.
+Eksperimen pada \en{paper} dilakukan dengan beberapa \en{pre-trained CNN model} pada sebuah komputer dengan satu GPU (Tesla M40) dengan kapasitas memori 12GB. Menurut eksperimen tersebut, didapatkan bahwa pada model-model yang diuji, ukuran \en{batch} dapat ditingkatkan hingga 3 kali. Sedangkan penggunaan memori maksimum menurun hingga 2-3 kali lipat. Bahkan, model-model seperti ResNet-1001 dan ResNet-2000 yang sebelumnya tidak dapat di-\en{train} karena \en{out of memory} (OOM), menjadi dapat di-\en{train}. Di sisi lain, \en{training speed} mengalami penurunan kurang dari 10\%, karena adanya \en{data transfer overhead}.
 
 \begin{figure}[h]
     \centering
