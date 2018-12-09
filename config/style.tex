@@ -1,15 +1,62 @@
+% Margin
+\usepackage[top=1.18in,bottom=1.18in,left=1.58in,right=1.18in]{geometry}
+
+% LaTeX tools
+\usepackage{etoolbox}
+
+% Math. and font: Times New Roman
+\usepackage{mathptmx}
+
+% Input encoding: UTF-8
+\usepackage[utf8]{inputenc}
+
+% Language: ID (EN)
+\usepackage[english,bahasa]{babel}
+
+% Line spacing: 1.5
+\renewcommand{\baselinestretch}{1.5}
+
+% Paragraphs
+\usepackage{parskip}
+
 % Headings
-\chapterfont{\centering \Large}
+\usepackage{sectsty}
+\usepackage{titlesec}
+\usepackage{titling}
+
 \titleformat{\chapter}[display]
     {\Large\centering\bfseries}
     {\chaptertitlename\ \thechapter}{0pt}
         {\Large\bfseries\uppercase}
-\titlespacing*{\chapter}{0pt}{0pt}{40pt}
+\titlespacing*{\chapter}{0pt}{-25pt}{40pt}
 
-% Line spacing: 1.5
-\renewcommand{\baselinestretch}{1.5}
+% Sections
+\setcounter{secnumdepth}{4}
+
+\titleformat*{\section}{\large\bfseries}
+\titleformat*{\subsection}{\large\bfseries}
+\titleformat*{\subsubsection}{\large\bfseries}
+
+\titlespacing*{\section}{0pt}{2.5ex plus 1ex minus .2ex}{1.3ex plus .2ex}
+\titlespacing*{\subsection}{0pt}{2.25ex plus 1ex minus .2ex}{0.5ex plus .2ex}
+\titlespacing*{\subsubsection}{0pt}{2.25ex plus 1ex minus .2ex}{0.5ex plus .2ex}
 
 % Numberings
 \renewcommand{\thechapter}{\Roman{chapter}}
 \renewcommand{\thefigure}{\arabic{chapter}.\arabic{figure}}
 \renewcommand{\thetable}{\arabic{chapter}.\arabic{table}}
+
+% Table of contents
+\usepackage{hyperref}
+\usepackage{tocbibind}
+
+% Quotes
+\usepackage{csquotes}
+
+% Graphics
+\usepackage{graphicx}
+
+% Citations
+\usepackage[numbers]{natbib}
+\bibliographystyle{plainnat}
+\setcitestyle{authoryear,round}
