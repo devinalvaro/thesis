@@ -1,0 +1,37 @@
+\chapter{Analisis Permasalahan dan Rancangan Solusi}
+
+\section{Analisis Permasalahan}
+
+\en{Deep learning} merupakan metode pembelajarn mesin menggunakan \en{neural network} dengan \en{hidden layer} berjumlah banyak. Di luar kinerja model, tantangan yang terdapat pada pelatihan model \en{deep learning} meliputi panjangnya durasi pelatihan dan besarnya sumber daya komputasi (seperti kapasitas CPU dan GPU) yang dibutuhkan. Salah satunya penyebabnya adalah banyaknya jumlah \en{hidden layer} yang mengakibatkan banyaknya pula parameter-parameter yang harus di-\en{maintain}, sehingga meningkatkan durasi dan komputasi yang dilakukan saat pelatihan model. Selain itu, pelatihan model \en{deep learning} seringkali menggunakan data berukuran besar, menambahkan durasi dan sumber daya yang dibutuhkan.
+
+Pada tugas akhir ini, fokus penelitian terletak pada penggunaan memori untuk pelatihan model \en{deep learning}. Pada pelatihan model \en{deep learning}, memori terutama digunakan untuk me-\en{maintain} nilai parameter-parameter model seperti \en{weight} dan \en{bias}, serta data yang sedang diproses. Kelebihan penggunaan memori dari kapasitas yang ada dapat mengakibatkan gagalnya pelatihan model karena masalah \en{out of memory}.
+
+Saat ini, terdapat berbagai penanganan terhadap masalah tersebut. Salah satunya adalah mengurangi jumlah \en{hidden layer} serta unit-unitnya yang secara langsung mengurangi jumlah parameter yang harus di-\en{maintain} di memori. Akan tetapi, metode ini berpotensi mengurangi kinerja, apabila jumlah parameter model menjadi kurang dari optimal.
+
+Metode penanganan lain disebut \en{stochastic gradient descent} (SGD), di mana data pelatihan dibagi menjadi beberapa \en{mini-batch}. Seperti yang telah disebutkan sebelumnya, data pelatihan \en{deep learning} seringkali berukuran besar, sehingga mahal secara waktu dan komputasi. Tujuan SGD adalah mengurangi ukuran data yang diproses pada suatu waktu, sehingga mengurangi komputasi (termasuk penggunaan memori) dan durasi pelatihan. Namun, SGD memiliki \en{trade-off} tersendiri, yaitu karena data yang diproses pada suatu waktu hanya sebagian, maka data yang diproses kurang representatif dari data sebenarnya. Seperti sebelumnya, hal ini berpotensi mengurangi keoptimalan kinerja model.
+
+Dari penjabaran tersebut ditunjukkan bahwa optimisasi penggunaan memori GPU pada pelatihan model \en{deep learning} merupakan permasalahan yang layak dipecahkan, karena dengan sumber daya yang sama dapat dilatih model dengan jumlah \en{layer} dan parameter yang lebih banyak serta meningkatkan ukuran data yang dapat diproses pada suatu waktu (ukuran \en{batch}).
+
+Satu lagi permasalahan memori pada pelatihan model \en{deep learning} adalah kapasitas GPU. Karena sifat paralelismenya yang tinggi, pelatihan menggunakan GPU lebih cepat dari CPU. Akan tetapi, karena alasan-alasan tertentu ukuran memori GPU biasanya 8-12 kali lebih kecil dari memori CPU. Terutama pada pelatihan model dengan satu GPU, masalah ini menjadi signifikan karena \en{memory load} tidak dapat didistribusi ke banyak GPU sekaligus.
+
+Salah satu penanganan permasalahan tersebut pada saat ini adalah \en{memory swapping}. \en{Memory swapping} adalah metode pengurangan beban memori dengan menyimpan data secara sementara di \en{memory pool} yang lebih besar (dan biasanya lebih lambat). Pada kasus \en{deep learning}, sebagian memori di GPU dapat disimpan di memori CPU secara sementara.
+
+\en{Memory swapping} telah diterapkan di beberapa \en{framework} pembelajaran mesin seperti TensorFlow. Akan tetapi, pada TensorFlow pengambilan keputusan mengenai data apa yang di-\en{swap} dan kapan melakukan \en{swapping} hanya menggunakan heuristik sederhana. Heuristik ini akan dijelaskan secara lebih detail di bawah.
+
+Melihat celah optimisasi tersebut, maka fokus tugas akhir ini adalah mengoptimisasi \en{memory swapping} di TensorFlow tersebut guna mengurangi penggunaan memori pada pelatihan model \en{deep learning}.
+
+\subsection{Penggunaan Memori pada Pelatihan Model}
+
+TBD. Penulis akan melakukan eksperimen untuk menunjukkan penggunaan memori pada pelatihan model RNN/LSTM terhadap beberapa variabel (jumlah \en{hidden layer} dan unitnya, ukuran data dan \en{batch}).
+
+\subsection{Heuristik \en{Memory Swapping} di TensorFlow}
+
+TBD. Penulis akan menjelaskan mekanisme heuristik \en{memory swapping} yang terdapat di TensorFlow pada saat ini.
+
+\subsection{Potensi Optimisasi \en{Memory Swapping}}
+
+TBD. Penulis akan menganalisis arsitektur \en{deep learning} dan potensi optimisasi \en{memory swapping} terhadapnya.
+
+\section{Rancangan Solusi}
+
+TBD. Penulis akan menjabarkan rancangan solusi terutama dengan merujuk pada \en{paper} Alibaba.
