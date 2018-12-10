@@ -67,7 +67,11 @@ Kembali menelaah Kode \code{ComputeAsync}, heuristik yang digunakan untuk menent
 
 \subsection{Potensi Optimisasi \en{Memory Swapping}}
 
-TBD. Penulis akan menganalisis arsitektur \en{deep learning} dan potensi optimisasi \en{memory swapping} terhadapnya.
+Pada umumnya, pelatihan model \en{deep learning} dilakukan dengan teknik \en{backpropagation}. Secara singkat, satu iterasi pelatihan terdiri dari 2 tahap, \en{forward propagation} dan \en{backward propagation} (atau \en{backpropagation}). Pada \en{forward propagation}, \en{input layer} menerima input kemudian mempropagasinya \en{layer} demi \en{layer} hingga didapatkan \en{output} di \en{output layer}. Setelahnya, \en{output} dibandingkan dengan label, kemudian dari selisihnya (\en{loss}) tersebut disesuaikan parameter-parameter model dari \en{output layer} sampai \en{input layer} sedemikian rupa sehingga secara keseluruhan, \en{loss} bernilai minimum.
+
+Melihat proses pelatihan dengan \en{backpropagation} tersebut, terdapat jeda antara digunakannya suatu \en{layer} saat \en{forward propagation} sampai digunakannya kembali saat \en{backpropagation}. Dilihat dari sisi penggunaan memori, pada jeda ini \en{layer} tetap mengonsumsi memori walaupun tidak sedang digunakan. Konsumsi memori yang tidak perlu ini tentunya lebih baik bila dapat digunakan untuk keperluan lain.
+
+Dari penjelasan tersebut, terlihat potensi optimisasi penggunaan memori pada pelatihan model \en{deep learning}. Memori untuk \en{layer}-\en{layer} yang sedang tidak digunakan tersebut lebih baik bila didelegasi ke \en{memory pool} yang lebih besar. Pada kasus pelatihan model dengan satu GPU, lebih baik bila memori yang digunakan \en{layer} di-\en{swap} dari GPU ke CPU apabila tidak sedang digunakan.
 
 \section{Rancangan Solusi}
 
