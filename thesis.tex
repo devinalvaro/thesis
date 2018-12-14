@@ -1,24 +1,21 @@
-% Document type
-\documentclass[12pt, a4paper, onecolumn, oneside]{report}
+% Class
+\documentclass[12pt, a4paper]{report}
 
 % Configs
 \input{config/style}
 \input{config/macros}
 
 % Document
-\title{Optimisasi Memori GPU untuk \en{Training} Model \en{Deep Learning} berbasis RNN pada TensorFlow dengan \en{Memory Swapping}}
-
 \author{Devin Alvaro\\ NIM: 13515062}
+
+\title{Optimisasi Memori GPU untuk \en{Training} Model \en{Deep Learning} berbasis RNN pada TensorFlow dengan \en{Memory Swapping}}
 
 \begin{document}
 
     % Configs
-
-    \input{config/hyphenation}
-    \input{config/rename}
+    \input{config/document}
 
     % Preface
-
     \newpage
 
     \input{miscs/cover}
@@ -34,7 +31,6 @@
     \lstlistoflistings
 
     % Chapters
-
     \newpage
 
     \pagenumbering{arabic}
@@ -44,8 +40,7 @@
     \input{chapters/chapter-2}
     \input{chapters/chapter-3}
 
-    % Citation
-
+    % Bibliography
     \bibliography{miscs/references}
 
 \end{document}
