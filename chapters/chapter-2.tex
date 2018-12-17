@@ -13,7 +13,7 @@ Ide dasar \en{deep learning} adalah menggunakan model \en{neural network} dengan
 \begin{figure}[htp]
     \centering
     \includegraphics[width=0.75\linewidth]{figures/deep-neural-network.png}
-    \caption{Ilustrasi arsitektur \en{deep neural network} \citep{nielsen2015neural}.}
+    \caption{Arsitektur \en{deep neural network} \citep{nielsen2015neural}.}
     \label{fig:DeepNeuralNetwork}
 \end{figure}
 
@@ -25,7 +25,22 @@ Pada umumnya, pelatihan dilakukan dengan \en{gradient descent}, yaitu proses pen
 
 \subsection{\en{Recurrent Neural Network}}
 
-TBD.
+\en{Recurrent neural network} (RNN) merupakan pengembangan dari \en{neural network} biasa, di mana pada setiap \en{layer} terdapat bobot yang menghubungkannya ke dirinya sendiri. Lebih tepatnya, bobot tersebut menghubungkan suatu \en{layer} ke dirinya sendiri pada urutan (atau \en{timestep}) sebelumnya (dan sesudahnya). Tujuan dari bobot ini adalah agar model dapat menangkap hubungan data secara temporal.
+
+Gambar ~\ref{fig:RecurrentNeuralNetwork} mengilustrasikan sebuah \en{layer} RNN. Dari gambar tersebut terlihat bahwa selain berhubungan dengan neuron-neuron di \en{layer} sebelumnya, setiap neuron di suatu \en{layer} juga berhubungan dengan dirinya sendiri pada \en{timestep} sebelumnya (dan sesudahnya).
+
+\begin{figure}[htp]
+    \centering
+    \includegraphics[width=0.5\linewidth]{figures/recurrent-neural-network.png}
+    \caption{Arsitektur sebuah \en{layer} RNN \citep{geron2017hands}.}
+    \label{fig:RecurrentNeuralNetwork}
+\end{figure}
+
+Karena kemampuannya menangkap hubungan data secara temporal, RNN banyak digunakan untuk data yang bersifat sekuens atau \en{time series}, di mana suatu data dipengaruhi oleh data-data pada urutan atau waktu sebelumnya. Contoh data sekuens atau \en{time series} adalah teks, \en{speech}, harga saham, dan lainnya.
+
+Pada RNN, terdapat istilah \en{sequence} dan \en{vector}. Apabila suatu \en{input/output layer} ber-\en{timestep} 1, maka disebut \en{vector}. Bila \en{timestep} suatu \en{input/output layer} lebih dari 1, disebut \en{sequence}. Dari kombinasi \en{sequence} dan \en{vector} tersebut terbentuk beberapa jenis RNN, yaitu \en{vector to sequence}, \en{sequence to vector}, dan \en{sequence to sequence}. Pemilihan jenis RNN ini tergantung dari data dan masalah yang dihadapi, misalnya \en{sequence to vector} cocok untuk \en{sentiment analysis} (dari sekuens teks menjadi skor sentimen) sedangkan \en{sequence to sequence} tepat untuk translasi bahasa \en{dari teks suatu bahasa ke bahasa lain} \citep{geron2017hands}.
+
+\en{Layer} berjenis \en{sequence} seringkali nilai \en{timestep}-nya tergantung pada panjang \en{input/output}. Misalnya, pada model \en{sequence to sequence} untuk translasi bahasa, nilai \en{timestep} dari \en{input layer} tergantung pada panjang kalimat yang akan ditranslasi, begitu juga nilai \en{timestep} dari \en{output layer} tergantung pada panjang kalimat hasil translasi. Oleh karena itu, model RNN seperti demikian harus dapat secara dinamis mengadaptasikan topologinya sesuai \en{input/output} yang sedang diproses.
 
 \subsection{Proses Pelatihan}
 
@@ -53,7 +68,7 @@ Dari hasil perhitungan tersebut, ditunjukkan bahwa penggunaan terbesar memori te
 \section{Graphics Processing Unit}
 
 Penggunaan GPU pada pelatihan \en{deep learning} merupakan salah satu faktor yang memajukan perkembangan bidang ini secara signifikan \citep{dean2012large}. Hal ini dikarenakan GPU mampu meningkatkan kecepatan dengan menjalankan pelatihan secara paralel. Sayangnya, ukuran memori GPU lebih terbatas, yakni 8-10 kali lebih kecil dari memori CPU. Sebagai gambaran, pada saat penulisan tulisan ini, \en{high-end} GPU rata-rata memiliki 12-16GB memori, sedangkan memori CPU dapat mencapai 128GB \citep{meng2017training}.
-
+RecurrentNeuralNetwork
 Padahal, kekurangan memori dapat menyebabkan kegagalan pelatihan model (\en{out of memory}). Solusi yang biasa diterapkan adalah mengurangi ukuran \en{dataset}, ukuran \en{batch}, atau jumlah parameter model, meskipun hal ini dapat menurunkan kinerja model \citep{meng2017training}.
 
 Selain solusi-solusi tersebut, terdapat juga metode \en{memory swapping}, yaitu memindahkan sebagian data dari memori GPU ke CPU saat pelatihan. Akan tetapi, \en{memory swapping} yang terlalu sering dapat menurunkan kecepatan pelatihan secara signifikan karena adanya \en{data transfer overhead} \citep{dean2012large}.
