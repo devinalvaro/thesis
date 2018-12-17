@@ -1,42 +1,30 @@
 \chapter{Studi Literatur}
 
-\section{Deep Learning}
+\section{\en{Deep Learning}}
 
 \en{Deep learning} adalah suatu bagian dari bidang \en{machine learning}, di mana pembelajaran dilakukan pada \en{neural network} dengan \en{layer} berjumlah banyak \citep{deng2014deep}. Berbagai arsitektur \en{deep learning} seperti \en{convolutional neural network} (CNN) dan \en{recurrent neural network} (RNN) telah banyak diaplikasikan pada berbagai bidang AI, seperti \en{computer vision} dan \en{speech recognition}.
 
-\subsection{Arsitektur}
+Berikut akan dijelaskan lebih dalam mengenai \en{deep learning}, termasuk salah satu jenis arsitektur dan metode pelatihannya.
 
-Arsitektur \en{deep learning} sangat beragam sehingga tidak semuanya dapat dibahas secara detail, oleh karena itu hanya akan dibahas secara singkat beberapa arsitektur \en{deep learning} yang relevan dengan tulisan ini, yaitu CNN.
+\subsection{\en{Overview}}
 
-Pada CNN, neuron-neuron pada suatu \en{layer} tidak selalu tersusun secara 1 dimensi, namun dapat tersusun secara n-dimensi. Selain itu, suatu neuron tidak memiliki hubungan satu-satu dengan neuron-neuron di \en{layer} selanjutnya. Melainkan, kumpulan \en{weight} dan \en{bias} beberapa neuron sekaligus menjadi input dari fungsi aktivasi ke sebuah neuron di \en{layer} selanjutnya. Hubungan antar \en{layer} pada CNN tersebut diilustrasikan oleh Gambar ~\ref{fig:FeatureMap}. Inilah yang disebut \en{feature map}, yaitu \en{mapping} dari kumpulan neuron di suatu \en{layer} ke suatu neuron di \en{layer} selanjutnya.
+TBD.
 
-Secara intuitif, kegunaan \en{feature map} adalah mengenali fitur pada suatu \en{layer}, untuk kemudian diserahkan ke \en{layer} selanjutnya. Maka dari itu, pada umumnya setiap \en{layer} menggunakan banyak \en{feature map} yang diinisialisasi secara acak, dengan harapan bahwa setelah \en{training}, setiap \en{feature map} mengenali fitur-fitur yang berbeda pada suatu \en{layer}.
+\subsection{\en{Recurrent Neural Network}}
 
-\begin{figure}[htp]
-    \centering
-    \includegraphics[width=0.75\linewidth]{figures/feature-map.png}
-    \caption{\en{Feature map} pada CNN \citep{nielsen2015neural}.}
-    \label{fig:FeatureMap}
-\end{figure}
+TBD.
 
-Sebagai contoh, arsitektur CNN untuk MNIST ditunjukkan oleh Gambar ~\ref{fig:CNN}. Pada \en{input layer}, terdapat 28x28 neuron (1 neuron untuk setiap pixel pada gambar berukuran 28x28 pixel). Pada gambar tersebut, \en{input layer} terhubung ke \en{layer} selanjutnya dengan 3 \en{feature map}, begitu seterusnya hingga \en{output layer}.
+\subsection{Proses Pelatihan}
 
-\begin{figure}[htp]
-    \centering
-    \includegraphics[width=0.75\linewidth]{figures/cnn.png}
-    \caption{Contoh arsitektur CNN untuk MNIST \citep{nielsen2015neural}.}
-    \label{fig:CNN}
-\end{figure}
+Terdapat berbagai macam metode pelatihan model \en{deep learning}, salah satunya adalah \en{stochastic gradient descent} (SGD). Pada SGD, keseluruhan \en{dataset} dibagi menjadi beberapa \en{mini-batch} (atau \en{batch}). Pada setiap \en{batch}, gradien dihitung kemudian digunakan untuk meng-\en{update} parameter, agar menurunkan \en{loss} atau \en{error}.
 
-\subsection{Proses Training}
-
-Ada berbagai macam metode pelatihan model \en{deep learning}, tetapi akan dibahas salah satu metode yang paling populer, yaitu \en{stochastic gradient descent} (SGD). Pada SGD, keseluruhan \en{dataset} dibagi menjadi beberapa \en{mini-batch} (atau \en{batch}). Pada setiap \en{batch}, gradien dihitung kemudian digunakan untuk \en{update} parameter, agar menurunkan \en{loss} atau \en{error}.
-
-Apabila \en{training} telah selesai memproses seluruh \en{batch}, maka disebut telah menyelesaikan satu \en{epoch}. Biasanya, \en{training} terdiri dari banyak \en{epoch}. Tujuan SGD membagi \en{dataset} ke \en{batch}-\en{batch} adalah mempercepat konvergensi dan menghemat penggunaan memori karena pada satu waktu hanya perlu diproses sebagian \en{training data} saja. Sayangnya, karena gradien yang didapat pada suatu \en{batch} hanya berdasarkan beberapa \en{training sample} saja, maka gradien ini sejatinya adalah estimasi dari gradien seharusnya. Hal ini dapat menyebabkan penurunan kinerja model, namun pada praktiknya penurunan kinerja ini dapat diterima demi meningkatkan kecepatan pelatihan dan mengurangi penggunaan memori.
+Apabila pelatihan telah selesai memproses seluruh \en{batch}, maka disebut telah menyelesaikan satu \en{epoch}. Biasanya, pelatihan terdiri dari banyak \en{epoch}. Tujuan SGD membagi \en{dataset} ke \en{batch}-\en{batch} adalah mempercepat konvergensi dan menghemat penggunaan memori karena pada satu waktu hanya perlu diproses sebagian \en{training data} saja. Namun, karena gradien yang didapat pada suatu \en{batch} hanya berdasarkan sebagian sampel data saja, maka gradien ini sejatinya adalah estimasi dari gradien yang seharusnya (gradien populasi). Hal ini dapat menyebabkan penurunan kinerja model, meski pada praktiknya penurunan kinerja ini dapat saja diterima demi meningkatkan kecepatan pelatihan dan mengurangi penggunaan memori.
 
 \subsection{Penggunaan Memori}
 
 Berbagai penelitian menunjukkan bahwa pada model \en{deep learning}, menambah jumlah neuron dan \en{hidden layer} dapat meningkatkan kinerja model \citep{dean2012large,nielsen2015neural}. Tetapi, meningkatkan kompleksitas model seperti demikian juga meningkatkan \en{training cost}, seperti waktu pelatihan dan ukuran memori yang dibutuhkan. Gambar ~\ref{fig:MemoryVSBatchSize} menunjukkan utilisasi memori beberapa \en{pre-trained model} terhadap ukuran \en{batch}. Berikutnya, akan dibahas beberapa penyebab meningkatnya kebutuhan memori pada model \en{deep learning} seiring meningkatnya kompleksitas model.
+
+TBD.
 
 \begin{figure}[htp]
     \centering
@@ -45,20 +33,12 @@ Berbagai penelitian menunjukkan bahwa pada model \en{deep learning}, menambah ju
     \label{fig:MemoryVSBatchSize}
 \end{figure}
 
-\textbf{Feature Map.} Jumlah feature map meningkat seiring bertambahnya \en{hidden layer}, karena setiap \en{layer} membutuhkan \en{mapping} ke \en{layer} selanjutnya. Sedangkan ukuran \en{feature map} ditentukan oleh berbagai faktor, seperti ukuran \en{batch} dan \en{stride}. Gambar ~\ref{fig:ResNet50Memory} menunjukkan penggunaan memori model ResNet-50 pada satu iterasi \en{mini-batch training} pada \en{dataset} ImageNet. Penggunaan memory ResNet-50 mengalami \en{peak} pada sekitar 5GB, kemudian mengalami penurunan karena \en{feature map} yang sudah tidak dibutuhkan akan didealokasi.
-
 \begin{figure}[htp]
     \centering
-    \includegraphics[width=0.75\linewidth]{figures/ResNet50-memory.png}
+    \includegraphics[width=0.75\linewidth]{figures/resnet50-memory.png}
     \caption{Penggunaan memori pada model ResNet-50 \citep{meng2017training}.}
     \label{fig:ResNet50Memory}
 \end{figure}
-
-\textbf{Bias.} Jumlah \en{bias} meningkat dengan bertambahnya \en{hidden layer}, karena setiap neuron pada setiap \en{hidden layer} memiliki \en{bias} sendiri. Akan tetapi, bila dibandingkan dengan \en{feature map}, penggunaan memori dari \en{bias} relatif sedikit. Hanya saja, tidak seperti \en{feature map}, bias tidak pernah dialokasi di sepanjang proses \en{training}.
-
-\textbf{Temporary memory.} Beberapa algoritma komputasi pada training \en{deep learning} membutuhkan memori, seperti FFT (fast Fourier transform). Tetapi, penggunaan memori seperti ini relatif kecil dan cepat didealokasi, tepatnya setelah algoritma selesai dieksekusi.
-
-Dari beberapa penyebab penggunaan memori pada \en{deep learning} tersebut, \en{feature map} merupakan pengguna memori tertinggi. Selain itu, \en{feature map} memiliki beberapa properti khusus yang dapat dimanfaatkan untuk optimisasi. Salah satu properti tersebut adalah sifatnya yang berbasis \en{layer}, sehingga bila pada \en{feed-forward} proses \en{training} telah maju ke \en{layer} selanjutnya, \en{feature map} dari \en{layer-layer} sebelumnya tidak digunakan hingga \en{backpropagation}.
 
 \section{Graphics Processing Unit}
 
@@ -68,15 +48,13 @@ Padahal, kekurangan memori dapat menyebabkan kegagalan pelatihan model (\en{out 
 
 Selain solusi-solusi tersebut, terdapat juga metode \en{memory swapping}, yaitu memindahkan sebagian data dari memori GPU ke CPU saat pelatihan. Akan tetapi, \en{memory swapping} yang terlalu sering dapat menurunkan kecepatan pelatihan secara signifikan karena adanya \en{data transfer overhead} \citep{dean2012large}.
 
-\subsection{Memori}
-
 TBD.
 
 \section{TensorFlow}
 
 TensorFlow adalah sistem pembelajaran mesin yang didesain untuk menangani pelatihan model berskala besar dan secara terdistribusi, baik untuk kebutuhan penelitian maupun industri. Dikembangkan oleh tim Google Brain dan dirilis secara \en{open source}, TensorFlow telah digunakan secara ekstensif pada berbagai proyek pembelajaran mesin, baik di dalam maupun di luar Google.
 
-Pada dasarnya, TensorFlow adalah \en{framework} yang menyediakan operasi-operasi komputasi matematika (seperti aljabar linear dan kalkulus), dengan operasi-operasi tambahan yang memudahkan pendefinisian proses pembelajaran mesin. Dengan TensorFlow, eksekusi operasi-operasi tersebut dapat dilakukan secara terdistribusi menggunakan berbagai \en{device} seperti CPU, GPU, maupun TPU (Tensor Processing Units) yang terdapat pada satu atau lebih \en{machine} yang terletak pada satu atau lebih \en{cluster}. Selain itu, TensorFlow juga berjalan di berbagai macam platform, mulai dari \en{data center} hingga \en{smartphone}.
+Pada dasarnya, TensorFlow adalah \en{framework} yang menyediakan operasi-operasi komputasi matematika (seperti aljabar linear dan kalkulus), dengan operasi-operasi tambahan yang memudahkan pendefinisian proses pembelajaran mesin. Dengan TensorFlow, eksekusi operasi-operasi tersebut dapat dilakukan secara terdistribusi menggunakan berbagai \en{device} seperti CPU, GPU, maupun TPU (Tensor Processing Units) yang terdapat pada satu atau lebih \en{machine} yang terletak pada satu atau lebih \en{cluster}. Selain itu, TensorFlow juga berjalan di berbagai macam platform, mulai dari \en{data center} hingga \en{smartphone} \citep{abadi2016tensorflow}.
 
 \subsection{Komputasi}
 
@@ -110,7 +88,7 @@ Gambar ~\ref{fig:TensorFlowArch} menunjukkan arsitektur umum TensorFlow. Berikut
 
 \textbf{Kernel Implementations.} Merupakan implementasi operasi-operasi TensorFlow yang \en{device-specific}. Tanpa \en{kernel implementation} yang sesuai, \en{backend} TensorFlow tidak dapat berjalan pada suatu \en{device}.
 
-Gambar ~\ref{fig:TensorFlowDist} mengilustrasikan hubungan antar bagian TensorFlow tersebut dalam \en{training} terdistribusi.
+Gambar ~\ref{fig:TensorFlowDist} mengilustrasikan hubungan antar bagian TensorFlow tersebut dalam pelatihan terdistribusi.
 
 \begin{figure}[htp]
     \centering
