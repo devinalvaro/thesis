@@ -4,11 +4,24 @@
 
 \en{Deep learning} adalah suatu bagian dari bidang \en{machine learning}, di mana pembelajaran dilakukan pada \en{neural network} dengan \en{layer} berjumlah banyak \citep{deng2014deep}. Berbagai arsitektur \en{deep learning} seperti \en{convolutional neural network} (CNN) dan \en{recurrent neural network} (RNN) telah banyak diaplikasikan pada berbagai bidang AI, seperti \en{computer vision} dan \en{speech recognition}.
 
-Berikut akan dijelaskan lebih dalam mengenai \en{deep learning}, termasuk salah satu jenis arsitektur dan metode pelatihannya.
+Berikut akan dijelaskan lebih dalam mengenai \en{deep learning}, termasuk salah satu jenis arsitektur, metode pelatihan, dan penggunaan memorinya.
 
 \subsection{\en{Overview}}
 
-TBD.
+Ide dasar \en{deep learning} adalah menggunakan model \en{neural network} dengan \en{hidden layer} berjumlah lebih dari satu, yang disebut juga \en{deep neural network}. Gambar ~\ref{fig:DeepNeuralNetwork} mengilustrasikan \en{deep neural network} yang memiliki 3 \en{hidden layer}.
+
+\begin{figure}[htp]
+    \centering
+    \includegraphics[width=0.75\linewidth]{figures/deep-neural-network.png}
+    \caption{Ilustrasi arsitektur \en{deep neural network} \citep{nielsen2015neural}.}
+    \label{fig:DeepNeuralNetwork}
+\end{figure}
+
+Seperti \en{neural network} pada \en{shallow learning}, setiap hubungan neuron memiliki bobot (\en{weight}) yang nilainya merepresentasikan signifikansi hubungan antar neuron tersebut. Selain bobot, terdapat juga bias yang secara langsung mempengaruhi nilai setiap neuron (tidak seperti bobot yang mempengaruhi hubungan antara neuron), dengan nilainya merepresentasikan signifikasi suatu neuron. Secara garis besar, tujuan setiap neuron dan hubungan antar neuron adalah mengenali pola atau fitur dari \en{dataset} sehingga dapat memprediksi \en{output} dengan benar \citep{nielsen2015neural}.
+
+Maka, pelatihan \en{neural network} itu sendiri adalah mencari kombinasi bobot dan bias setiap neuron dan hubungannya sedemikian sehingga dari \en{input dataset} dihasilkan \en{output} yang paling mendekati \en{target dataset}. Ukuran dekatnya \en{output} dengan \en{target dataset} adalah \en{loss} atau \en{error function}, yaitu fungsi yang menghasilkan selisih antara \en{output} dan \en{target}. Semakin kecil \en{loss}, maka model semakin optimal.
+
+Pada umumnya, pelatihan dilakukan dengan \en{gradient descent}, yaitu proses pencarian gradien yang optimal untuk setiap bobot dan bias pada model terhadap seluruh \en{training dataset} yang ada. Perhitungan \en{gradient descent} secara matematis tidak dijelaskan pada tulisan ini, bagi pembaca yang tertarik dapat merujuk ke \citep{nielsen2015neural}.
 
 \subsection{\en{Recurrent Neural Network}}
 
@@ -24,21 +37,18 @@ Apabila pelatihan telah selesai memproses seluruh \en{batch}, maka disebut telah
 
 Berbagai penelitian menunjukkan bahwa pada model \en{deep learning}, menambah jumlah neuron dan \en{hidden layer} dapat meningkatkan kinerja model \citep{dean2012large,nielsen2015neural}. Tetapi, meningkatkan kompleksitas model seperti demikian juga meningkatkan \en{training cost}, seperti waktu pelatihan dan ukuran memori yang dibutuhkan. Gambar ~\ref{fig:MemoryVSBatchSize} menunjukkan utilisasi memori beberapa \en{pre-trained model} terhadap ukuran \en{batch}. Berikutnya, akan dibahas beberapa penyebab meningkatnya kebutuhan memori pada model \en{deep learning} seiring meningkatnya kompleksitas model.
 
-TBD.
-
 \begin{figure}[htp]
     \centering
     \includegraphics[width=0.75\linewidth]{figures/memory-vs-batch-size.png}
-    \caption{Utilisasi memori berbagai model \en{deep learning} terhadap ukuran \en{batch} \citep{canziani2016analysis}.}
+    \caption{Penggunaan memori berbagai model \en{deep learning} terhadap ukuran \en{batch} \citep{canziani2016analysis}.}
     \label{fig:MemoryVSBatchSize}
 \end{figure}
 
-\begin{figure}[htp]
-    \centering
-    \includegraphics[width=0.75\linewidth]{figures/resnet50-memory.png}
-    \caption{Penggunaan memori pada model ResNet-50 \citep{meng2017training}.}
-    \label{fig:ResNet50Memory}
-\end{figure}
+Selain untuk memuat \en{dataset} yang digunakan, memori juga digunakan untuk variabel yang memuat parameter model (bobot dan bias) dan hasil komputasi seperti fungsi aktivasi. Katakanlah bahwa variabel direpresentasikan oleh 32-bit \en{floating point}, maka ukuran memori yang digunakan adalah 4 \en{byte} dikali dengan jumlah variabel. Sebagai contoh, model ResNet50 memiliki sekitar 26 juta parameter dan 16 juta fungsi aktivasi pada sekali \en{forward pass}. Maka, ukuran memori yang digunakan pada satu sampel sekitar \(\num{26e6} \times \SI{4}{byte} = \SI{104}{\mega\byte}\) untuk parameter dan \(\num{16e6} \times \SI{4}{byte} = \SI{64}{\mega\byte}\) untuk fungsi aktivasi \citep{hanlon2016why}.
+
+Ukuran tersebut barulah ukuran memori yang digunakan oleh satu sampel pada \en{batch}. Seperti dijelaskan sebelumnya, pelatihan model dengan SGD meng-\en{update} parameter model (dengan gradien yang didapat dari fungsi aktivasi setiap neuron) sekaligus per \en{batch}. Oleh karena itu, untuk setiap \en{batch} perlu dimuat seluruh fungsi aktivasi yang didapat dari setiap sampel pada \en{batch}. Misalnya \en{batch} berukuran 16, maka diperlukan \(16 * \SI{64}{\mega\byte} = \SI{1024}{\mega\byte}\) untuk memuat seluruh hasil fungsi aktivasi pada satu \en{batch}. Bila dijumlah dengan ukuran parameter tadi, maka diperlukan sekitar \(\SI{104}{\mega\byte} + \SI{1024}{\mega\byte} = \SI{1.128}{\giga\byte}\) memori pada pelatihan model ResNet50 untuk \en{batch} berukuran 16. Perhitungan ini didukung oleh Gambar ~\ref{fig:MemoryVSBatchSize} di mana pada \({batch\ size} = 16\), penggunaan memori ResNet50 (merah muda) sekitar \(\SI{1000}{\mega\byte}\).
+
+Dari hasil perhitungan tersebut, ditunjukkan bahwa penggunaan terbesar memori terletak pada pemuatan hasil fungsi aktivasi yang dibutuhkan untuk mencari gradien pada suatu \en{batch}. Selain itu, ditunjukkan juga bagaimana penggunaan memori meningkat seiring peningkatan ukuran \en{batch}.
 
 \section{Graphics Processing Unit}
 
