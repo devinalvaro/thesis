@@ -65,16 +65,6 @@ Ukuran tersebut barulah ukuran memori yang digunakan oleh satu sampel pada \en{b
 
 Dari hasil perhitungan tersebut, ditunjukkan bahwa penggunaan terbesar memori terletak pada pemuatan hasil fungsi aktivasi yang dibutuhkan untuk mencari gradien pada suatu \en{batch}. Selain itu, ditunjukkan juga bagaimana penggunaan memori meningkat seiring peningkatan ukuran \en{batch}.
 
-\section{Graphics Processing Unit}
-
-Penggunaan GPU pada pelatihan \en{deep learning} merupakan salah satu faktor yang memajukan perkembangan bidang ini secara signifikan \citep{dean2012large}. Hal ini dikarenakan GPU mampu meningkatkan kecepatan dengan menjalankan pelatihan secara paralel. Sayangnya, ukuran memori GPU lebih terbatas, yakni 8-10 kali lebih kecil dari memori CPU. Sebagai gambaran, pada saat penulisan tulisan ini, \en{high-end} GPU rata-rata memiliki 12-16GB memori, sedangkan memori CPU dapat mencapai 128GB \citep{meng2017training}.
-RecurrentNeuralNetwork
-Padahal, kekurangan memori dapat menyebabkan kegagalan pelatihan model (\en{out of memory}). Solusi yang biasa diterapkan adalah mengurangi ukuran \en{dataset}, ukuran \en{batch}, atau jumlah parameter model, meskipun hal ini dapat menurunkan kinerja model \citep{meng2017training}.
-
-Selain solusi-solusi tersebut, terdapat juga metode \en{memory swapping}, yaitu memindahkan sebagian data dari memori GPU ke CPU saat pelatihan. Akan tetapi, \en{memory swapping} yang terlalu sering dapat menurunkan kecepatan pelatihan secara signifikan karena adanya \en{data transfer overhead} \citep{dean2012large}.
-
-TBD.
-
 \section{TensorFlow}
 
 TensorFlow adalah sistem pembelajaran mesin yang didesain untuk menangani pelatihan model berskala besar dan secara terdistribusi, baik untuk kebutuhan penelitian maupun industri. Dikembangkan oleh tim Google Brain dan dirilis secara \en{open source}, TensorFlow telah digunakan secara ekstensif pada berbagai proyek pembelajaran mesin, baik di dalam maupun di luar Google.
@@ -125,6 +115,37 @@ Gambar ~\ref{fig:TensorFlowDist} mengilustrasikan hubungan antar bagian TensorFl
 \subsection{Penambahan Operasi}
 
 TensorFlow mendukung penambahan jenis operasi baru, apabila jenis-jenis operasi yang disediakan belum memenuhi kebutuhan pengguna, atau mengoptimisasi operasi yang ada secara \en{native}. Untuk membuat operasi baru, pengguna perlu menambahkan definisi (seperti \en{input} dan \en{output}, bentuk \en{tensor}) dan implementasi operasi tersebut dalam bahasa C++. Selanjutnya, pengguna dapat menambahkan API ke operasi tersebut pada \en{client}, namun langkah ini bersifat opsional.
+
+\section{Graphics Processing Unit}
+
+Penggunaan GPU pada pelatihan \en{deep learning} merupakan salah satu faktor yang memajukan perkembangan bidang ini secara signifikan \citep{dean2012large}. Hal ini dikarenakan GPU mampu meningkatkan kecepatan dengan menjalankan pelatihan secara paralel. Sayangnya, ukuran memori GPU lebih terbatas, yakni 8-10 kali lebih kecil dari memori CPU. Sebagai gambaran, pada saat penulisan tulisan ini, \en{high-end} GPU rata-rata memiliki 12-16GB memori, sedangkan memori CPU dapat mencapai 128GB \citep{meng2017training}.
+
+Padahal, kekurangan memori dapat menyebabkan kegagalan pelatihan model (\en{out of memory}). Solusi yang biasa diterapkan adalah mengurangi ukuran \en{dataset}, ukuran \en{batch}, atau jumlah parameter model, meskipun hal ini dapat menurunkan kinerja model \citep{meng2017training}.
+
+Selain solusi-solusi tersebut, terdapat juga metode \en{memory swapping}, yaitu memindahkan sebagian data dari memori GPU ke CPU saat pelatihan. Akan tetapi, \en{memory swapping} yang terlalu sering dapat menurunkan kecepatan pelatihan secara signifikan karena adanya \en{data transfer overhead} \citep{dean2012large}.
+
+TensorFlow sendiri mendukung penggunaan GPU untuk menjalankan programnya, sehingga operasi-operasi yang disediakan oleh TensorFlow dapat dijalankan pada GPU (dengan beberapa pengecualian). Untuk dukungan terhadap GPU Nvidia, operasi-operasi tersebut diimplementasi dengan menggunakan CUDA.
+
+\subsection{CUDA}
+
+CUDA merupakan platform komputasi paralel \en{general purpose} untuk GPU Nvidia. CUDA memberikan abstraksi dan model pemrograman bagi \en{programmer} untuk menggunakan kemampuan komputasi paralel di GPU Nvidia \citep{nvidia2010programming}. Program CUDA berupa kode (disebut \en{kernel}) yang disisipkan ke dalam bahasa C (berekstensi ".cu").
+
+Arsitektur CUDA dapat dilihat sebagai sebuah \en{grid} yang terdiri dari \en{blocks}, di mana \en{block} terdiri dari \en{threads}, seperti diilustrasikan oleh Gambar ~\ref{fig:CUDAArchitecture}. Jumlah \en{block} dan \en{thread} tidak konstan, melainkan ditentukan oleh \en{programmer}.
+
+\begin{figure}[htp]
+    \centering
+    \includegraphics[width=0.5\linewidth]{figures/cuda-architecture.png}
+    \caption{Arsitektur CUDA \citep{nvidia2010programming}.}
+    \label{fig:CUDAArchitecture}
+\end{figure}
+
+Selain \en{block} dan \en{thread}, CUDA juga mengabstraksikan memori GPU. Pada CUDA, memori GPU terbagi menjadi beberapa jenis. Beberapa di antaranya adalah \en{global memory}, \en{shared memory}, dan \en{local memory}. \en{Global memory} adalah memori yang dapat diakses oleh \en{thread} di semua \en{block}, \en{shared memory} hanya dapat diakses oleh \en{thread} di suatu \en{block}, dan \en{local memory} terbatas untuk masing-masing \en{thread} saja \citep{wilt2013cuda}.
+
+Pada CUDA, CPU disebut \en{host} sehingga memori CPU disebut \en{host memory} dan GPU disebut \en{device} sehingga memori GPU disebut \en{device memory}. Pada umumnya, kode yang dijalankan di \en{host} tidak dapat langsung mengakses \en{device memory} dan begitu juga sebaliknya. Untuk itu, perlu dilakukan transfer data dari \en{device} ke \en{host} atau sebaliknya. Penjelasan lebih lanjut mengenai transfer data ini akan dibahas pada bagian selanjutnya.
+
+Sejak CUDA 6 terdapat fitur \en{unified memory}, yaitu abstraksi memori yang dapat diakses secara langsung baik oleh \en{host} maupun \en{device}. Di balik layar, tetap dilakukan transfer data antar \en{host} dan \en{device}, namun secara otomatis dilakukan oleh kernel CUDA, sehingga memudahkan \en{programmer} meskipun cenderung mengakibatkan kinerja yang lebih buruk. Hingga versi 1.12, dukungan TensorFlow terhadap \en{unified memory} masih eksperimental sehingga pada tulisan ini \en{unified memory} diabaikan.
+
+% TBD. Penjelasan transfer data host <-> device.
 
 \section{Penelitian Terkait}
 
