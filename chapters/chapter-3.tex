@@ -2,11 +2,11 @@
 
 \section{Analisis Permasalahan}
 
-\en{Deep learning} merupakan metode pembelajaran mesin menggunakan \en{neural network} dengan \en{hidden layer} berjumlah banyak. Di luar kinerja model, tantangan yang terdapat pada pelatihan model \en{deep learning} meliputi panjangnya durasi pelatihan dan besarnya sumber daya komputasi (seperti kapasitas CPU dan GPU) yang dibutuhkan. Salah satunya penyebabnya adalah banyaknya jumlah \en{hidden layer} yang mengakibatkan banyaknya pula parameter-parameter yang harus di-\en{maintain}, sehingga meningkatkan durasi dan komputasi yang dilakukan saat pelatihan model. Selain itu, pelatihan model \en{deep learning} seringkali menggunakan data berukuran besar, menambahkan durasi dan sumber daya yang dibutuhkan.
+\en{Deep learning} merupakan metode pembelajaran mesin menggunakan \en{neural network} dengan \en{hidden layer} berjumlah banyak. Di luar kinerja model, tantangan yang terdapat pada pelatihan model \en{deep learning} meliputi panjangnya durasi pelatihan dan besarnya sumber daya komputasi (seperti kapasitas CPU dan GPU) yang dibutuhkan. Salah satunya penyebabnya adalah banyaknya jumlah \en{hidden layer} yang mengakibatkan banyaknya pula parameter-parameter yang harus di-\en{maintain}, sehingga meningkatkan durasi dan komputasi yang dilakukan saat pelatihan model. Selain itu, pelatihan model \en{deep learning} seringkali menggunakan data berukuran besar, menambah durasi dan sumber daya yang dibutuhkan.
 
-Pada tugas akhir ini, fokus penelitian terletak pada penggunaan memori untuk pelatihan model \en{deep learning}. Pada pelatihan model \en{deep learning}, memori terutama digunakan untuk me-\en{maintain} nilai parameter-parameter model seperti \en{weight} dan \en{bias}, serta data yang sedang diproses. Kelebihan penggunaan memori dari kapasitas yang ada dapat mengakibatkan gagalnya pelatihan model karena masalah \en{out of memory}.
+Pada tugas akhir ini, fokus penelitian terletak pada penggunaan memori untuk pelatihan model \en{deep learning}. Pada pelatihan model \en{deep learning}, memori terutama digunakan untuk me-\en{maintain} nilai parameter-parameter model seperti \en{weight}, \en{bias}, hasil fungsi aktivasi, serta data yang sedang diproses. Kelebihan penggunaan memori dari kapasitas yang ada dapat mengakibatkan gagalnya pelatihan model karena masalah \en{out of memory}.
 
-Saat ini, terdapat berbagai penanganan terhadap masalah tersebut. Salah satunya adalah mengurangi jumlah \en{hidden layer} serta unit-unitnya yang secara langsung mengurangi jumlah parameter yang harus di-\en{maintain} di memori. Akan tetapi, metode ini berpotensi mengurangi kinerja, apabila jumlah parameter model menjadi kurang dari optimal.
+Saat ini, terdapat berbagai penanganan terhadap masalah tersebut. Salah satunya adalah mengurangi jumlah \en{hidden layer} serta neuron-neuronnya yang secara langsung mengurangi jumlah parameter yang harus di-\en{maintain} di memori. Akan tetapi, metode ini berpotensi mengurangi kinerja, apabila topologi model menjadi kurang dari optimal.
 
 Metode penanganan lain disebut \en{stochastic gradient descent} (SGD), di mana data pelatihan dibagi menjadi beberapa \en{mini-batch}. Seperti yang telah disebutkan sebelumnya, data pelatihan \en{deep learning} seringkali berukuran besar, sehingga mahal secara waktu dan komputasi. Tujuan SGD adalah mengurangi ukuran data yang diproses pada suatu waktu, sehingga mengurangi komputasi (termasuk penggunaan memori) dan durasi pelatihan. Namun, SGD memiliki \en{trade-off} tersendiri, yaitu karena data yang diproses pada suatu waktu hanya sebagian, maka data yang diproses kurang representatif dari data sebenarnya. Seperti sebelumnya, hal ini berpotensi mengurangi keoptimalan kinerja model.
 
@@ -22,7 +22,7 @@ Melihat celah optimisasi tersebut, demikian fokus tugas akhir ini adalah mengopt
 
 \subsection{Penggunaan Memori pada Pelatihan Model}
 
-TBD. Penulis akan melakukan eksperimen untuk menunjukkan penggunaan memori pada pelatihan model RNN/LSTM terhadap beberapa variabel (jumlah \en{hidden layer} dan unitnya, ukuran data dan \en{batch}).
+TBD. Penulis akan melakukan eksperimen untuk menunjukkan penggunaan memori pada pelatihan model RNN/LSTM terhadap beberapa variabel (jumlah \en{hidden layer} dan neuronnya, ukuran data dan \en{batch}).
 
 \subsection{Heuristik \en{Memory Swapping} di TensorFlow}
 
@@ -72,6 +72,10 @@ Pada umumnya, pelatihan model \en{deep learning} dilakukan dengan teknik \en{bac
 Melihat proses pelatihan dengan \en{backpropagation} tersebut, terdapat jeda antara digunakannya suatu \en{layer} saat \en{forward propagation} sampai digunakannya kembali saat \en{backpropagation}. Dilihat dari sisi penggunaan memori, pada jeda ini \en{layer} tetap mengonsumsi memori walaupun tidak sedang digunakan. Konsumsi memori yang tidak perlu ini tentunya lebih baik bila dapat digunakan untuk keperluan lain.
 
 Dari penjelasan tersebut, terlihat potensi optimisasi penggunaan memori pada pelatihan model \en{deep learning}. Memori untuk \en{layer}-\en{layer} yang sedang tidak digunakan tersebut lebih baik bila didelegasi ke \en{memory pool} yang lebih besar. Pada kasus pelatihan model dengan satu GPU, lebih baik bila memori yang digunakan \en{layer} di-\en{swap} dari GPU ke CPU apabila tidak sedang digunakan.
+
+Bila melihat heuristik \en{memory swapping} di TensorFlow yang dijelaskan pada bagian sebelumnya, terlihat bahwa yang dilakukan TensorFlow justru kebalikannya. Karena \en{swapping} dilakukan bila memori melebihi \code{kOccupancy}, berarti \en{tensor} yang di-\en{swap} adalah \en{tensor} pada \en{layer-layer} akhir. Di sinilah terletak potensi optimisasi \en{memory swapping} di TensorFlow tersebut.
+
+Selain itu, perlu diingat bahwa \en{memory swapping} di TensorFlow hingga saat ini (v1.12) masih terbatas pada satu model saja, yaitu kelas \code{tf.nn.dynamic\_rnn}, yaitu model RNN topologinya dinamis sesuai sekuens yang diberikan. Padahal, metode \en{memory swapping} seharusnya adalah teknik yang umum (tidak terikat arsitektur tertentu).
 
 \section{Rancangan Solusi}
 
