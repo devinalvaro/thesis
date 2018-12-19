@@ -20,9 +20,9 @@ Salah satu penanganan permasalahan tersebut pada saat ini adalah \en{memory swap
 
 Melihat celah optimisasi tersebut, demikian fokus tugas akhir ini adalah mengoptimisasi penggunaan memori pada pelatihan model \en{deep learning} dengan satu GPU di TensorFlow.
 
-\subsection{Penggunaan Memori pada Pelatihan Model}
+% \subsection{Penggunaan Memori pada Pelatihan Model}
 
-TBD. Penulis akan melakukan eksperimen untuk menunjukkan penggunaan memori pada pelatihan model RNN/LSTM terhadap beberapa variabel (jumlah \en{hidden layer} dan neuronnya, ukuran data dan \en{batch}).
+% TBD. Penulis akan melakukan eksperimen untuk menunjukkan penggunaan memori pada pelatihan model RNN/LSTM terhadap beberapa variabel (jumlah \en{hidden layer} dan neuronnya, ukuran data dan \en{batch}).
 
 \subsection{Heuristik \en{Memory Swapping} di TensorFlow}
 
@@ -32,7 +32,7 @@ Selanjutnya akan dijelaskan mekanisme \en{memory swapping} di Tensorflow dari si
 
 Berikut adalah cuplikan kode dari \en{codebase} TensorFlow mengenai \code{StackPushOp}, kelas yang bertanggung jawab dalam peletakkan tensor ke \en{memory stack} tersebut. Kode telah dimodifikasi agar hanya menampilkan bagian-bagian yang menjadi perhatian pembahasan.
 
-\begin{lstlisting}[language=C++, caption=\code{tensorflow/core/kernels/stack\_ops.cc}, label={lst:swapmemory}]
+\begin{lstlisting}[language=C++, caption=\code{tensorflow/core/kernels/stack\_ops.cc}, label={lst:SwapMemory}]
 template <typename Device>
 class StackPushOp : public AsyncOpKernel {
 
@@ -59,13 +59,13 @@ class StackPushOp : public AsyncOpKernel {
 }
 \end{lstlisting}
 
-Seperti terlihat pada Kode \ref{lst:swapmemory}, kelas \code{StackPushOp} memiliki \en{method} \code{ComputeAsync} yang berfungsi meletakkan \en{tensor} ke \en{memory stack}. \code{ComputeAsync} memiliki cara kerja sebagai berikut. Apabila \code{swap\_memory\_} bernilai \code{true} dan kondisi heuristiknya terpenuhi, maka dimulai pemindahan tensor dari GPU ke memori CPU. Setelahnya, yang diletakkan ke atas \en{memory stack} hanyalah \en{pointer} ke memori CPU tempat \en{tensor} tadi dipindahkan. Untuk memperjelas konteks, \en{pointer} ke memori CPU ini nantinya digunakan untuk menyalin kembali \en{tensor} dari CPU ke GPU ketika dibutuhkan.
+Seperti terlihat pada Kode \ref{lst:SwapMemory}, kelas \code{StackPushOp} memiliki \en{method} \code{ComputeAsync} yang berfungsi meletakkan \en{tensor} ke \en{memory stack}. \code{ComputeAsync} memiliki cara kerja sebagai berikut. Apabila \code{swap\_memory\_} bernilai \code{true} dan kondisi heuristiknya terpenuhi, maka dimulai pemindahan tensor dari GPU ke memori CPU. Setelahnya, yang diletakkan ke atas \en{memory stack} hanyalah \en{pointer} ke memori CPU tempat \en{tensor} tadi dipindahkan. Untuk memperjelas konteks, \en{pointer} ke memori CPU ini nantinya digunakan untuk menyalin kembali \en{tensor} dari CPU ke GPU ketika dibutuhkan.
 
 Sebaliknya, bila \en{memory swapping} tidak dilakukan baik karena \code{swap\_memory\_} bernilai \code{false} atau heuristik tidak terpenuhi, \code{ComputeAsync} \en{by value} meletakkan \en{tensor} ke \en{memory stack}.
 
 Kembali menelaah Kode \code{ComputeAsync}, heuristik yang digunakan untuk menentukan apakah \en{tensor} layak di-\en{swap} ke CPU cukup sederhana. Pertama, \code{ComputeAsync} memeriksa apakah ukuran \en{tensor} melebihi \code{kCopyThreshold} yang bernilai cukup \en{arbitrary}, yaitu 2048 \en{bytes}. Selanjutnya, \code{ComputeAsync} mengevaluasi apakah persentase penggunaan memori GPU saat ini melebihi \code{kOccupancy}, yang ditetapkan bernilai 0.7 (70\%).
 
-\subsection{Potensi Optimisasi \en{Memory Swapping}}
+\subsection{Potensi Optimisasi dengan \en{Memory Swapping}}
 
 Pada umumnya, pelatihan model \en{deep learning} dilakukan dengan teknik \en{backpropagation}. Secara singkat, satu iterasi pelatihan terdiri dari 2 tahap, \en{forward propagation} dan \en{backward propagation} (atau \en{backpropagation}). Pada \en{forward propagation}, \en{input layer} menerima input kemudian mempropagasinya \en{layer} demi \en{layer} hingga didapatkan \en{output} di \en{output layer}. Setelahnya, \en{output} dibandingkan dengan label, kemudian dari selisihnya (\en{loss}) tersebut disesuaikan parameter-parameter model dari \en{output layer} sampai \en{input layer} sedemikian rupa sehingga secara keseluruhan, \en{loss} bernilai minimum.
 
@@ -77,6 +77,18 @@ Bila melihat heuristik \en{memory swapping} di TensorFlow yang dijelaskan pada b
 
 Selain itu, perlu diingat bahwa \en{memory swapping} di TensorFlow hingga saat ini (v1.12) masih terbatas pada satu model saja, yaitu kelas \code{tf.nn.dynamic\_rnn}, yaitu model RNN topologinya dinamis sesuai sekuens yang diberikan. Padahal, metode \en{memory swapping} seharusnya adalah teknik yang umum (tidak terikat arsitektur tertentu).
 
+\subsection{\en{Recurrent Neural Network} sebagai Model Uji}
+
+Arsitektur \en{deep neural network} yang dipilih untuk menjadi fokus optimisasi ini adalah \en{recurrent neural network} (RNN) yang antara \en{input layer} atau \en{output layer}-nya (atau keduanya) berjenis \en{sequence}. Alasan pemilihan arsitektur yang demikian adalah karena topologinya yang dinamis sesuai panjang \en{input} atau \en{output}, penggunaan memori tidak dapat diprediksi sebelum eksekusi, sehingga optimisasi memori pun menjadi lebih krusial.
+
+Alasan lainnya adalah fitur \en{memory swapping} pada TensorFlow hanya terdapat pada \code{tf.nn.dynamic\_rnn}, sehingga dengan memilih model berarsitektur RNN, dapat diuji pula \en{memory swapping} hasil optimisasi terhadap \en{memory swapping} bawaan dari TensorFlow.
+
 \section{Rancangan Solusi}
 
-TBD. Penulis akan menjabarkan rancangan solusi terutama dengan merujuk pada \en{paper} Alibaba.
+Setelah menganalisis permasalahan didapatkan bahwa terdapat potensi optimisasi dengan \en{memory swapping} pada TensorFlow. Pada bagian sebelumnya, disebutkan bahwa \en{memory swapping} akan dioptimisasi dengan memprioritaskan \en{tensor} dengan jeda waktu yang lama hingga digunakan kembali saat \en{backpropagation}. Untuk itu, metode optimisasi tersebut perlu diimplementasikan ke TensorFlow.
+
+Pada Studi Literatur bagian Penelitian Terkait, disebutkan bahwa \en{paper} \citep{meng2017training} melakukan optimisasi dengan ide yang kurang lebih sama. Pada penelitian tersebut, optimisasi diimplementasi dengan menambahkan \en{op} baru ke TensorFlow, yaitu \code{swap\_out} dan \code{swap\_in} yang berfungsi memindahkan \en{tensor} dari \en{device} ke \en{host}, dan sebaliknya. Kedua \en{op} tersebut kemudian disisipkan ke graf TensorFlow, seperti ditunjukkan oleh Gambar ~\ref{fig:SwapOutIn}. Sayangnya, \en{paper} tersebut kurang menjelaskan bagaimana kedua \en{op} diimplementasikan dan bagaimana disisipkan ke graf TensorFlow.
+
+Karena studi kasus yang digunakan adalah arsitektur RNN, maka solusi terhadap permasalahan berfokus pada kelas-kelas RNN yang disediakan oleh TensorFlow, seperti \code{tf.nn.nn\_cell.RNNCell}. Akan dianalisis \en{source code} kelas-kelas RNN tersebut, terutama bagaimana \en{StackPushOp} pada Kode ~\ref{lst:SwapMemory} dipanggil, kemudian memodifikasinya mengikuti ide yang diajukan pada analisis permasalahan dan pada \en{paper} \citep{meng2017training}.
+
+Kemudian akan dilakukan pengujian program TensorFlow asli dengan program TensorFlow hasil modifikasi tersebut. Pengujian tersebut dilakukan pada sebuah model RNN, dengan variabel-variabel berupa jumlah \en{layer} dan neuron, ukuran \en{batch}, dan ukuran data. Dari pengujian tersebut, ingin diketahui perbandingan penggunaan memori dan durasi \en{training} antara program TensorFlow asli dan hasil modifikasi.

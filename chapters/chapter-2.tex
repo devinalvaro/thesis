@@ -149,7 +149,7 @@ Sejak CUDA 6 terdapat fitur \en{unified memory}, yaitu abstraksi memori yang dap
 
 \section{Penelitian Terkait}
 
-"Training deeper models by GPU memory optimization on TensorFlow" (Meng, 2017) merupakan penelitian untuk mengoptimisasi penggunaan memori GPU pada pelatihan model \en{deep learning} dengan TensorFlow \citep{meng2017training}. Penelitian tersebut terbatas pada sebuah komputer dengan satu GPU. Ide dari \en{paper} tersebut adalah menyimpan sebagian model dari memori GPU ke memori CPU saat pelatihan untuk mengurangi beban memori GPU.
+"Training deeper models by GPU memory optimization on TensorFlow" \citep{meng2017training} merupakan penelitian untuk mengoptimisasi penggunaan memori GPU pada pelatihan model \en{deep learning} dengan TensorFlow \citep{meng2017training}. Penelitian tersebut terbatas pada sebuah komputer dengan satu GPU. Ide dari \en{paper} tersebut adalah menyimpan sebagian model dari memori GPU ke memori CPU saat pelatihan untuk mengurangi beban memori GPU.
 
 Optimisasi dilakukan dengan mengimplementasikan operasi baru yang disebut (\textbf{swap out/in}) untuk men-\en{swap} \en{tensor} dari memori GPU ke CPU. Dengan operasi baru ini, graf TensorFlow yang sudah ada dimodifikasi sehingga operasi disisipkan ke hubungan \en{vertice} yang mengalirkan tensor yang di-\en{swap}. Operasi \textbf{swap out/in} ini diilustrasikan oleh Gambar ~\ref{fig:SwapOutIn}.
 
