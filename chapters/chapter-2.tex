@@ -128,14 +128,14 @@ TensorFlow sendiri mendukung penggunaan GPU untuk menjalankan programnya, sehing
 
 \subsection{CUDA}
 
-CUDA merupakan platform komputasi paralel \en{general purpose} untuk GPU Nvidia. CUDA memberikan abstraksi dan model pemrograman bagi \en{programmer} untuk menggunakan kemampuan komputasi paralel di GPU Nvidia \citep{nvidia2010programming}. Program CUDA berupa kode (disebut \en{kernel}) yang disisipkan ke dalam bahasa C (berekstensi ".cu").
+CUDA merupakan platform komputasi paralel \en{general purpose} untuk GPU Nvidia. CUDA memberikan abstraksi dan model pemrograman bagi \en{programmer} untuk menggunakan kemampuan komputasi paralel di GPU Nvidia \citep{nvidia2011cuda}. Program CUDA berupa kode (disebut \en{kernel}) yang disisipkan ke dalam bahasa C (berekstensi ".cu").
 
 Arsitektur CUDA dapat dilihat sebagai sebuah \en{grid} yang terdiri dari \en{blocks}, di mana \en{block} terdiri dari \en{threads}, seperti diilustrasikan oleh Gambar ~\ref{fig:CUDAArchitecture}. Jumlah \en{block} dan \en{thread} tidak konstan, melainkan ditentukan oleh \en{programmer}.
 
 \begin{figure}[htp]
     \centering
     \includegraphics[width=0.5\linewidth]{figures/cuda-architecture.png}
-    \caption{Arsitektur CUDA \citep{nvidia2010programming}.}
+    \caption{Arsitektur CUDA \citep{nvidia2011cuda}.}
     \label{fig:CUDAArchitecture}
 \end{figure}
 
