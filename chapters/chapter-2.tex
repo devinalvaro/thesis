@@ -17,7 +17,7 @@ Seperti \en{neural network} pada \en{shallow learning}, setiap hubungan neuron a
 
 Pelatihan \en{neural network} itu sendiri adalah mencari kombinasi bobot dan bias setiap neuron dan hubungannya sedemikian sehingga dari input dihasilkan \en{output} yang paling mendekati target. Ukuran dekatnya \en{output} dengan target adalah \en{loss} atau \en{cost function}, yaitu fungsi yang menghasilkan selisih antara \en{output} dan target. Semakin kecil \en{loss}, maka model semakin optimal.
 
-Pada umumnya, pelatihan dilakukan dengan \en{gradient descent}, yaitu proses pencarian gradien yang optimal untuk setiap bobot dan bias dari model terhadap data yang ada. Gradien ini kemudian digunakan untuk meng-\en{update} bobot dan bias dari model. Pencarian gradien untuk parameter-parameter ini biasanya menggunakan teknik \en{backpropagation}. Pada bagian berikutnya akan dijelaskan secara singkat mengenai \en{backpropagation} berdasarkan \citep{werbos1990backpropagation} dan \citep{michalski2013machine}.
+Pada umumnya, pelatihan dilakukan dengan \en{gradient descent}, yaitu proses pencarian gradien yang optimal untuk setiap bobot dan bias dari model terhadap data yang ada. Gradien ini kemudian digunakan untuk meng-\en{update} bobot dan bias dari model. Pencarian gradien untuk parameter-parameter ini biasanya menggunakan teknik \en{backpropagation}. Pada bagian berikutnya akan dijelaskan secara singkat mengenai \en{backpropagation} berdasarkan \citep{guo2013backpropagation} dan \citep{michalski2013machine}.
 
 \subsection{\en{Backpropagation}} \label{backpropagation}
 
@@ -35,16 +35,16 @@ Seperti disebutkan sebelumnya, pada \en{gradient descent} dicari gradien masing-
 Berikut adalah gradien terhadap bobot $w_{kj}$, yaitu bobot yang berasal dari sebuah neuron (berindeks $j$) pada sebuah \en{layer} menuju neuron (berindeks $k$) pada \en{layer} selanjutnya.
 
 \begin{equation}
-    \frac{\partial{C}}{\partial{w_{kj}}} = \frac{\partial{C}}{\partial{net_{k}}} \times \frac{\partial{net_{k}}}{\partial{w_{kj}}}
+    \frac{\partial{C}}{\partial{w_{kj}}} = \frac{\partial{C}}{\partial{net_{k}}} \frac{\partial{net_{k}}}{\partial{w_{kj}}}
     \label{eq:gradient}
 \end{equation}
 
-di mana $net_{k} = \sum_{j} w_{kj} \times o_{j} + b_{k}$ dengan $o_{j}$ adalah \en{output} dari neuron ke-$j$ di \en{layer} sebelumnya. Cukup jelas bahwa $\frac{\partial{net_{k}}}{\partial{w_{kj}}} = o_{j}$, sehingga yang menjadi perhatian berikutnya adalah $\frac{\partial{C}}{\partial{net_{k}}}$ yaitu \en{error} pada neuron berindeks $k$, dinotasikan dengan simbol $\delta_{k}$ \citep{werbos1990backpropagation}.
+di mana $net_{k} = \sum_{j} w_{kj} o_{j} + b_{k}$ dengan $o_{j}$ adalah \en{output} dari neuron ke-$j$ di \en{layer} sebelumnya. Cukup jelas bahwa $\frac{\partial{net_{k}}}{\partial{w_{kj}}} = o_{j}$, sehingga yang menjadi perhatian berikutnya adalah $\frac{\partial{C}}{\partial{net_{k}}}$ yaitu \en{error} pada neuron berindeks $k$, dinotasikan dengan simbol $\delta_{k}$ \citep{guo2013backpropagation}.
 
 Dengan menjabarkan $\delta_{k}$ menggunakan \en{chain rule}, didapat persamaan berikut.
 
 \begin{equation}
-    \delta_{k} = \frac{\partial{C}}{\partial{net_{k}}} = \frac{\partial{C}}{\partial{o_{k}}} \times \frac{\partial{o_{k}}}{\partial{net_{k}}} = (t_{k} - o_{k}) \times a'(net_{k})
+    \delta_{k} = \frac{\partial{C}}{\partial{net_{k}}} = \frac{\partial{C}}{\partial{o_{k}}} \frac{\partial{o_{k}}}{\partial{net_{k}}} = (t_{k} - o_{k}) a'(net_{k})
     \label{eq:delta}
 \end{equation}
 
@@ -53,7 +53,7 @@ di mana $\frac{\partial{C}}{\partial{o_{k}}} = (t_{k} - o_{k})$ merupakan penuru
 Demikian didapatkan \en{error} untuk parameter di \en{output layer}. Untuk \en{error} di \en{layer}-\en{layer} sebelumnya, dipropagasikan \en{error} dari \en{layer} sesudahnya dengan \en{chain rule} seperti berikut.
 
 \begin{equation}
-    \delta_{j} = \sum_{k} \frac{\partial{C}}{\partial{net_{k}}} \times \frac{\partial{net_{k}}}{\partial{o_{j}}} \times \frac{\partial{o_{j}}}{\partial{net_{j}}} = \sum_{k} \delta_{k} \times \frac{\partial{net_{k}}}{\partial{o_{j}}} \times \frac{\partial{o_{j}}}{\partial{net_{j}}} = \sum_{k} \delta_{k} \times w_{kj} \times a'(net_{j})
+    \delta_{j} = \sum_{k} \frac{\partial{C}}{\partial{net_{k}}} \frac{\partial{net_{k}}}{\partial{o_{j}}} \frac{\partial{o_{j}}}{\partial{net_{j}}} = \sum_{k} \delta_{k} \frac{\partial{net_{k}}}{\partial{o_{j}}} \frac{\partial{o_{j}}}{\partial{net_{j}}} = \sum_{k} \delta_{k} w_{kj} a'(net_{j})
     \label{eq:hidden}
 \end{equation}
 
@@ -87,23 +87,6 @@ Pada RNN, terdapat istilah \en{sequence} dan \en{vector}. Apabila suatu \en{inpu
 Terdapat berbagai macam metode pelatihan model \en{deep learning}, salah satunya adalah \en{stochastic gradient descent} (SGD). Pada SGD, keseluruhan \en{dataset} dibagi menjadi beberapa \en{mini-batch} (atau \en{batch}). Pada setiap \en{batch}, gradien dihitung kemudian digunakan untuk meng-\en{update} parameter, agar menurunkan \en{loss} atau \en{cost}.
 
 Apabila pelatihan telah selesai memproses seluruh \en{batch}, maka disebut telah menyelesaikan satu \en{epoch}. Biasanya, pelatihan terdiri dari banyak \en{epoch}. Tujuan SGD membagi \en{dataset} ke \en{batch}-\en{batch} adalah mempercepat konvergensi dan menghemat penggunaan memori karena pada satu waktu hanya perlu diproses sebagian \en{training data} saja. Namun, karena gradien yang didapat pada suatu \en{batch} hanya berdasarkan sebagian sampel data saja, maka gradien ini sejatinya adalah estimasi dari gradien yang seharusnya (gradien populasi). Hal ini dapat menyebabkan penurunan kinerja model, meski pada praktiknya penurunan kinerja ini dapat saja diterima demi meningkatkan kecepatan pelatihan dan mengurangi penggunaan memori.
-
-\subsection{Penggunaan Memori}
-
-Berbagai penelitian menunjukkan bahwa pada model \en{deep learning}, menambah jumlah neuron dan \en{hidden layer} dapat meningkatkan kinerja model \citep{dean2012large,nielsen2015neural}. Tetapi, meningkatkan kompleksitas model seperti demikian juga meningkatkan \en{training cost}, seperti waktu pelatihan dan ukuran memori yang dibutuhkan. Gambar ~\ref{fig:MemoryVSBatchSize} menunjukkan utilisasi memori beberapa \en{pre-trained model} terhadap ukuran \en{batch}. Berikutnya, akan dibahas beberapa penyebab meningkatnya kebutuhan memori pada model \en{deep learning} seiring meningkatnya kompleksitas model.
-
-\begin{figure}[htp]
-    \centering
-    \includegraphics[width=0.75\linewidth]{figures/memory-vs-batch-size.png}
-    \caption{Penggunaan memori berbagai model \en{deep learning} terhadap ukuran \en{batch} \citep{canziani2016analysis}.}
-    \label{fig:MemoryVSBatchSize}
-\end{figure}
-
-Selain untuk memuat \en{dataset} yang digunakan, memori juga digunakan untuk variabel yang memuat parameter model (bobot dan bias) dan hasil komputasi seperti fungsi aktivasi. Katakanlah bahwa variabel direpresentasikan oleh 32-bit \en{floating point}, maka ukuran memori yang digunakan adalah 4 \en{byte} dikali dengan jumlah variabel. Sebagai contoh, model ResNet50 memiliki sekitar 26 juta parameter dan 16 juta fungsi aktivasi pada sekali \en{forward pass}. Maka, ukuran memori yang digunakan pada satu sampel sekitar \(\num{26e6} \times \SI{4}{byte} = \SI{104}{\mega\byte}\) untuk parameter dan \(\num{16e6} \times \SI{4}{byte} = \SI{64}{\mega\byte}\) untuk fungsi aktivasi \citep{hanlon2016why}.
-
-Ukuran tersebut barulah ukuran memori yang digunakan oleh satu sampel pada \en{batch}. Seperti dijelaskan sebelumnya, pelatihan model dengan SGD meng-\en{update} parameter model (dengan gradien yang didapat dari fungsi aktivasi setiap neuron) sekaligus per \en{batch}. Oleh karena itu, untuk setiap \en{batch} perlu dimuat seluruh fungsi aktivasi yang didapat dari setiap sampel pada \en{batch}. Misalnya \en{batch} berukuran 16, maka diperlukan \(16 * \SI{64}{\mega\byte} = \SI{1024}{\mega\byte}\) untuk memuat seluruh hasil fungsi aktivasi pada satu \en{batch}. Bila dijumlah dengan ukuran parameter tadi, maka diperlukan sekitar \(\SI{104}{\mega\byte} + \SI{1024}{\mega\byte} = \SI{1.128}{\giga\byte}\) memori pada pelatihan model ResNet50 untuk \en{batch} berukuran 16. Perhitungan ini didukung oleh Gambar ~\ref{fig:MemoryVSBatchSize} di mana pada \({batch\ size} = 16\), penggunaan memori ResNet50 (merah muda) sekitar \(\SI{1000}{\mega\byte}\).
-
-Dari hasil perhitungan tersebut, ditunjukkan bahwa penggunaan terbesar memori terletak pada pemuatan hasil fungsi aktivasi yang dibutuhkan untuk mencari gradien pada suatu \en{batch}. Selain itu, ditunjukkan juga bagaimana penggunaan memori meningkat seiring peningkatan ukuran \en{batch}.
 
 \section{TensorFlow}
 
@@ -189,7 +172,7 @@ Sejak CUDA 6 terdapat fitur \en{unified memory}, yaitu abstraksi memori yang dap
 
 \section{Penelitian Terkait}
 
-"Training deeper models by GPU memory optimization on TensorFlow" \citep{meng2017training} merupakan penelitian untuk mengoptimisasi penggunaan memori GPU pada pelatihan model \en{deep learning} dengan TensorFlow \citep{meng2017training}. Penelitian tersebut terbatas pada sebuah komputer dengan satu GPU. Ide dari \en{paper} tersebut adalah menyimpan sebagian model dari memori GPU ke memori CPU saat pelatihan untuk mengurangi beban memori GPU.
+"Training deeper models by GPU memory optimization on TensorFlow" \citep{meng2017training} merupakan \en{paper} yang berisi penelitian untuk mengoptimisasi penggunaan memori GPU pada pelatihan model \en{deep learning} dengan TensorFlow \citep{meng2017training}. Penelitian tersebut terbatas pada sebuah komputer dengan satu GPU. Ide dari \en{paper} tersebut adalah menyimpan sebagian model dari memori GPU ke memori CPU saat pelatihan untuk mengurangi beban memori GPU.
 
 Optimisasi dilakukan dengan mengimplementasikan operasi baru yang disebut (\textbf{swap out/in}) untuk men-\en{swap} \en{tensor} dari memori GPU ke CPU. Dengan operasi baru ini, graf TensorFlow yang sudah ada dimodifikasi sehingga operasi disisipkan ke hubungan \en{vertice} yang mengalirkan tensor yang di-\en{swap}. Operasi \textbf{swap out/in} ini diilustrasikan oleh Gambar ~\ref{fig:SwapOutIn}.
 
@@ -200,9 +183,9 @@ Optimisasi dilakukan dengan mengimplementasikan operasi baru yang disebut (\text
     \label{fig:SwapOutIn}
 \end{figure}
 
-Agar dapat mengoptimisasi dengan baik, perlu dipertimbangkan \en{tensor} mana yang perlu di-\en{swap}. Apabila semua \en{tensor} di-\en{swap}, akan menyebabkan penurunan kinerja model karena \en{data transfer overhead}. Maka dari itu, \en{tensor} terbaik untuk di-\en{swap} adalah yang interval hingga diperlukannya kembali cukup lama.
+Agar dapat mengoptimisasi dengan baik, perlu dipertimbangkan \en{tensor} mana yang perlu di-\en{swap}. Apabila semua \en{tensor} di-\en{swap}, akan menyebabkan penurunan kinerja model karena \en{data transfer overhead} yang besar. Menurut \en{paper} tersebut, \en{tensor}-\en{tensor} yang terbaik untuk di-\en{swap} adalah yang interval hingga diperlukannya kembali saat \en{backpropagation} paling lama. Harapannya, \en{overlapping} antara komputasi dengan \en{asynchronous data transfer} meningkat, sehingga mengurangi durasi pelatihan karena semakin banyak \en{data transfer} yang berjalan bersama dengan komputasi..
 
-Eksperimen pada \en{paper} dilakukan dengan beberapa \en{pre-trained model} seperti ResNet, Inception, dan NMT, pada sebuah komputer dengan satu GPU (Tesla M40) dengan kapasitas memori 12GB. Menurut hasil eksperimen yang ditunjukkan Gambar ~\ref{fig:SwapOutInResult} tersebut, didapatkan bahwa pada model-model yang diuji, ukuran \en{batch} dapat ditingkatkan hingga 3 kali, sedangkan penggunaan memori maksimum menurun hingga 2-3 kali lipat. Bahkan, model-model seperti ResNet-1001 dan ResNet-2000 yang sebelumnya tidak dapat dilatih karena \en{out of memory} (OOM), menjadi dapat dilatih. Di sisi lain, \en{training speed} mengalami penurunan kurang dari 10\%, karena adanya \en{data transfer overhead}.
+Eksperimen pada \en{paper} tersebut dilakukan dengan beberapa \en{pre-trained model} seperti ResNet, Inception, dan NMT, pada sebuah komputer dengan satu GPU (Tesla M40) dengan kapasitas memori 12GB. Menurut hasil eksperimen yang ditunjukkan Gambar ~\ref{fig:SwapOutInResult} tersebut, didapatkan bahwa pada model-model yang diuji, ukuran \en{batch} dapat ditingkatkan hingga 3 kali, sedangkan penggunaan memori maksimum menurun hingga 2-3 kali lipat. Bahkan, model-model seperti ResNet-1001 dan ResNet-2000 yang sebelumnya tidak dapat dilatih karena \en{out of memory} (OOM), menjadi dapat dilatih. Di sisi lain, \en{training speed} mengalami penurunan kurang dari 10\%, karena adanya \en{data transfer overhead} seperti yang telah disebutkan sebelumnya.
 
 \begin{figure}[htp]
     \centering

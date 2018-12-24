@@ -20,9 +20,22 @@ Salah satu penanganan permasalahan tersebut pada saat ini adalah \en{memory swap
 
 Melihat celah optimisasi tersebut, demikian fokus tugas akhir ini adalah mengoptimisasi penggunaan memori pada pelatihan model \en{deep learning} dengan satu GPU di TensorFlow.
 
-% \subsection{Penggunaan Memori pada Pelatihan Model}
+\subsection{Penggunaan Memori pada Pelatihan Model}
 
-% TBD. Penulis akan melakukan eksperimen untuk menunjukkan penggunaan memori pada pelatihan model RNN/LSTM terhadap beberapa variabel (jumlah \en{hidden layer} dan neuronnya, ukuran data dan \en{batch}).
+Berbagai penelitian menunjukkan bahwa pada model \en{deep learning}, menambah jumlah neuron dan \en{hidden layer} dapat meningkatkan kinerja model \citep{dean2012large,nielsen2015neural}. Tetapi, meningkatkan kompleksitas model seperti demikian juga meningkatkan \en{training cost}, seperti waktu pelatihan dan ukuran memori yang dibutuhkan. Gambar ~\ref{fig:MemoryVSBatchSize} menunjukkan utilisasi memori beberapa \en{pre-trained model} terhadap ukuran \en{batch}. Berikutnya, akan dibahas beberapa penyebab meningkatnya kebutuhan memori pada model \en{deep learning} seiring meningkatnya kompleksitas model.
+
+\begin{figure}[htp]
+    \centering
+    \includegraphics[width=0.75\linewidth]{figures/memory-vs-batch-size.png}
+    \caption{Penggunaan memori berbagai model \en{deep learning} terhadap ukuran \en{batch} \citep{canziani2016analysis}.}
+    \label{fig:MemoryVSBatchSize}
+\end{figure}
+
+Selain untuk memuat \en{dataset} yang digunakan, memori juga digunakan untuk variabel yang memuat parameter model (bobot dan bias) dan hasil komputasi seperti fungsi aktivasi. Katakanlah bahwa variabel direpresentasikan oleh 32-bit \en{floating point}, maka ukuran memori yang digunakan adalah 4 \en{byte} dikali dengan jumlah variabel. Sebagai contoh, model ResNet50 memiliki sekitar 26 juta parameter dan 16 juta fungsi aktivasi pada sekali \en{forward pass}. Maka, ukuran memori yang digunakan pada satu sampel sekitar $\num{26e6} \times \SI{4}{byte} = \SI{104}{\mega\byte}$ untuk parameter dan $\num{16e6} \times \SI{4}{byte} = \SI{64}{\mega\byte}$ untuk fungsi aktivasi \citep{hanlon2016why}.
+
+Ukuran tersebut barulah ukuran memori yang digunakan oleh satu sampel pada \en{batch}. Seperti dijelaskan sebelumnya, pelatihan model dengan SGD meng-\en{update} parameter model (dengan gradien yang didapat dari fungsi aktivasi setiap neuron) sekaligus per \en{batch}. Oleh karena itu, untuk setiap \en{batch} perlu dimuat seluruh fungsi aktivasi yang didapat dari setiap sampel pada \en{batch}. Misalnya \en{batch} berukuran 16, maka diperlukan $16 * \SI{64}{\mega\byte} = \SI{1024}{\mega\byte}$ untuk memuat seluruh hasil fungsi aktivasi pada satu \en{batch}. Bila dijumlah dengan ukuran parameter tadi, maka diperlukan sekitar $\SI{104}{\mega\byte} + \SI{1024}{\mega\byte} = \SI{1.128}{\giga\byte}$ memori pada pelatihan model ResNet50 untuk \en{batch} berukuran 16. Perhitungan ini didukung oleh Gambar ~\ref{fig:MemoryVSBatchSize} di mana pada ${batch\ size} = 16$, penggunaan memori ResNet50 (merah muda) sekitar $\SI{1000}{\mega\byte}$.
+
+Dari hasil perhitungan tersebut, ditunjukkan bahwa penggunaan terbesar memori terletak pada pemuatan hasil fungsi aktivasi yang dibutuhkan untuk mencari gradien pada suatu \en{batch}. Selain itu, ditunjukkan juga bagaimana penggunaan memori meningkat seiring peningkatan ukuran \en{batch}.
 
 \subsection{Heuristik \en{Memory Swapping} di TensorFlow}
 
@@ -69,7 +82,7 @@ Kembali menelaah Kode \code{ComputeAsync}, heuristik yang digunakan untuk menent
 
 Pada umumnya, pelatihan model \en{deep learning} dilakukan dengan teknik \en{backpropagation}. Secara singkat, satu iterasi pelatihan terdiri dari 2 tahap, \en{forward propagation} dan \en{backward propagation} (atau \en{backpropagation}). Pada \en{forward propagation}, \en{input layer} menerima input kemudian mempropagasinya \en{layer} demi \en{layer} hingga didapatkan \en{output} di \en{output layer}. Setelahnya, \en{output} dibandingkan dengan label, kemudian dari selisihnya (\en{loss}) tersebut disesuaikan parameter-parameter model dari \en{output layer} sampai \en{input layer} sedemikian rupa sehingga secara keseluruhan, \en{loss} bernilai minimum.
 
-Melihat proses pelatihan dengan \en{backpropagation} tersebut, terdapat jeda antara digunakannya suatu \en{layer} saat \en{forward propagation} sampai digunakannya kembali saat \en{backpropagation}. Dilihat dari sisi penggunaan memori, pada jeda ini \en{layer} tetap mengonsumsi memori walaupun tidak sedang digunakan. Konsumsi memori yang tidak perlu ini tentunya lebih baik bila dapat digunakan untuk keperluan lain.
+Melihat proses pelatihan dengan \en{backpropagation} tersebut, terdapat interval antara digunakannya suatu \en{layer} saat \en{forward propagation} sampai digunakannya kembali saat \en{backpropagation}. Dilihat dari sisi penggunaan memori, pada interval ini \en{layer} tetap mengonsumsi memori walaupun tidak sedang digunakan. Konsumsi memori yang tidak perlu ini tentunya lebih baik bila dapat digunakan untuk keperluan lain.
 
 Dari penjelasan tersebut, terlihat potensi optimisasi penggunaan memori pada pelatihan model \en{deep learning}. Memori untuk \en{layer}-\en{layer} yang sedang tidak digunakan tersebut lebih baik bila didelegasi ke \en{memory pool} yang lebih besar. Pada kasus pelatihan model dengan satu GPU, lebih baik bila memori yang digunakan \en{layer} di-\en{swap} dari GPU ke CPU apabila tidak sedang digunakan.
 
@@ -85,7 +98,7 @@ Alasan lainnya adalah fitur \en{memory swapping} pada TensorFlow hanya terdapat 
 
 \section{Rancangan Solusi}
 
-Setelah menganalisis permasalahan didapatkan bahwa terdapat potensi optimisasi dengan \en{memory swapping} pada TensorFlow. Pada bagian sebelumnya, disebutkan bahwa \en{memory swapping} akan dioptimisasi dengan memprioritaskan \en{tensor} dengan jeda waktu yang lama hingga digunakan kembali saat \en{backpropagation}. Untuk itu, metode optimisasi tersebut perlu diimplementasikan ke TensorFlow.
+Setelah menganalisis permasalahan didapatkan bahwa terdapat potensi optimisasi dengan \en{memory swapping} pada TensorFlow. Pada bagian sebelumnya, disebutkan bahwa \en{memory swapping} akan dioptimisasi dengan memprioritaskan \en{tensor} dengan interval waktu yang lama hingga digunakan kembali saat \en{backpropagation}. Untuk itu, metode optimisasi tersebut perlu diimplementasikan ke TensorFlow.
 
 Pada Studi Literatur bagian Penelitian Terkait, disebutkan bahwa \en{paper} \citep{meng2017training} melakukan optimisasi dengan ide yang kurang lebih sama. Pada penelitian tersebut, optimisasi diimplementasi dengan menambahkan \en{op} baru ke TensorFlow, yaitu \code{swap\_out} dan \code{swap\_in} yang berfungsi memindahkan \en{tensor} dari \en{device} ke \en{host}, dan sebaliknya. Kedua \en{op} tersebut kemudian disisipkan ke graf TensorFlow, seperti ditunjukkan oleh Gambar ~\ref{fig:SwapOutIn}. Sayangnya, \en{paper} tersebut kurang menjelaskan bagaimana kedua \en{op} diimplementasikan dan bagaimana disisipkan ke graf TensorFlow.
 
