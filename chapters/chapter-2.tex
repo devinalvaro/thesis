@@ -32,7 +32,7 @@ di mana $C$ adalah nilai \en{cost function}, $t$ adalah nilai target, $o$ adalah
 
 Seperti disebutkan sebelumnya, pada \en{gradient descent} dicari gradien masing-masing bobot dan bias yang kemudian digunakan untuk meng-\en{update} parameter bersangkutan. Gradien dicari dengan mencari turunan $C$ terhadap masing-masing bobot ($w$) dan bias ($b$). Untuk mempersingkat, hanya akan dijelaskan pencarian gradien terhadap bobot, namun pencarian gradien terhadap bias serupa.
 
-Berikut adalah gradien terhadap bobot $w_{kj}$, yaitu bobot yang berasal dari sebuah neuron (berindeks $j$}) pada sebuah \en{layer} menuju neuron (berindeks $k$) pada \en{layer} selanjutnya.
+Berikut adalah gradien terhadap bobot $w_{kj}$, yaitu bobot yang berasal dari sebuah neuron (berindeks $j$) pada sebuah \en{layer} menuju neuron (berindeks $k$) pada \en{layer} selanjutnya.
 
 \begin{equation}
     \frac{\partial{C}}{\partial{w_{kj}}} = \frac{\partial{C}}{\partial{net_{k}}} \times \frac{\partial{net_{k}}}{\partial{w_{kj}}}
