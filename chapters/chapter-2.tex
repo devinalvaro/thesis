@@ -4,7 +4,7 @@
 
 \en{Deep learning} adalah suatu bagian dari bidang \en{machine learning} di mana pembelajaran dilakukan pada beberapa tingkatan dengan tujuan memodelkan hubungan yang kompleks antar data \citep{deng2014deep}. Biasanya, \en{deep learning} menggunakan \en{neural network} dengan banyak \en{hidden layer} (disebut juga \en{deep neural network}). Berbagai arsitektur \en{deep neural network} seperti \en{convolutional neural network} (CNN) dan \en{recurrent neural network} (RNN) telah banyak diaplikasikan pada berbagai bidang AI, seperti penglihatan komputer dan pengenalan ucapan.
 
-Ide dasar \en{deep neural network} adalah memodelkan fitur-fitur dari data beserta relasinya dengan banyak \en{layer} yang saling berhubungan. Untuk memberikan gambaran, Gambar ~\ref{fig:DeepNeuralNetwork} mengilustrasikan \en{deep neural network} yang memiliki 3 \en{hidden layer}.
+Ide dasar \en{deep neural network} adalah memodelkan fitur-fitur dari data beserta relasinya dengan banyak \en{layer} yang saling berhubungan. Untuk memberikan gambaran, Gambar~\ref{fig:DeepNeuralNetwork} mengilustrasikan \en{deep neural network} yang memiliki 3 \en{hidden layer}.
 
 \begin{figure}[htp]
     \centering
@@ -64,7 +64,7 @@ Dapat diperhatikan bahwa untuk mendapatkan $\delta_{j}$ diperlukan $\delta_{k}$ 
 
 \en{Recurrent neural network} (RNN) merupakan pengembangan dari \en{deep neural network} biasa, di mana pada setiap \en{layer} terdapat bobot yang menghubungkannya ke dirinya sendiri. Lebih tepatnya, bobot tersebut menghubungkan suatu \en{layer} ke dirinya sendiri pada urutan (atau \en{timestep}) sebelumnya (dan sesudahnya). Tujuan dari bobot rekuren ini adalah agar model dapat menangkap hubungan data secara temporal.
 
-Gambar ~\ref{fig:RecurrentNeuralNetwork} mengilustrasikan sebuah \en{layer} RNN. Dari gambar tersebut terlihat bahwa selain berhubungan dengan neuron-neuron di \en{layer} sebelumnya, setiap neuron di suatu \en{layer} juga berhubungan dengan dirinya sendiri pada \en{timestep} sebelumnya (dan sesudahnya). Perlu diperhatikan bahwa untuk suatu \en{layer}, bobot dan bias yang sama digunakan pada seluruh \en{timestep}. Bobot $U$ menghubungkan \en{hidden layer} dengan input, bobot $V$ menghubungkan \en{hidden layer} dengan \en{output}, dan bobot $W$ menghubungkan \en{hidden layer} pada \en{timestep} $t$ dengan \en{hidden layer} pada \en{timestep} $t-1$ dan $t+1$.
+Gambar~\ref{fig:RecurrentNeuralNetwork} mengilustrasikan sebuah \en{layer} RNN. Dari gambar tersebut terlihat bahwa selain berhubungan dengan neuron-neuron di \en{layer} sebelumnya, setiap neuron di suatu \en{layer} juga berhubungan dengan dirinya sendiri pada \en{timestep} sebelumnya (dan sesudahnya). Perlu diperhatikan bahwa untuk suatu \en{layer}, bobot dan bias yang sama digunakan pada seluruh \en{timestep}. Bobot $U$ menghubungkan \en{hidden layer} dengan input, bobot $V$ menghubungkan \en{hidden layer} dengan \en{output}, dan bobot $W$ menghubungkan \en{hidden layer} pada \en{timestep} $t$ dengan \en{hidden layer} pada \en{timestep} $t-1$ dan $t+1$.
 
 \begin{figure}[htp]
     \centering
@@ -75,13 +75,13 @@ Gambar ~\ref{fig:RecurrentNeuralNetwork} mengilustrasikan sebuah \en{layer} RNN.
 
 Karena kemampuannya menangkap hubungan data secara temporal, RNN banyak digunakan untuk data yang bersifat sekuens atau \en{time series}, di mana suatu data dipengaruhi oleh data-data pada urutan atau waktu sebelumnya. Contoh data sekuens atau \en{time series} adalah teks, \en{speech}, harga saham, dan lainnya.
 
-Pada RNN, terdapat istilah \en{sequence} dan \en{vector}. Apabila suatu \en{input/output layer} ber-\en{timestep} 1, maka disebut \en{vector}. Bila \en{timestep} suatu \en{input/output layer} lebih dari 1, disebut \en{sequence}. Dari kombinasi \en{sequence} dan \en{vector} tersebut terbentuk beberapa jenis RNN, yaitu \en{vector to sequence}, \en{sequence to vector}, dan \en{sequence to sequence}. Pemilihan jenis RNN ini tergantung dari data dan masalah yang dihadapi, misalnya \en{sequence to vector} cocok untuk \en{sentiment analysis} (dari sekuens teks menjadi skor sentimen) sedangkan \en{sequence to sequence} tepat untuk translasi bahasa \en{dari teks suatu bahasa ke bahasa lain} \citep{geron2017hands}. Sebagai contoh, Gambar ~\ref{fig:RecurrentNeuralNetwork} menunjukkan \en{sequence to sequence} RNN.
+Pada RNN, terdapat istilah \en{sequence} dan \en{vector}. Apabila suatu \en{input/output layer} ber-\en{timestep} 1, maka disebut \en{vector}. Bila \en{timestep} suatu \en{input/output layer} lebih dari 1, disebut \en{sequence}. Dari kombinasi \en{sequence} dan \en{vector} tersebut terbentuk beberapa jenis RNN, yaitu \en{vector to sequence}, \en{sequence to vector}, dan \en{sequence to sequence}. Pemilihan jenis RNN ini tergantung dari data dan masalah yang dihadapi, misalnya \en{sequence to vector} cocok untuk \en{sentiment analysis} (dari sekuens teks menjadi skor sentimen) sedangkan \en{sequence to sequence} tepat untuk translasi bahasa \en{dari teks suatu bahasa ke bahasa lain} \citep{geron2017hands}. Sebagai contoh, Gambar~\ref{fig:RecurrentNeuralNetwork} menunjukkan \en{sequence to sequence} RNN.
 
 \en{Layer} berjenis \en{sequence} seringkali nilai \en{timestep}-nya tergantung pada panjang \en{input/output}. Misalnya, pada model \en{sequence to sequence} untuk translasi bahasa, nilai \en{timestep} dari \en{input layer} tergantung pada panjang kalimat yang akan ditranslasi, begitu juga nilai \en{timestep} dari \en{output layer} tergantung pada panjang kalimat hasil translasi. Oleh karena itu, model RNN yang seperti demikian harus dapat secara dinamis mengadaptasikan topologinya sesuai panjang \en{input/output} yang sedang diproses.
 
 \subsubsection{\en{Backpropagation Through Time}}
 
-Seperti \en{neural network} biasa, pelatihan RNN pada umumnya menggunakan \en{gradient descent} dengan \en{backpropagation} seperti pada bagian ~\ref{backpropagation} (Backpropagation). Hanya saja, untuk setiap \en{layer} terdapat 3 jenis bobot dengan perhitungan gradien yang berbeda. Selain itu, terdapat faktor \en{timestep} yang harus diperhitungkan. Pada Gambar ~\ref{fig:RecurrentNeuralNetwork}, terdapat bobot $u$, $v$, dan $w$. Berikut ditunjukkan perhitungan gradien untuk ketiga bobot tersebut.
+Seperti \en{neural network} biasa, pelatihan RNN pada umumnya menggunakan \en{gradient descent} dengan \en{backpropagation} seperti pada Bagian \ref{backpropagation}~\nameref{backpropagation}. Hanya saja, untuk setiap \en{layer} terdapat 3 jenis bobot dengan perhitungan gradien yang berbeda. Selain itu, terdapat faktor \en{timestep} yang harus diperhitungkan. Pada Gambar~\ref{fig:RecurrentNeuralNetwork}, terdapat bobot $u$, $v$, dan $w$. Berikut ditunjukkan perhitungan gradien untuk ketiga bobot tersebut.
 
 Bobot $v$ hanya mempengaruhi \en{output layer}, sehingga perhitungan gradiennya relatif sederhana. Berikut perhitungan gradien bobot $v_{kj}$ (bobot yang menghubungkan neuron berindeks $j$ pada \en{hidden layer} ke neuron berindeks $k$ pada \en{output layer}) pada \en{timestep} $t$.
 
@@ -124,7 +124,7 @@ Apabila pelatihan telah selesai memproses seluruh \en{batch}, maka disebut telah
 
 \section{TensorFlow}
 
-TensorFlow adalah sistem pembelajaran mesin yang didesain untuk menangani pelatihan model berskala besar dan secara terdistribusi, baik untuk kebutuhan penelitian maupun industri. Dikembangkan oleh tim Google Brain dan dirilis secara \en{open source}, TensorFlow telah digunakan secara ekstensif pada berbagai proyek pembelajaran mesin, baik di dalam maupun di luar Google.
+TensorFlow adalah \en{framework} pembelajaran mesin yang didesain untuk menangani pelatihan model berskala besar dan secara terdistribusi, baik untuk kebutuhan penelitian maupun industri. Dikembangkan oleh tim Google Brain dan dirilis secara \en{open source}, TensorFlow telah digunakan secara ekstensif pada berbagai proyek pembelajaran mesin, baik di dalam maupun di luar Google.
 
 Pada dasarnya, TensorFlow adalah \en{framework} yang menyediakan operasi-operasi komputasi matematika (seperti aljabar linear dan kalkulus), dengan operasi-operasi tambahan yang memudahkan pendefinisian proses pembelajaran mesin. Dengan TensorFlow, eksekusi operasi-operasi tersebut dapat dilakukan secara terdistribusi menggunakan berbagai \en{device} seperti CPU, GPU, maupun TPU (Tensor Processing Units) yang terdapat pada satu atau lebih \en{machine} yang terletak pada satu atau lebih \en{cluster}. Selain itu, TensorFlow juga berjalan di berbagai macam platform, mulai dari \en{data center} hingga \en{smartphone} \citep{abadi2016tensorflow}.
 
@@ -132,7 +132,7 @@ Pada dasarnya, TensorFlow adalah \en{framework} yang menyediakan operasi-operasi
 
 Seluruh operasi dan data pada program TensorFlow beserta hubungannya membentuk sebuah \en{dataflow graph}. Operasi merupakan \en{vertice} dari graf tersebut. Sedangkan data yang pada TensorFlow direpresentasikan sebagai \en{tensor} (vektor multi-dimensional) mengalir (\en{flowing}) melalui \en{edge}-\en{edge} dari graf.
 
-Salah satu tujuan representasi program dengan \en{dataflow graph} adalah memudahkan komputasi program secara terdistribusi. Seperti diilustrasikan oleh Gambar ~\ref{fig:TensorFlowGraph}, graf dapat dibagi-bagi menjadi beberapa subgraf, di mana setiap subgraf dieksekusi oleh \en{device} yang berbeda-beda. Dengan membagi menjadi beberapa subgraf, sebuah \en{device} baru perlu berkomunikasi dengan \en{device} lainnya apabila masuk \en{vertice} yang memiliki \en{dependency} ke \en{vertice} di \en{device} lain.
+Salah satu tujuan representasi program dengan \en{dataflow graph} adalah memudahkan komputasi program secara terdistribusi. Seperti diilustrasikan oleh Gambar~\ref{fig:TensorFlowGraph}, graf dapat dibagi-bagi menjadi beberapa subgraf, di mana setiap subgraf dieksekusi oleh \en{device} yang berbeda-beda. Dengan membagi menjadi beberapa subgraf, sebuah \en{device} baru perlu berkomunikasi dengan \en{device} lainnya apabila masuk \en{vertice} yang memiliki \en{dependency} ke \en{vertice} di \en{device} lain.
 
 \begin{figure}[htp]
     \centering
@@ -143,7 +143,7 @@ Salah satu tujuan representasi program dengan \en{dataflow graph} adalah memudah
 
 \subsection{Arsitektur}
 
-Gambar ~\ref{fig:TensorFlowArch} menunjukkan arsitektur umum TensorFlow. Berikut ini akan dijelaskan beberapa bagian dari arsitektur tersebut.
+Gambar~\ref{fig:TensorFlowArch} menunjukkan arsitektur umum TensorFlow. Berikut ini akan dijelaskan beberapa bagian dari arsitektur tersebut.
 
 \begin{figure}[htp]
     \centering
@@ -160,7 +160,7 @@ Gambar ~\ref{fig:TensorFlowArch} menunjukkan arsitektur umum TensorFlow. Berikut
 
 \textbf{Kernel Implementations.} Merupakan implementasi operasi-operasi TensorFlow yang \en{device-specific}. Tanpa \en{kernel implementation} yang sesuai, \en{backend} TensorFlow tidak dapat berjalan pada suatu \en{device}.
 
-Gambar ~\ref{fig:TensorFlowDist} mengilustrasikan hubungan antar bagian TensorFlow tersebut dalam pelatihan terdistribusi.
+Gambar~\ref{fig:TensorFlowDist} mengilustrasikan hubungan antar bagian TensorFlow tersebut dalam pelatihan terdistribusi.
 
 \begin{figure}[htp]
     \centering
@@ -173,7 +173,7 @@ Gambar ~\ref{fig:TensorFlowDist} mengilustrasikan hubungan antar bagian TensorFl
 
 TensorFlow mendukung penambahan jenis operasi baru, apabila jenis-jenis operasi yang disediakan belum memenuhi kebutuhan pengguna, atau mengoptimisasi operasi yang ada secara \en{native}. Untuk membuat operasi baru, pengguna perlu menambahkan definisi (seperti input dan \en{output}, bentuk \en{tensor}) dan implementasi operasi tersebut dalam bahasa C++. Selanjutnya, pengguna dapat menambahkan API ke operasi tersebut pada \en{client}, namun langkah ini bersifat opsional.
 
-\section{Graphics Processing Unit}
+\section{\en{Graphics Processing Unit}}
 
 Penggunaan GPU pada pelatihan \en{deep learning} merupakan salah satu faktor yang memajukan perkembangan bidang ini secara signifikan \citep{dean2012large}. Hal ini dikarenakan GPU mampu meningkatkan kecepatan dengan menjalankan pelatihan secara paralel. Sayangnya, ukuran memori GPU lebih terbatas, yakni 8-10 kali lebih kecil dari memori CPU. Sebagai gambaran, pada saat penulisan tulisan ini, \en{high-end} GPU rata-rata memiliki 12-16GB memori, sedangkan memori CPU dapat mencapai 128GB \citep{meng2017training}.
 
@@ -187,7 +187,7 @@ TensorFlow sendiri mendukung penggunaan GPU untuk menjalankan programnya, sehing
 
 CUDA merupakan platform komputasi paralel \en{general purpose} untuk GPU Nvidia. CUDA memberikan abstraksi dan model pemrograman bagi \en{programmer} untuk menggunakan kemampuan komputasi paralel di GPU Nvidia \citep{nvidia2011cuda}. Program CUDA berupa kode (disebut \en{kernel}) yang disisipkan ke dalam bahasa C (berekstensi ".cu").
 
-Arsitektur CUDA dapat dilihat sebagai sebuah \en{grid} yang terdiri dari \en{blocks}, di mana \en{block} terdiri dari \en{threads}, seperti diilustrasikan oleh Gambar ~\ref{fig:CUDAArchitecture}. Jumlah \en{block} dan \en{thread} tidak konstan, melainkan ditentukan oleh \en{programmer}.
+Arsitektur CUDA dapat dilihat sebagai sebuah \en{grid} yang terdiri dari \en{blocks}, di mana \en{block} terdiri dari \en{threads}, seperti diilustrasikan oleh Gambar~\ref{fig:CUDAArchitecture}. Jumlah \en{block} dan \en{thread} tidak konstan, melainkan ditentukan oleh \en{programmer}.
 
 \begin{figure}[htp]
     \centering
@@ -208,7 +208,7 @@ Sejak CUDA 6 terdapat fitur \en{unified memory}, yaitu abstraksi memori yang dap
 
 "Training deeper models by GPU memory optimization on TensorFlow" \citep{meng2017training} merupakan \en{paper} yang berisi penelitian untuk mengoptimisasi penggunaan memori GPU pada pelatihan model \en{deep learning} dengan TensorFlow \citep{meng2017training}. Penelitian tersebut terbatas pada sebuah komputer dengan satu GPU. Ide dari \en{paper} tersebut adalah menyimpan sebagian model dari memori GPU ke memori CPU saat pelatihan untuk mengurangi beban memori GPU.
 
-Optimisasi dilakukan dengan mengimplementasikan operasi baru yang disebut (\textbf{swap out/in}) untuk men-\en{swap} \en{tensor} dari memori GPU ke CPU. Dengan operasi baru ini, graf TensorFlow yang sudah ada dimodifikasi sehingga operasi disisipkan ke hubungan \en{vertice} yang mengalirkan tensor yang di-\en{swap}. Operasi \textbf{swap out/in} ini diilustrasikan oleh Gambar ~\ref{fig:SwapOutIn}.
+Optimisasi dilakukan dengan mengimplementasikan operasi baru yang disebut (\textbf{swap out/in}) untuk men-\en{swap} \en{tensor} dari memori GPU ke CPU. Dengan operasi baru ini, graf TensorFlow yang sudah ada dimodifikasi sehingga operasi disisipkan ke hubungan \en{vertice} yang mengalirkan tensor yang di-\en{swap}. Operasi \textbf{swap out/in} ini diilustrasikan oleh Gambar~\ref{fig:SwapOutIn}.
 
 \begin{figure}[htp]
     \centering
@@ -219,7 +219,7 @@ Optimisasi dilakukan dengan mengimplementasikan operasi baru yang disebut (\text
 
 Agar dapat mengoptimisasi dengan baik, perlu dipertimbangkan \en{tensor} mana yang perlu di-\en{swap}. Apabila semua \en{tensor} di-\en{swap}, akan menyebabkan penurunan kinerja model karena \en{data transfer overhead} yang besar. Menurut \en{paper} tersebut, \en{tensor}-\en{tensor} yang terbaik untuk di-\en{swap} adalah yang interval hingga diperlukannya kembali saat \en{backpropagation} paling lama. Harapannya, \en{overlapping} antara komputasi dengan \en{asynchronous data transfer} meningkat, sehingga mengurangi durasi pelatihan karena semakin banyak \en{data transfer} yang berjalan bersama dengan komputasi..
 
-Eksperimen pada \en{paper} tersebut dilakukan dengan beberapa \en{pre-trained model} seperti ResNet, Inception, dan NMT, pada sebuah komputer dengan satu GPU (Tesla M40) dengan kapasitas memori 12GB. Menurut hasil eksperimen yang ditunjukkan Gambar ~\ref{fig:SwapOutInResult} tersebut, didapatkan bahwa pada model-model yang diuji, ukuran \en{batch} dapat ditingkatkan hingga 3 kali, sedangkan penggunaan memori maksimum menurun hingga 2-3 kali lipat. Bahkan, model-model seperti ResNet-1001 dan ResNet-2000 yang sebelumnya tidak dapat dilatih karena \en{out of memory} (OOM), menjadi dapat dilatih. Di sisi lain, \en{training speed} mengalami penurunan kurang dari 10\%, karena adanya \en{data transfer overhead} seperti yang telah disebutkan sebelumnya.
+Eksperimen pada \en{paper} tersebut dilakukan dengan beberapa \en{pre-trained model} seperti ResNet, Inception, dan NMT, pada sebuah komputer dengan satu GPU (Tesla M40) dengan kapasitas memori 12GB. Menurut hasil eksperimen yang ditunjukkan Gambar~\ref{fig:SwapOutInResult} tersebut, didapatkan bahwa pada model-model yang diuji, ukuran \en{batch} dapat ditingkatkan hingga 3 kali, sedangkan penggunaan memori maksimum menurun hingga 2-3 kali lipat. Bahkan, model-model seperti ResNet-1001 dan ResNet-2000 yang sebelumnya tidak dapat dilatih karena \en{out of memory} (OOM), menjadi dapat dilatih. Di sisi lain, \en{training speed} mengalami penurunan kurang dari 10\%, karena adanya \en{data transfer overhead} seperti yang telah disebutkan sebelumnya.
 
 \begin{figure}[htp]
     \centering

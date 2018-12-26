@@ -6,19 +6,19 @@
 
 % Latar Belakang berisi dasar pemikiran, kebutuhan atau alasan yang menjadi ide dari topik tugas akhir. Tujuan utamanya adalah untuk memberikan informasi secukupnya kepada pembaca agar memahami topik yang akan dibahas.  Saat menuliskan bagian ini, posisikan anda sebagai pembaca --- apakah anda tertarik untuk terus membaca?
 
-Saat ini, \en{deep learning} semakin populer dan banyak digunakan oleh berbagai kalangan baik di dalam penelitian maupun industri. Salah satu alasannya adalah kinerja \en{deep learning} yang mampu mengungguli metode-metode pembelajaran mesin lainnya dalam berbagai permasalahan AI seperti penglihatan komputer, pengenalan ucapan, dan translasi bahasa alami. Alasan lainnya, pada masa kini ukuran \en{dataset} semakin membesar dan \en{deep learning} dapat bekerja dengan baik dalam memproses \en{dataset} berukuran besar relatif terhadap metode-metode pembelajaran mesin lainnya.
+Saat ini, \en{deep learning} semakin banyak digunakan oleh berbagai kalangan baik di dalam penelitian maupun industri. Salah satu alasannya adalah kinerjanya yang mampu mengungguli metode-metode pembelajaran mesin lainnya dalam berbagai permasalahan AI seperti penglihatan komputer, pengenalan ucapan, dan penerjemahan bahasa alami. Salah satu alasan lainnya adalah ukuran \en{dataset} yang semakin membesar dan \en{deep learning} dapat bekerja dengan baik dalam memproses \en{dataset} berukuran besar relatif terhadap metode-metode pembelajaran mesin lainnya.
 
-Model \en{deep learning} pada umumnya terdiri dari banyak \en{layer} dan neuron, serta memerlukan \en{dataset} berukuran besar untuk mendapatkan kinerja optimal. Selain itu, beberapa arsitektur seperti RNN cenderung menggunakan lebih banyak \en{layer} dan neuron dari arsitektur-arsitektur lainnya. Faktor-faktor ini menimbulkan beberapa permasalahan pada saat melatih model, seperti panjangnya durasi pelatihan dan besarnya sumber daya komputasi yang dibutuhkan untuk melatih model.
+\en{Deep learning} pada umumnya menggunakan \en{deep neural network}, yaitu \en{neural network} yang terdiri dari banyak \en{hidden layer}, serta biasanya memerlukan \en{dataset} berukuran besar untuk mendapatkan kinerja optimal. Selain itu, beberapa arsitektur \en{recurrent neural network} (RNN) cenderung menggunakan lebih banyak \en{layer} dan neuron dari arsitektur-arsitektur lainnya. Faktor-faktor ini menyebabkan beberapa permasalahan saat melatih model, seperti panjangnya durasi pelatihan dan besarnya sumber daya komputasi yang dibutuhkan untuk melatih model.
 
-Terdapat berbagai cara untuk menangani permasalahan-permasalahan tersebut. Untuk mengurangi penggunaan memori dan mempercepat konvergensi, \en{dataset} dapat dibagi-bagi menjadi beberapa \en{mini-batch} (atau \en{batch}) sehingga jumlah data yang diproses sekaligus menjadi berkurang. Konvergensi pun menjadi lebih cepat karena frekuensi \en{update} parameter yang lebih tinggi (setiap \en{batch} ketimbang setiap seluruh \en{dataset} selesai diproses). Metode seperti demikian disebut \en{mini-batch gradient descent} (MBGD). Selain itu, banyak pelatihan model \en{deep learning} menggunakan GPU untuk mengurangi waktu pelatihan karena sifatnya yang \en{highly parallel}.
+Terdapat berbagai cara untuk menangani permasalahan-permasalahan tersebut. Untuk mengurangi penggunaan memori dan mempercepat konvergensi, \en{dataset} dapat dibagi-bagi menjadi sejumlah \en{mini-batch} sehingga jumlah data yang diproses sekaligus menjadi berkurang. Konvergensi pun menjadi lebih cepat karena frekuensi \en{update} parameter yang lebih tinggi (setiap \en{mini-batch} ketimbang setiap seluruh \en{dataset} selesai diproses). Di samping itu, banyak pelatihan model \en{deep learning} yang menggunakan GPU untuk mengurangi waktu pelatihan karena sifatnya yang \en{highly parallel}.
 
-Akan tetapi, metode MBGD memiliki \en{trade-off} tersendiri. Semakin kecil ukuran \en{batch}, \en{batch} menjadi kurang representatif terhadap data sebenarnya, sehingga dapat menimbulkan penurunan kinerja (karena terjebak di \en{local minima}). Memang, menggunakan ukuran \en{batch} yang besar tidak selalu meningkatkan kinerja, sehingga tetap harus dilakukan eksperimen untuk mencari ukuran \en{batch} paling optimal. Masalahnya, \en{batch} berukuran besar tidak selalu mungkin dengan sumber daya yang ada, karena tingginya kebutuhan sumber daya komputasi, keterbatasan waktu, dan lainnya.
+Akan tetapi, membagi \en{dataset} menjadi sekumpulan \en{mini-batch} memiliki \en{trade-off} tersendiri. Semakin kecil ukurannya, \en{mini-batch} menjadi kurang representatif terhadap \en{dataset} sebenarnya, sehingga dapat menimbulkan penurunan kinerja (karena terjebak di \en{local minima}). Memang, meningkatkan ukuran \en{mini-batch} tidak selalu meningkatkan kinerja, sehingga tetap harus dilakukan eksperimen untuk mencari ukuran \en{mini-batch} yang paling optimal. Permasalahannya, \en{mini-batch} berukuran besar tidak selalu mungkin, karena tingginya kebutuhan sumber daya komputasi, keterbatasan waktu, dan lainnya.
 
-Salah satu sumber daya yang dibutuhkan pada pelatihan model adalah memori. Melatih model \en{deep learning} membutuhkan semakin banyak memori seiring bertambahnya jumlah \en{layer}, neuron, dan ukuran \en{dataset}. Ditambah lagi, melatih model \en{deep learning} sering menggunakan GPU untuk meningkatkan kinerja karena kemampuannya untuk melakukan komputasi paralel. Sayangnya, kapasitas memori GPU cenderung lebih kecil dibandingkan dengan kapasitas memori CPU. Maka dari itu, dibutuhkan optimisasi memori untuk melatih model \en{deep learning} yang semakin besar, terutama pada GPU.
+Salah satu sumber daya komputasi yang dibutuhkan pada pelatihan model adalah memori. Melatih model \en{deep learning} membutuhkan semakin banyak memori seiring bertambahnya jumlah \en{layer}, neuron, dan ukuran \en{dataset}. Ditambah lagi, melatih model \en{deep learning} sering menggunakan GPU untuk meningkatkan kinerja karena kemampuannya untuk melakukan komputasi paralel. Sayangnya, kapasitas memori GPU cenderung lebih kecil dibandingkan dengan kapasitas memori CPU. Maka dari itu, dibutuhkan optimisasi memori untuk melatih model \en{deep learning} yang semakin besar, terutama pada GPU.
 
-Salah satu \en{framework} \en{deep learning}, TensorFlow, mendukung optimisasi memori dengan \en{memory swapping}, yaitu memindahkan data dari memori GPU ke memori CPU secara temporer. Akan tetapi, heuristik \en{memory swapping} pada TensorFlow relatif sederhana, yaitu melakukan \en{memory swapping} baru ketika memori GPU hampir tidak mencukupi. Selain itu, fitur \en{memory swapping} di TensorFlow hanya tersedia untuk model-model tertentu. \en{Memory swapping} juga dapat meningkatkan durasi pelatihan karena \en{data transfer overhead}. Mengenai heuristik tersebut akan dijelaskan secara lebih detail pada Analisis Masalah.
+Salah satu \en{framework} pembelajaran mesin, TensorFlow, mendukung optimisasi memori dengan \en{memory swapping}, yaitu memindahkan isi memori dari GPU ke CPU secara temporer. Akan tetapi, heuristik \en{memory swapping} pada TensorFlow relatif sederhana, yaitu melakukan \en{memory swapping} baru ketika memori GPU hampir tidak mencukupi. Terlebih lagi, fitur \en{memory swapping} tersebut hanya tersedia untuk arsitektur RNN. Selain itu, \en{memory swapping} juga dapat meningkatkan durasi pelatihan karena adanya \en{data transfer overhead}. Mengenai heuristik tersebut akan dijelaskan secara lebih detail pada \nameref{analisispermasalahan}.
 
-Pada tugas akhir ini penulis bertujuan mengoptimisasi \en{memory swapping} pada TensorFlow dengan metode yang akan dijelaskan pada Rancangan Solusi. Untuk eksperimen, digunakan model berbasis RNN seperti LSTM, dipilih karena topologi \en{neural network}-nya yang dinamis, sehingga penggunaan memorinya juga dinamis.
+Seperti telah dijelaskan pada Latar Belakang, memori merupakan salah satu kebutuhan pelatihan model \en{deep learning}. Terlebih, pelatihan \en{deep learning} seringkali menggunakan GPU yang, relatif terhadap CPU, memiliki memori lebih sedikit. Salah satu cara mengurangi penggunaan memori adalah dengan mengurangi ukuran \en{batch} atau \en{dataset}, namun cara ini berpotensi menurunkan kinerja model. Maka dari itu, untuk mendukung pelatihan model dengan ukuran yang lebih besar dibutuhkan optimisasi memori.
 
 \section{Rumusan Masalah}
 
@@ -33,24 +33,22 @@ Pada tugas akhir ini penulis bertujuan mengoptimisasi \en{memory swapping} pada 
 
 % Penting untuk diperhatikan bahwa persoalan yang dideskripsikan pada subbab ini akan dipertanggungjawabkan di akhir pelaksanaan tugas akhir apakah terselesaikan atau tidak.
 
-Seperti telah dijelaskan pada Latar Belakang, memori merupakan salah satu kebutuhan pelatihan model \en{deep learning}. Terlebih, pelatihan \en{deep learning} seringkali menggunakan GPU yang, relatif terhadap CPU, memiliki memori lebih sedikit. Salah satu cara mengurangi penggunaan memori adalah dengan mengurangi ukuran \en{batch} atau \en{dataset}, namun cara ini berpotensi menurunkan kinerja model. Untuk mendukung pelatihan model dengan ukuran yang lebih besar, dibutuhkan optimisasi memori.
+Telah dijelaskan sebelumnya bahwa salah satu metode optimisasi memori adalah \en{memory swapping}, yaitu mengurangi beban memori GPU dengan memindahkan isi memori ke CPU secara temporer, seperti yang tersedia pada TensorFlow. Secara singkat, heuristik \en{memory swapping} TensorFlow melakukan \en{swapping} baru ketika memori GPU hampir tidak mencukupi. Berdasarkan hasil studi literatur dan analisis proses pelatihan model \en{deep learning} (dijelaskan pada \nameref{analisispermasalahan}), terdapat kemungkinan bahwa heuristik tersebut kurang optimal. Secara singkat, solusi yang diajukan untuk mengoptimisasi \en{memory swapping} tersebut adalah memprioritaskan \en{swapping} pada \en{layer}-\en{layer} yang interval hingga digunakannya kembali terpanjang, sehingga meningkatkan \en{overlapping} antara komputasi dengan \en{memory swapping}.
 
-Salah satu metode optimisasi memori adalah \en{memory swapping}, yaitu mengurangi beban memori GPU dengan memindahkan data ke memori CPU secara temporer, seperti yang tersedia pada beberapa model TensorFlow. Secara singkat, heuristik \en{memory swapping} di TensorFlow memindahkan data ke CPU baru ketika memori GPU hampir tidak mencukupi. Dengan menganalisis proses pelatihan model \en{deep learning} (dijelaskan pada Analisis Masalah) terdapat kemungkinan bahwa heuristik tersebut kurang optimal. Kurang optimalnya \en{memory swapping} dapat mengakibatkan meningkatnya durasi pelatihan karena terdapat \en{data transfer overhead} untuk setiap kali \en{swapping} memori.
+Rumusan masalah pada tugas akhir ini adalah sebagi berikut.
 
-Oleh karena itu, tujuan tugas akhir ini adalah mengoptimisasi memori GPU pada pelatihan \en{deep learning} dengan TensorFlow, tepatnya pada bagian \en{memory swapping}. Secara garis besar, metode yang digunakan adalah men-\en{swap} memori pada \en{layer-layer} yang selang waktu hingga digunakannya kembali paling besar, sehingga mengurangi jumlah data yang harus di-\en{swap}. Digunakan model berbasis RNN untuk eksperimen karena topologinya yang dinamis sehingga penggunaan memorinya juga dinamis.
+\begin{enumerate}
+    \item Bagaimana mengembangkan \en{memory swapping} pada TensorFlow yang lebih optimal dari yang sudah ada?
+    \item Bagaimana kinerja \en{memory swapping} yang dikembangkan dibandingkan dengan \en{memory swapping} yang sudah ada di TensorFlow?
+\end{enumerate}
 
 \section{Tujuan}
 
 % Tuliskan tujuan utama dan/atau tujuan detil yang akan dicapai dalam pelaksanaan tugas akhir. Fokuskan pada hasil akhir yang ingin diperoleh setelah tugas akhir diselesaikan, terkait dengan penyelesaian persoalan pada rumusan masalah. Penting untuk diperhatikan bahwa tujuan yang dideskripsikan pada subbab ini akan dipertanggungjawabkan di akhir pelaksanaan tugas akhir apakah tercapai atau tidak.
 
-Secara garis besar, tugas akhir ini bertujuan mengoptimisasi penggunaan memori GPU pada pelatihan model \en{deep learning} berbasis RNN. Harapan tercapainya tujuan ini adalah sebagai berikut.
+Tujuan tugas akhir ini adalah mengoptimisasi \en{memory swapping} pada TensorFlow dengan metode yang akan dijelaskan pada \nameref{rancangansolusi}. Untuk eksperimen, digunakan model berbasis RNN seperti LSTM yang dipilih karena topologi \en{neural network}-nya yang dinamis, sehingga penggunaan memorinya juga dinamis.
 
-\begin{enumerate}
-    \item Jumlah \en{layer} dan neuron model dapat ditingkatkan.
-    \item Ukuran \en{batch} saat pelatihan dapat ditingkatkan.
-    \item Dapat dilatih model-model yang sebelumnya tidak dapat dilatih karena kelebihan penggunaan memori.
-    \item Mengurangi durasi pelatihan dibandingkan saat menggunakan \en{memory swapping} TensorFlow karena berkurangnya jumlah memori yang di-\en{swap}.
-\end{enumerate}
+Harapan tercapainya tujuan tersebut adalah mengurangi durasi pelatihan dibandingkan dengan menggunakan \en{memory swapping} dari TensorFlow. Selain itu, bila dibandingkan dengan pelatihan model yang tidak menggunakan \en{memory swapping} dari TensorFlow, diharapkan agar jumlah parameter model dan ukuran \en{batch} dapat ditingkatkan serta dapat dilatih model-model yang sebelumnya tidak dapat dilatih karena kelebihan penggunaan memori.
 
 \section{Batasan Masalah}
 
@@ -61,20 +59,22 @@ Tugas akhir ini memiliki batasan-batasan masalah seperti berikut.
 \begin{enumerate}
     \item Pelatihan model dilakukan pada sebuah komputer dengan \en{single GPU} (tidak terdistribusi).
     \item Model \en{deep learning} yang digunakan adalah model berbasis RNN seperti LSTM, namun model dengan arsitektur lain dapat digunakan untuk perbandingan atau eksperimen.
-    \item Proses \en{deep learning} dijalankan pada TensorFlow, \en{framework} pembelajarn mesin yang penggunaan memorinya akan dioptimisasi sebagai tujuan dari tugas akhir ini.
+    \item Pelatihan \en{deep learning} dijalankan pada TensorFlow, \en{framework} pembelajarn mesin yang penggunaan memorinya akan dioptimisasi sebagai tujuan dari tugas akhir ini.
 \end{enumerate}
 
 \section{Metodologi}
 
 % Tuliskan semua tahapan yang akan dilalui selama pelaksanaan tugas akhir. Tahapan ini spesifik untuk menyelesaikan persoalan tugas akhir. Tahapan studi literatur tidak perlu dituliskan karena ini adalah pekerjaan yang harus Anda lakukan selama proses pelaksanaan tugas akhir.
 
-Tahapan pengerjaan tugas akhir ini dimulai dengan melakukan analisis dan merumuskan permasalahan yang akan dipecahkan. Selanjutnya, melakukan pencarian terhadap solusi yang tepat untuk memecahkan permasalahan tersebut, salah satunya dengan melakukan studi literatur. Setelah memutuskan solusi yang tepat, melakukan perancangan solusi serta implementasi yang akan digunakan untuk melakukan eksperimen. Langkah selanjutnya adalah mengimplementasi solusi dan bereksperimen sesuai rancangan yang dibuat sebelumnya. Setelahnya, menganalisis dan mengevaluasi hasil eksperimen sampai akhirnya menarik kesimpulan terhadap permasalahan dan solusi yang diajukan.
+Tahapan pengerjaan tugas akhir ini dimulai dengan melakukan analisis dan merumuskan permasalahan yang akan dipecahkan. Selanjutnya, melakukan pencarian terhadap solusi yang tepat untuk memecahkan permasalahan tersebut, salah satunya dengan melakukan studi literatur. Setelah memutuskan solusi yang tepat, melakukan perancangan solusi serta implementasi yang akan digunakan untuk melakukan eksperimen. Langkah selanjutnya adalah mengimplementasi solusi dan melakukan eksperimen sesuai rancangan yang dibuat sebelumnya. Setelahnya, menganalisis dan mengevaluasi hasil eksperimen hingga akhirnya menarik kesimpulan terhadap rumusan permasalahan dan solusi yang diajukan.
 
 \section{Jadwal Pelaksanaan Tugas Akhir}
 
 % Tuliskan rencana kegiatan dan jadwal (dirinci sampai per minggu) mulai dari awal pelaksanaan Tugas Akhir I s.d.\ sidang tugas akhir berikut \en{milestones} dan \en{deliverables} yang harus diberikan. Jadwal ini dapat dibantu dengan membuat sebuah tabel \en{timeline.}
 
-Tabel ~\ref{table:PlanSchedule} berikut menunjukkan jadwal rencana kegiatan pelaksanaan tugas akhir ini untuk setiap minggunya.
+Tabel~\ref{table:PlanSchedule} berikut menunjukkan jadwal rencana kegiatan pelaksanaan tugas akhir ini untuk setiap minggunya.
+
+\newpage
 
 \begin{longtable}{|c|c|c|c|}
 
@@ -114,9 +114,9 @@ Tabel ~\ref{table:PlanSchedule} berikut menunjukkan jadwal rencana kegiatan pela
                        &                                   & 3               &                                                             \\ \cline{3-3}
                        &                                   & 4               &                                                             \\ \cline{2-3}
                        & \multirow{4}{*}{Mei}              & 1               &                                                             \\ \cline{3-4}
-                       &                                   & 2               & \multirow{2}{*}{Eksperimen}                                 \\ \cline{3-3}
-                       &                                   & 3               &                                                             \\ \cline{3-4}
-                       &                                   & 4               & \multirow{2}{*}{Pengujian}                                  \\ \cline{2-3}
+                       &                                   & 2               & \multirow{4}{*}{Eksperimen}                                 \\ \cline{3-3}
+                       &                                   & 3               &                                                             \\ \cline{3-3}
+                       &                                   & 4               &                                                             \\ \cline{2-3}
                        & \multirow{4}{*}{Juni}             & 1               &                                                             \\ \cline{3-4}
                        &                                   & 2               & Kesimpulan dan Saran                                        \\ \cline{3-4}
                        &                                   & 3               & Pengumpulan TA II                                           \\ \cline{3-4}
