@@ -84,9 +84,9 @@ Pada RNN, terdapat istilah \en{sequence} dan \en{vector}. Apabila suatu \en{inpu
 
 \subsection{Proses Pelatihan}
 
-Terdapat berbagai macam metode pelatihan model \en{deep learning}, salah satunya adalah \en{stochastic gradient descent} (SGD). Pada SGD, keseluruhan \en{dataset} dibagi menjadi beberapa \en{mini-batch} (atau \en{batch}). Pada setiap \en{batch}, gradien dihitung kemudian digunakan untuk meng-\en{update} parameter, agar menurunkan \en{loss} atau \en{cost}.
+Terdapat berbagai macam metode pelatihan model \en{deep learning}, salah satunya adalah \en{mini-batch gradient descent} (MBGD). Pada MBGD, keseluruhan \en{dataset} dibagi menjadi beberapa \en{mini-batch} (atau \en{batch}). Pada setiap \en{batch}, gradien dihitung kemudian digunakan untuk meng-\en{update} parameter, agar menurunkan \en{loss} atau \en{cost}.
 
-Apabila pelatihan telah selesai memproses seluruh \en{batch}, maka disebut telah menyelesaikan satu \en{epoch}. Biasanya, pelatihan terdiri dari banyak \en{epoch}. Tujuan SGD membagi \en{dataset} ke \en{batch}-\en{batch} adalah mempercepat konvergensi dan menghemat penggunaan memori karena pada satu waktu hanya perlu diproses sebagian \en{training data} saja. Namun, karena gradien yang didapat pada suatu \en{batch} hanya berdasarkan sebagian sampel data saja, maka gradien ini sejatinya adalah estimasi dari gradien yang seharusnya (gradien populasi). Hal ini dapat menyebabkan penurunan kinerja model, meski pada praktiknya penurunan kinerja ini dapat saja diterima demi meningkatkan kecepatan pelatihan dan mengurangi penggunaan memori.
+Apabila pelatihan telah selesai memproses seluruh \en{batch}, maka disebut telah menyelesaikan satu \en{epoch}. Biasanya, pelatihan terdiri dari banyak \en{epoch}. Tujuan MBGD membagi \en{dataset} ke \en{batch}-\en{batch} adalah mempercepat konvergensi dan menghemat penggunaan memori karena pada satu waktu hanya perlu diproses sebagian \en{training data} saja. Namun, karena gradien yang didapat pada suatu \en{batch} hanya berdasarkan sebagian sampel data saja, maka gradien ini sejatinya adalah estimasi dari gradien yang seharusnya (gradien populasi). Hal ini dapat menyebabkan penurunan kinerja model, meski pada praktiknya penurunan kinerja ini dapat saja diterima demi meningkatkan kecepatan pelatihan dan mengurangi penggunaan memori.
 
 \section{TensorFlow}
 
