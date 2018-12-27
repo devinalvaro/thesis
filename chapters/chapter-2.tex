@@ -200,7 +200,7 @@ Selain \en{block} dan \en{thread}, CUDA juga mengabstraksikan memori GPU. Pada C
 
 Pada CUDA, CPU disebut \en{host} sehingga memori CPU disebut \en{host memory} dan GPU disebut \en{device} sehingga memori GPU disebut \en{device memory}. Pada umumnya, kode yang dijalankan di \en{host} tidak dapat langsung mengakses \en{device memory} dan begitu juga sebaliknya. Untuk itu, perlu dilakukan transfer data dari \en{device} ke \en{host} atau sebaliknya. Penjelasan lebih lanjut mengenai transfer data ini akan dibahas pada bagian selanjutnya.
 
-Sejak CUDA 6 terdapat fitur \en{unified memory}, yaitu abstraksi memori yang dapat diakses secara langsung baik oleh \en{host} maupun \en{device}. Di balik layar, tetap dilakukan transfer data antar \en{host} dan \en{device}, namun secara otomatis dilakukan oleh kernel CUDA, sehingga memudahkan \en{programmer} meskipun cenderung mengakibatkan kinerja yang lebih buruk. Hingga versi 1.12, dukungan TensorFlow terhadap \en{unified memory} masih eksperimental sehingga pada tulisan ini \en{unified memory} diabaikan.
+Sejak CUDA 6 terdapat fitur \en{unified memory}, yaitu abstraksi memori yang dapat diakses secara langsung baik oleh \en{host} maupun \en{device}. Di balik layar, tetap dilakukan transfer data antar \en{host} dan \en{device}, namun secara otomatis dilakukan oleh kernel CUDA, sehingga memudahkan \en{programmer} meskipun cenderung mengakibatkan kinerja yang lebih buruk. Hingga versi 1.12, dukungan TensorFlow terhadap \en{unified memory} masih eksperimental sehingga pada tugas akhir ini \en{unified memory} diabaikan.
 
 \subsubsection{\en{Asynchronous Memory Copy}}
 
@@ -212,7 +212,7 @@ Gambar~\ref{fig:CudaMemcpyAsync} berikut mengilustrasikan mekanisme tersebut.
 
 \begin{figure}[htp]
     \centering
-    \includegraphics[width=0.75\linewidth]{figures/cuda-memcpy-async.png}
+    \includegraphics[width=0.625\linewidth]{figures/cuda-memcpy-async.png}
     \caption{Mekanisme \en{asynchronous memory copy} antara \en{host} dan \en{device}}
     \label{fig:CudaMemcpyAsync}
 \end{figure}
@@ -230,9 +230,9 @@ Optimisasi dilakukan dengan mengimplementasikan operasi baru yang disebut (\text
     \label{fig:SwapOutIn}
 \end{figure}
 
-Agar dapat mengoptimisasi dengan baik, perlu dipertimbangkan \en{tensor} mana yang perlu di-\en{swap}. Apabila semua \en{tensor} di-\en{swap}, akan menyebabkan penurunan kinerja model karena \en{data transfer overhead} yang besar. Menurut \en{paper} tersebut, \en{tensor}-\en{tensor} yang terbaik untuk di-\en{swap} adalah yang interval hingga diperlukannya kembali saat \en{backpropagation} paling lama. Harapannya, \en{overlapping} antara komputasi dengan \en{asynchronous data transfer} meningkat, sehingga mengurangi durasi pelatihan karena semakin banyak \en{data transfer} yang berjalan bersama dengan komputasi..
+Agar dapat mengoptimisasi dengan baik, perlu dipertimbangkan \en{tensor} mana yang perlu di-\en{swap}. Apabila semua \en{tensor} di-\en{swap}, akan menyebabkan penurunan kinerja model karena \en{memory copy overhead} yang besar. Menurut \en{paper} tersebut, \en{tensor}-\en{tensor} yang terbaik untuk di-\en{swap} adalah yang interval hingga diperlukannya kembali saat \en{backpropagation} paling lama. Harapannya, \en{overlapping} antara komputasi dengan \en{asynchronous memory copy} meningkat, sehingga mengurangi durasi pelatihan karena semakin banyak \en{memory copy} yang berjalan bersama dengan komputasi.
 
-Eksperimen pada \en{paper} tersebut dilakukan dengan beberapa \en{pre-trained model} seperti ResNet, Inception, dan NMT, pada sebuah komputer dengan satu GPU (Tesla M40) dengan kapasitas memori 12GB. Menurut hasil eksperimen yang ditunjukkan Gambar~\ref{fig:SwapOutInResult} tersebut, didapatkan bahwa pada model-model yang diuji, ukuran \en{batch} dapat ditingkatkan hingga 3 kali, sedangkan penggunaan memori maksimum menurun hingga 2-3 kali lipat. Bahkan, model-model seperti ResNet-1001 dan ResNet-2000 yang sebelumnya tidak dapat dilatih karena \en{out of memory} (OOM), menjadi dapat dilatih. Di sisi lain, \en{training speed} mengalami penurunan kurang dari 10\%, karena adanya \en{data transfer overhead} seperti yang telah disebutkan sebelumnya.
+Eksperimen pada \en{paper} tersebut dilakukan dengan beberapa \en{pre-trained model} seperti ResNet, Inception, dan NMT, pada sebuah komputer dengan satu GPU (Tesla M40) dengan kapasitas memori 12GB. Menurut hasil eksperimen yang ditunjukkan Gambar~\ref{fig:SwapOutInResult} tersebut, didapatkan bahwa pada model-model yang diuji, ukuran \en{batch} dapat ditingkatkan hingga 3 kali, sedangkan penggunaan memori maksimum menurun hingga 2-3 kali lipat. Bahkan, model-model seperti ResNet-1001 dan ResNet-2000 yang sebelumnya tidak dapat dilatih karena \en{out of memory} (OOM), menjadi dapat dilatih. Di sisi lain, \en{training speed} mengalami penurunan kurang dari 10\%, karena adanya \en{memory copy overhead} seperti yang telah disebutkan sebelumnya.
 
 \begin{figure}[htp]
     \centering
