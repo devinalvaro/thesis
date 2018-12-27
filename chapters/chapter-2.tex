@@ -79,9 +79,9 @@ Pada RNN, terdapat istilah \en{sequence} dan \en{vector}. Apabila suatu \en{inpu
 
 \en{Layer} berjenis \en{sequence} seringkali nilai \en{timestep}-nya tergantung pada panjang \en{input/output}. Misalnya, pada model \en{sequence to sequence} untuk translasi bahasa, nilai \en{timestep} dari \en{input layer} tergantung pada panjang kalimat yang akan ditranslasi, begitu juga nilai \en{timestep} dari \en{output layer} tergantung pada panjang kalimat hasil translasi. Oleh karena itu, model RNN yang seperti demikian harus dapat secara dinamis mengadaptasikan topologinya sesuai panjang \en{input/output} yang sedang diproses.
 
-\subsubsection{\en{Backpropagation Through Time}}
+\subsubsection{\en{Backpropagation Through Time}} \label{bptt}
 
-Seperti \en{neural network} biasa, pelatihan RNN pada umumnya menggunakan \en{gradient descent} dengan \en{backpropagation} seperti pada Bagian \ref{backpropagation}~\nameref{backpropagation}. Hanya saja, untuk setiap \en{layer} terdapat 3 jenis bobot dengan perhitungan gradien yang berbeda. Selain itu, terdapat faktor \en{timestep} yang harus diperhitungkan. Pada Gambar~\ref{fig:RecurrentNeuralNetwork}, terdapat bobot $u$, $v$, dan $w$. Berikut ditunjukkan perhitungan gradien untuk ketiga bobot tersebut.
+Seperti \en{neural network} biasa, pelatihan RNN pada umumnya menggunakan \en{gradient descent} dengan \en{backpropagation} seperti pada Bagian~\ref{backpropagation}. Hanya saja, untuk setiap \en{layer} terdapat 3 jenis bobot dengan perhitungan gradien yang berbeda. Selain itu, terdapat faktor \en{timestep} yang harus diperhitungkan. Pada Gambar~\ref{fig:RecurrentNeuralNetwork}, terdapat bobot $u$, $v$, dan $w$. Berikut ditunjukkan perhitungan gradien untuk ketiga bobot tersebut.
 
 Bobot $v$ hanya mempengaruhi \en{output layer}, sehingga perhitungan gradiennya relatif sederhana. Berikut perhitungan gradien bobot $v_{kj}$ (bobot yang menghubungkan neuron berindeks $j$ pada \en{hidden layer} ke neuron berindeks $k$ pada \en{output layer}) pada \en{timestep} $t$.
 
@@ -122,7 +122,7 @@ Terdapat berbagai macam metode pelatihan model \en{deep learning}, salah satunya
 
 Apabila pelatihan telah selesai memproses seluruh \en{batch}, maka disebut telah menyelesaikan satu \en{epoch}. Biasanya, pelatihan terdiri dari banyak \en{epoch}. Tujuan MBGD membagi \en{dataset} ke \en{batch}-\en{batch} adalah mempercepat konvergensi dan menghemat penggunaan memori karena pada satu waktu hanya perlu diproses sebagian \en{training data} saja. Namun, karena gradien yang didapat pada suatu \en{batch} hanya berdasarkan sebagian sampel data saja, maka gradien ini sejatinya adalah estimasi dari gradien yang seharusnya (gradien populasi). Hal ini dapat menyebabkan penurunan kinerja model, meski pada praktiknya penurunan kinerja ini dapat saja diterima demi meningkatkan kecepatan pelatihan dan mengurangi penggunaan memori.
 
-\section{TensorFlow}
+\section{TensorFlow} \label{tensorflow}
 
 TensorFlow adalah \en{framework} pembelajaran mesin yang didesain untuk menangani pelatihan model berskala besar dan secara terdistribusi, baik untuk kebutuhan penelitian maupun industri. Dikembangkan oleh tim Google Brain dan dirilis secara \en{open source}, TensorFlow telah digunakan secara ekstensif pada berbagai proyek pembelajaran mesin, baik di dalam maupun di luar Google.
 
@@ -175,7 +175,7 @@ TensorFlow mendukung penambahan jenis operasi baru, apabila jenis-jenis operasi 
 
 \section{\en{Graphics Processing Unit}}
 
-Penggunaan GPU pada pelatihan \en{deep learning} merupakan salah satu faktor yang memajukan perkembangan bidang ini secara signifikan \citep{dean2012large}. Hal ini dikarenakan GPU mampu meningkatkan kecepatan dengan menjalankan pelatihan secara paralel. Sayangnya, ukuran memori GPU lebih terbatas, yakni 8-10 kali lebih kecil dari memori CPU. Sebagai gambaran, pada saat penulisan tulisan ini, \en{high-end} GPU rata-rata memiliki 12-16GB memori, sedangkan memori CPU dapat mencapai 128GB \citep{meng2017training}.
+Penggunaan GPU pada pelatihan \en{deep learning} merupakan salah satu faktor yang memajukan perkembangan bidang ini secara signifikan \citep{dean2012large}. Hal ini dikarenakan GPU mampu meningkatkan kecepatan dengan menjalankan pelatihan secara paralel. Sayangnya, ukuran memori GPU lebih terbatas  dari memori CPU. Umumnya, memori GPU berukuran 8-16GB sedangkan memori CPU dapat mencapai 1TB.
 
 Padahal, kekurangan memori dapat menyebabkan kegagalan pelatihan model (\en{out of memory}). Solusi yang biasa diterapkan adalah mengurangi ukuran \en{dataset}, ukuran \en{batch}, atau jumlah parameter model, meskipun hal ini dapat menurunkan kinerja model \citep{meng2017training}.
 
@@ -204,7 +204,7 @@ Sejak CUDA 6 terdapat fitur \en{unified memory}, yaitu abstraksi memori yang dap
 
 % TBD. Penjelasan transfer data host <-> device.
 
-\section{Penelitian Terkait}
+\section{Penelitian Terkait} \label{relatedworks}
 
 "Training deeper models by GPU memory optimization on TensorFlow" \citep{meng2017training} merupakan \en{paper} yang berisi penelitian untuk mengoptimisasi penggunaan memori GPU pada pelatihan model \en{deep learning} dengan TensorFlow \citep{meng2017training}. Penelitian tersebut terbatas pada sebuah komputer dengan satu GPU. Ide dari \en{paper} tersebut adalah menyimpan sebagian model dari memori GPU ke memori CPU saat pelatihan untuk mengurangi beban memori GPU.
 
