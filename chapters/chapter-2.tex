@@ -202,7 +202,20 @@ Pada CUDA, CPU disebut \en{host} sehingga memori CPU disebut \en{host memory} da
 
 Sejak CUDA 6 terdapat fitur \en{unified memory}, yaitu abstraksi memori yang dapat diakses secara langsung baik oleh \en{host} maupun \en{device}. Di balik layar, tetap dilakukan transfer data antar \en{host} dan \en{device}, namun secara otomatis dilakukan oleh kernel CUDA, sehingga memudahkan \en{programmer} meskipun cenderung mengakibatkan kinerja yang lebih buruk. Hingga versi 1.12, dukungan TensorFlow terhadap \en{unified memory} masih eksperimental sehingga pada tulisan ini \en{unified memory} diabaikan.
 
-% TBD. Penjelasan transfer data host <-> device.
+\subsubsection{\en{Asynchronous Memory Copy}}
+
+CUDA mendukung \en{asynchronous memory copy} dengan \code{cudaMemcpyAsync}, yaitu fungsi penyalinan isi memori antara \en{host} dan \en{device} yang tidak mem-\en{block} pemanggilnya.
+
+Mekanisme \en{memory copy} ini adalah sebagai berikut. Misalnya dilakukan \en{memory copy} dari \en{host} ke \en{device}, pertama-tama \en{host} menyalin isi memori ke \en{staging buffer}. Kemudian, \en{device} membaca isi memori dari \en{staging buffer}. Di saat yang bersamaan, \en{host} menyalin isi memori lainnya ke bagian lain \en{staging buffer}, yang kemudian akan dibaca oleh \en{device}, dan begitu seterusnya \citep{wilt2013cuda}.
+
+Gambar~\ref{fig:CudaMemcpyAsync} berikut mengilustrasikan mekanisme tersebut.
+
+\begin{figure}[htp]
+    \centering
+    \includegraphics[width=0.75\linewidth]{figures/cuda-memcpy-async.png}
+    \caption{Mekanisme \en{asynchronous memory copy} antara \en{host} dan \en{device}}
+    \label{fig:CudaMemcpyAsync}
+\end{figure}
 
 \section{Penelitian Terkait} \label{relatedworks}
 
