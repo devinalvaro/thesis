@@ -18,25 +18,6 @@ Salah satu \en{framework} pembelajaran mesin, TensorFlow, memiliki fitur \en{mem
 
 Melihat potensi optimisasi tersebut, fokus tugas akhir ini adalah meneliti dan mengembangkan \en{memory swapping} di TensorFlow sehingga lebih optimal dari yang sudah ada, terutama dari faktor durasi pelatihan.
 
-\subsection{Penggunaan Memori pada Pelatihan Model}
-
-Berikut akan dibahas mengenai penyebab penggunaan memori pada pelatihan model serta perhitungannya. Selain untuk memuat \en{dataset} yang digunakan, memori juga digunakan untuk me-\en{maintain} variabel yang memuat parameter model (bobot dan bias) dan hasil fungsi aktivasi (\en{output}). Bila variabel direpresentasikan oleh 32-bit \en{floating point}, maka ukuran memori yang digunakan adalah 4 \en{byte} dikali dengan jumlah variabel yang ada. Sebagai contoh, model ResNet50 memiliki sekitar 26 juta parameter dan 16 juta \en{output} pada sekali \en{forward pass}. Maka, ukuran memori yang digunakan pada satu sampel sekitar $\num{26e6} \times \SI{4}{byte} = \SI{104}{\mega\byte}$ untuk parameter dan $\num{16e6} \times \SI{4}{byte} = \SI{64}{\mega\byte}$ untuk \en{output} \citep{hanlon2016why}.
-
-Ukuran tersebut barulah ukuran memori yang digunakan oleh satu sampel pada \en{batch}. Biasanya, pelatihan model berlangsung secara paralel, yang berarti dilakukan pencarian gradien terhadap seluruh sampel pada \en{batch} sekaligus. Berarti, perlu dimuat \en{output} seluruh sampel karena \en{output} dibutuhkan untuk pencarian gradien dengan \en{backpropagation} (seperti dijelaskan pada Bagian~\ref{backpropagation} dan \ref{bptt}).
-
-Misalnya \en{batch} berukuran 16, maka diperlukan $16 * \SI{64}{\mega\byte} = \SI{1024}{\mega\byte}$ untuk memuat seluruh \en{output} pada satu \en{batch}. Bila dijumlah dengan ukuran parameter (bobot dan bias) seperti di atas, maka diperlukan sekitar $\SI{104}{\mega\byte} + \SI{1024}{\mega\byte} = \SI{1.128}{\giga\byte}$ memori pada pelatihan model ResNet50 untuk \en{batch} berukuran 16. Perhitungan ini didukung oleh Gambar~\ref{fig:MemoryVSBatchSize} di mana pada ${batch\ size} = 16$, penggunaan memori ResNet50 (merah muda) sekitar $\SI{1000}{\mega\byte}$. Perhitungan yang sama untuk \en{batch size} lainnya juga memberikan hasil yang sesuai dengan grafik tersebut.
-
-\begin{figure}[htp]
-    \centering
-    \includegraphics[width=0.75\linewidth]{figures/memory-vs-batch-size.png}
-    \caption{Penggunaan memori berbagai model \en{deep learning} terhadap ukuran \en{batch} \citep{canziani2016analysis}.}
-    \label{fig:MemoryVSBatchSize}
-\end{figure}
-
-Dari hasil perhitungan tersebut, ditunjukkan bagaimana penggunaan memori meningkat seiring peningkatan ukuran \en{batch}. Selain itu, terlihat bahwa penggunaan terbesar memori terletak pada pemuatan hasil fungsi aktivasi (\en{output}) yang dibutuhkan untuk mencari gradien pada suatu \en{batch}. Hal ini bersesuaian dengan yang disebutkan di \citep{meng2017training} di mana \en{output} (pada \en{paper} tersebut disebut \en{feature map}) merupakan penyebab utama penggunaan memori pada pelatihan model.
-
-Lebih lanjut, akan dilakukan eksperimen untuk memverifikasi kebenaran perhitungan penggunaan memori tersebut.
-
 \subsection{Heuristik \en{Memory Swapping} di TensorFlow} \label{heuristic}
 
 Seperti disebutkan sebelumnya, pada TensorFlow dapat digunakan \en{memory swapping} yang telah disediakan. Dari sisi \en{high-level}, TensorFlow menyediakan kelas \code{tf.nn.dynamic\_rnn} (model RNN dinamis) yang menerima parameter \code{swap\_memory} untuk memberi pilihan kepada pengguna apakah akan digunakan metode \en{memory swapping} saat pelatihan model.
