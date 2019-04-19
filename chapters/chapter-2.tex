@@ -169,10 +169,6 @@ Gambar~\ref{fig:TensorFlowDist} mengilustrasikan hubungan antar bagian TensorFlo
     \label{fig:TensorFlowDist}
 \end{figure}
 
-\subsection{Penambahan Operasi}
-
-TensorFlow mendukung penambahan jenis operasi baru, apabila jenis-jenis operasi yang disediakan belum memenuhi kebutuhan pengguna, atau mengoptimisasi operasi yang ada secara \en{native}. Untuk membuat operasi baru, pengguna perlu menambahkan definisi (seperti input dan \en{output}, bentuk \en{tensor}) dan implementasi operasi tersebut dalam bahasa C++. Selanjutnya, pengguna dapat menambahkan API ke operasi tersebut pada \en{client}, namun langkah ini bersifat opsional.
-
 \section{\en{Graphics Processing Unit}}
 
 Penggunaan GPU pada pelatihan \en{deep learning} merupakan salah satu faktor yang memajukan perkembangan bidang ini secara signifikan \citep{dean2012large}. Hal ini dikarenakan GPU mampu meningkatkan kecepatan dengan menjalankan pelatihan secara paralel. Sayangnya, ukuran memori GPU lebih terbatas  dari memori CPU. Umumnya, memori GPU berukuran 8-16GB sedangkan memori CPU dapat mencapai 1TB.
