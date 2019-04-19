@@ -208,15 +208,6 @@ CUDA mendukung \en{asynchronous memory copy} dengan \code{cudaMemcpyAsync}, yait
 
 Mekanisme \en{memory copy} ini adalah sebagai berikut. Misalnya dilakukan \en{memory copy} dari \en{host} ke \en{device}, pertama-tama \en{host} menyalin isi memori ke \en{staging buffer}. Kemudian, \en{device} membaca isi memori dari \en{staging buffer}. Di saat yang bersamaan, \en{host} menyalin isi memori lainnya ke bagian lain \en{staging buffer}, yang kemudian akan dibaca oleh \en{device}, dan begitu seterusnya \citep{wilt2013cuda}.
 
-Gambar~\ref{fig:CudaMemcpyAsync} berikut mengilustrasikan mekanisme tersebut.
-
-\begin{figure}[htp]
-    \centering
-    \includegraphics[width=0.625\linewidth]{figures/cuda-memcpy-async.png}
-    \caption{Mekanisme \en{asynchronous memory copy} antara \en{host} dan \en{device} \citep{wilt2013cuda}.}
-    \label{fig:CudaMemcpyAsync}
-\end{figure}
-
 \section{Penggunaan Memori pada Pelatihan Model} \label{memoryusage}
 
 Berikut akan dibahas mengenai penyebab penggunaan memori pada pelatihan model serta perhitungannya. Selain untuk memuat \en{dataset} yang digunakan, memori juga digunakan untuk me-\en{maintain} variabel yang memuat parameter model (bobot dan bias) dan hasil fungsi aktivasi (\en{output}). Bila variabel direpresentasikan oleh 32-bit \en{floating point}, maka ukuran memori yang digunakan adalah 4 \en{byte} dikali dengan jumlah variabel yang ada. Sebagai contoh, model ResNet50 memiliki sekitar 26 juta parameter dan 16 juta \en{output} pada sekali \en{forward pass}. Maka, ukuran memori yang digunakan pada satu sampel sekitar $\num{26e6} \times \SI{4}{byte} = \SI{104}{\mega\byte}$ untuk parameter dan $\num{16e6} \times \SI{4}{byte} = \SI{64}{\mega\byte}$ untuk \en{output} \citep{hanlon2016why}.
