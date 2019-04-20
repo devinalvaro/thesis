@@ -106,7 +106,6 @@ $w_{ji}$ menghubungkan neuron berindeks $i$ dengan neuron berindeks $j$ pada \en
 \begin{equation}
     \frac{\partial{C_{t}}}{\partial{w_{ji}}}
     = \sum_{k} (\frac{\partial{C_{t}}}{\partial{net_{t_k}}} \frac{\partial{net_{t_k}}}{\partial{s_{t_j}}} \sum_{\tau = 0}^{t} \sum_{l} \frac{\partial{s_{t_j}}}{s_{(t-\tau)_l}} \frac{s_{(t-\tau)_l}}{\partial{w_{ji}}})
-    \label{eq:W}
 \end{equation}
 
 Perhitungan gradien $u$ tidak jauh berbeda dengan $w$ karena dipengaruhi oleh \en{hidden state} seluruh \en{timestep} juga.
