@@ -2,7 +2,7 @@
 
 \section{Analisis Permasalahan} \label{problemanalysis}
 
-Di luar kinerja model, tantangan dalam melatih model \en{deep learning} meliputi lamanya durasi pelatihan dan besarnya sumber daya komputasi yang dibutuhkan, seperti kapasitas memori. Salah satunya penyebabnya adalah besarnya jumlah dan ukuran \en{hidden layer} yang meningkatkan jumlah nilai-nilai yang harus dikomputasi. Selain itu, pelatihan model \en{deep learning} seringkali menggunakan \en{dataset} berukuran besar, menambah durasi pelatihan dan sumber daya yang dibutuhkan.
+Di luar kinerja model, tantangan dalam melatih model \en{deep learning} meliputi lamanya durasi pelatihan dan besarnya sumber daya komputasi yang dibutuhkan, seperti kapasitas memori. Salah satu penyebabnya adalah besarnya jumlah dan ukuran \en{hidden layer} yang meningkatkan jumlah nilai-nilai yang harus dikomputasi. Selain itu, pelatihan model \en{deep learning} seringkali menggunakan \en{dataset} berukuran besar, menambah durasi pelatihan dan sumber daya yang dibutuhkan.
 
 Fokus penelitian di tugas akhir ini terletak pada optimisasi penggunaan memori untuk pelatihan model, khususnya di bagian \en{memory swapping} yang akan dijelaskan kemudian. Seperti dijelaskan di Bagian~\ref{memoryusage}, mayoritas memori digunakan untuk me-\en{maintain} nilai-nilai seperti bobot, bias, hasil fungsi aktivasi, serta data yang sedang diproses. Kelebihan penggunaan memori dari kapasitas yang ada dapat mengakibatkan gagalnya pelatihan model karena masalah \en{out of memory} (OOM).
 
@@ -10,7 +10,7 @@ Satu hal yang  memperparah masalah ini adalah kapasitas memori GPU. Saat ini, GP
 
 Salah satu penanganan masalah tersebut adalah \en{memory swapping}, yaitu metode pengurangan beban memori dengan memindahkan isi memori secara temporer ke \en{memory pool} yang lebih besar (dan biasanya memiliki waktu akses lebih lambat). Pada kasus ini, sebagian isi memori GPU dapat dipindahkan ke memori CPU secara sementara. Dalam berbagai kasus, terutama dengan kapasitas memori yang terbatas, \en{memory swapping} merupakan satu-satunya solusi terhadap masalah OOM.
 
-Namun, \en{memory swapping} memiliki \en{trade-off} tersendiri. Seperti pemindahan data apapun, memindahkan data dari GPU ke CPU (dan sebaliknya) juga membutuhkan waktu tersendiri, berbanding lurus dengan jumlah data yang dipindahkan. Akibatnya, \en{memory swapping} menambah durasi pelatihan yang bertambahnya semakin besar seiring  akumulasi data yang di-\en{swap}. Maka, \en{memory swapping} yang optimal perlu selektif memilih isi memori mana yang di-\en{swap} agar pelatihan model dapat berjalan tanpa OOM, juga tanpa menambah durasi pelatihan secara terlalu besar.
+Namun, \en{memory swapping} memiliki \en{trade-off} tersendiri. Seperti pemindahan data apapun, memindahkan data dari GPU ke CPU (dan sebaliknya) juga membutuhkan waktu tersendiri, berbanding lurus dengan jumlah data yang dipindahkan. Akibatnya, \en{memory swapping} menambah durasi pelatihan yang bertambahnya semakin besar seiring  bertambahnya data yang di-\en{swap}. Maka, \en{memory swapping} yang optimal perlu selektif dalam memilih data mana yang di-\en{swap} agar pelatihan model dapat berjalan tanpa OOM, juga tanpa menambah durasi pelatihan secara terlalu besar.
 
 Salah satu \en{framework} pembelajaran mesin, TensorFlow, memiliki fitur \en{memory swapping}. Namun, terdapat potensi bahwa \en{memory swapping} di TensorFlow masih kurang optimal, seperti yang dijelaskan secara lebih detail di Bagian~\ref{optimization}
 
@@ -26,15 +26,15 @@ Selanjutnya, akan dijelaskan mekanisme \en{memory swapping} di TensorFlow dari s
 
 Sedikit mengulang yang telah dijelaskan di Bagian~\ref{tensorflow}, sebuah program TensorFlow dapat dilihat sebagai sebuah \en{dataflow graph}, di mana \en{tensor} melewati sisi graf dan simpul graf adalah operasi (\en{op}) terhadap \en{tensor}-\en{tensor} yang melewatinya. \en{Tensor} di sini merupakan vektor multi-dimensional yang berisi nilai-nilai yang dikomputasi oleh TensorFlow.
 
-Pada \en{codebase} TensorFlow, terdapat kelas \code{Tensor}. Meskipun kelas ini merepresentasikan \en{tensor}, namun kelas ini hanya memiliki \en{pointer} yang menunjuk ke nilai-nilai \en{tensor} yang sebenarnya di memori, baik memori CPU maupun GPU. Maka, kelas ini dapat dilihat sebagai \en{handle} terhadap nilai \en{tensor} di memori.
+Pada \en{codebase} TensorFlow, terdapat kelas \code{Tensor}. Meskipun kelas ini merepresentasikan \en{tensor}, namun kelas ini hanya memiliki \en{pointer} yang menunjuk ke nilai-nilai \en{tensor} yang sebenarnya di memori, baik memori CPU ataupun GPU. Maka, kelas ini dapat dilihat sebagai \en{handle} terhadap nilai \en{tensor} di memori.
 
-Kegunaan kelas ini sebagai \en{handle}, selain untuk membaca nilai-nilai \en{tensor}-nya, juga digunakan dalam \en{memory swapping}, seperti yang akan ditunjukkan kemudian.
+Kegunaan kelas ini sebagai \en{handle}, selain untuk membaca nilai-nilai \en{tensor}-nya, juga digunakan untuk \en{memory swapping}, seperti yang akan ditunjukkan kemudian.
 
 Pada bagian-bagian selanjutnya, penulisan \code{tensor} seperti demikian merujuk pada sebuah \en{instance} kelas \code{Tensor}, sedangkan penulisan \en{tensor} seperti demikian merujuk pada \en{tensor} dalam artian vektor-multidimensional.
 
 \subsubsection{\code{Stack}} \label{stack}
 
-Saat \en{forward pass} berlangsung, \en{output tensor} dari \en{op} tertentu diletakkan ke sebuah \en{stack} agar ketika \en{backpropagation}, \en{op} bersangkutan dapat mengambil kembali \en{tensor} yang diletakkan ke \en{stack} tadi dengan urutan yang benar \citep{tensorflow2016implementation}.
+Saat \en{forward pass} berlangsung, \en{output tensor} dari sebuah \en{op} diletakkan ke sebuah \en{stack} agar ketika \en{backpropagation}, \en{op} bersangkutan dapat mengambil kembali \en{tensor} yang diletakkan ke \en{stack} tadi dengan urutan yang benar \citep{tensorflow2016implementation}.
 
 \en{Stack} yang dimaksud adalah kelas \code{Stack} yang terdapat di \en{codebase} TensorFlow, tepatnya pada \en{file} \code{tensorflow/core/kernels/stack.cc}. Perlu diperhatikan bahwa setiap \en{op} memiliki \code{stack}-nya sendiri.
 
@@ -75,7 +75,7 @@ void StackPushOp::ComputeAsync(OpKernelContext* ctx, DoneCallback done) {
 
 Terlihat pada Kode~\ref{lst:SwapOut} bahwa \code{StackPushOp} memiliki \en{method} \code{ComputeAsync} yang melakukan peletakkan \code{tensor} ke \code{stack}. \code{ComputeAsync} memiliki cara kerja sebagai berikut. Apabila \code{swap\_memory\_} bernilai \code{true} dan kondisi heuristiknya terpenuhi, maka dimulai pemindahan nilai \en{tensor} dari GPU ke memori CPU (\en{swap out}).
 
-Setelah pemindahan selesai, yang diletakkan ke atas \code{stack} adalah \en{instance} \code{tensor} baru (pada Kode~\ref{lst:SwapOut} dinamakan \code{cpu\_tensor}) sebagai \en{handle} terhadap nilai \en{tensor} yang sekarang terletak di memori CPU. Untuk memperjelas konteks, \code{tensor} ini nantinya digunakan sebagai \en{handle} dalam pemindahan kembali nilai \en{tensor} dari CPU ke GPU (\en{swap in}) ketika dibutuhkan saat \en{backpropagation}.
+Setelah pemindahan selesai, yang diletakkan ke atas \code{stack} adalah \en{instance} \code{tensor} baru (pada Kode~\ref{lst:SwapOut} dinamakan \code{cpu\_tensor}) sebagai \en{handle} terhadap nilai \en{tensor} yang sama, namun sekarang terletak di memori CPU. Untuk memperjelas konteks, \code{tensor} ini nantinya digunakan sebagai \en{handle} dalam pemindahan kembali nilai \en{tensor} dari CPU ke GPU (\en{swap in}) ketika dibutuhkan saat \en{backpropagation}.
 
 Sebaliknya, bila \en{memory swapping} tidak dilakukan baik karena \code{swap\_memory\_} bernilai \code{false} atau heuristik tidak terpenuhi, \code{tensor} langsung diletakkan saja ke atas \code{stack}.
 
@@ -114,7 +114,7 @@ void StackPopOp::ComputeAsync(OpKernelContext* ctx, DoneCallback done) {
 
 Dari Kode~\ref{lst:SwapIn} di atas, terlihat bahwa pada \code{StackPopOp}, TensorFlow memeriksa terlebih dahulu apakah sebelumnya \code{tensor} telah dipindahkan ke CPU. Jika iya, maka nilai \en{tensor} dipindahkan terlebih dahulu dari CPU ke GPU secara \en{asynchronous}. Jika tidak, maka nilai \en{tensor} dapat langsung dipakai karena sudah ada di GPU.
 
-Meskipun pemindahan dilakukan secara \en{asynchronous} (tidak mem-\en{block} CPU), namun penggunaan \code{stack} tetap \en{blocked}, karena menunggu pemanggilan \code{done()} dilakukan. Dapat diperhatikan bahwa pemanggilan \code{done()} pada kasus \en{swapping in} (baris 19 pada Kode~\ref{lst:SwapIn}) dilakukan pada \en{callback} (berarti setelah \en{swapping in} selesai). Seperti disebutkan di Bagian~\ref{stack}, karena masing-masing \en{op} memiliki \en{stack}-nya sendiri, dan setiap elemen di \en{stack} merepresentasikan setiap \en{timestep}, maka implikasi dari \en{blocking} ini adalah \en{op} tidak dapat digunakan untuk \en{timestep} berikutnya hingga \en{swapping in} untuk \en{timestep} sekarang telah selesai (memanggil \code{done()}).
+Meskipun pemindahan dilakukan secara \en{asynchronous} (tidak mem-\en{block} CPU), namun penggunaan \code{stack} tetap \en{blocked}, karena menunggu pemanggilan \code{done()} dilakukan. Dapat diperhatikan bahwa pemanggilan \code{done()} pada kasus \en{swapping in} (baris 19 pada Kode~\ref{lst:SwapIn}) dilakukan pada \en{callback} fungsi \code{CopyCPUTensorToDevice} (berarti setelah \en{swapping in} selesai). Seperti disebutkan di Bagian~\ref{stack}, karena masing-masing \en{op} memiliki \en{stack}-nya sendiri, dan setiap elemen di \en{stack} merepresentasikan setiap \en{timestep}, maka implikasi dari \en{blocking} ini adalah \en{op} tidak dapat digunakan untuk \en{timestep} berikutnya hingga \en{swapping in} untuk \en{timestep} sekarang telah selesai (memanggil \code{done()}).
 
 Kembali menelaah kedua kode tersebut, dapat diambil beberapa kesimpulan. Terdapat heuristik yang harus dipenuhi untuk menentukan apakah sebuah \en{tensor} layak di-\en{swap out} ke CPU, yaitu ketika ukuran \en{tensor} melebihi \code{kCopyThreshold} (2048 \en{bytes}) dan persentase penggunaan memori GPU melebihi \code{kOccupancy} (70\%). Hal yang perlu diperhatikan juga adalah ketika heuristik terpenuhi, \en{tensor} yang di-\en{swap out} adalah \en{tensor} yang baru akan diletakkan ke atas \code{stack} (\en{tensor} terbaru). Selain itu, dari Kode~\ref{lst:SwapIn} terlihat bahwa \en{swap in} sebuah \en{tensor} baru dilakukan saat \en{tensor} tersebut akan dipakai.
 
@@ -126,9 +126,9 @@ Melihat proses pelatihan dengan \en{backpropagation} tersebut, terdapat interval
 
 Dari penjelasan tersebut, terlihat potensi optimisasi penggunaan memori pada pelatihan model \en{deep learning}. Memori untuk \en{layer}-\en{layer} yang sedang tidak digunakan tersebut lebih baik bila didelegasikan ke \en{memory pool} yang lebih besar.
 
-Maka dari itu, seperti yang disebutkan oleh \citep{meng2017training}, \en{tensor} yang paling baik untuk di-\en{swap} adalah \en{tensor} dari \en{layer}-\en{layer} awal, karena interval dari \en{forward pass} hingga digunakannya kembali saat \en{backpropagation} yang terlama. Dengan begitu, diharapkan bahwa \en{overlapping} antara komputasi dengan \en{memory swapping} meningkat, sehingga mengurangi waktu yang dibutuhkan (\en{memory copy} antara GPU dan CPU berjalan secara \en{asynchronous}).
+Maka dari itu, seperti yang disebutkan oleh \citep{meng2017training}, \en{tensor} yang paling baik untuk di-\en{swap} adalah \en{tensor} dari \en{layer}-\en{layer} awal, karena interval dari \en{forward pass} hingga digunakannya kembali saat \en{backpropagation} yang terlama. Dengan begitu, diharapkan bahwa \en{overlapping} antara komputasi dengan \en{memory swapping} meningkat, sehingga mengurangi waktu yang dibutuhkan (karena \en{memory copy} antara GPU dan CPU berjalan secara \en{asynchronous}).
 
-Bila melihat heuristik \en{memory swapping} di TensorFlow yang dijelaskan di bagian sebelumnya, terlihat bahwa yang dilakukan TensorFlow justru kebalikannya. Karena ketika heuristik terpenuhi, \en{swapping} dilakukan terhadap \en{tensor} saat ini (\en{tensor} terbaru), yang berarti interval hingga digunakannya kembali tidak terlalu lama. Terlebih lagi, \en{tensor} baru di-\en{swap in} saat akan digunakan kembali di \en{backpropagation}, mengurangi \en{asynchronicity} dari eksekusi program. Di sinilah terletak potensi optimisasi \en{memory swapping} di TensorFlow.
+Bila melihat heuristik \en{memory swapping} di TensorFlow yang dijelaskan di bagian sebelumnya, terlihat bahwa yang dilakukan TensorFlow justru kebalikannya. Karena ketika heuristik terpenuhi, \en{swapping} dilakukan terhadap \en{current tensor} (\en{tensor} saat ini), yang berarti interval hingga digunakannya kembali tidak terlalu lama. Terlebih lagi, \en{tensor} baru di-\en{swap in} saat akan digunakan kembali di \en{backpropagation}, mengurangi \en{asynchronicity} dari eksekusi program. Di sinilah terletak potensi optimisasi \en{memory swapping} di TensorFlow.
 
 \subsection{\en{Recurrent Neural Network} sebagai Model Uji}
 
@@ -146,8 +146,14 @@ Seperti yang disebutkan pada Bagian~\ref{optimization}, ide optimisasi tersebut 
 
 Dengan demikian, diperlukan implementasi yang dapat mengoptimisasi sesuai ide tersebut, namun terhadap mekanisme \en{memory swapping} bawaan TensorFlow yang dijelaskan di Bagian~\ref{mechanism}. Berikut akan dijelaskan rancangan implementasi yang dibuat oleh penulis.
 
-\begin{lstlisting}[language=C++, caption=Pseudocode \en{Swap Out} Bawaan, label={lst:SwapOutPseudocode}]
-if (passes_heuristic) {
+Pada Bagian~\ref{mechanism} dijelaskan bahwa setelah melewati heuristik yang ada (apakah memori GPU hampir penuh), dilakukan \en{swapping out} terhadap \en{current tensor}. Karena heuristik cenderung baru terpenuhi saat memori hampir penuh, maka \en{current tensor} adalah \en{tensor} yang dalam waktu lebih dekat akan digunakan kembali ketika \en{backpropagation}, ketimbang \en{tensor}-\en{tensor} yang sebelumnya. Ide penulis adalah ketika heuristik terpenuhi, dilakukan \en{swapping out} terhadap \en{oldest tensor} yang belum di-\en{swap}. \en{Oldest} di sini berarti \en{least recent} atau yang paling awal waktu digunakannya pada \en{forward pass}, sehingga paling lama juga waktu hingga akan digunakannya kembali pada \en{backpropagation}.
+
+Kode~\ref{lst:SwapOutPseudocodeOptimized} berikut menggambarkan alur \en{swapping out} menurut implementasi tersebut, beserta Kode~\ref{lst:SwapOutPseudocode} yang menggambarkan alur \en{swapping out} bawaan TensorFlow untuk perbandingan.
+
+Perlu diperhatikan bahwa \code{swap\_out} (dan \code{swap\_in}) adalah \en{asynchronous function} yang argumen ke-2-nya adalah \en{callback function}. \en{Callback function} di kedua fungsi tersebut dinotasikan seperti berikut: \code{(args) => \{ ... \}}.
+
+\begin{lstlisting}[language=C++, caption=Pseudocode \en{Swapping Out} Bawaan, label={lst:SwapOutPseudocode}]
+if (gpu_memory_almost_full) {
     swap_out(current_tensor, (cpu_tensor) => {
         stack.push(cpu_tensor)
     })
@@ -156,20 +162,28 @@ if (passes_heuristic) {
 }
 \end{lstlisting}
 
-\begin{lstlisting}[language=C++, caption=Pseudocode \en{Swap Out} Teroptimisasi, label={lst:SwapOutPseudocodeOptimized}]
+\begin{lstlisting}[language=C++, caption=Pseudocode \en{Swapping Out} Teroptimisasi, label={lst:SwapOutPseudocodeOptimized}]
 stack.push(current_tensor)
 
-if (passes_heuristic) {
+if (gpu_memory_almost_full) {
     id = stack.get_oldest_unswapped_tensor_id()
     swap_out(stack[id].tensor, (cpu_tensor) => {
-        // set respective stack element to swapped
+        // set respective stack element as swapped
         stack[id].tensor = cpu_tensor
         stack[id].swapped = true
     })
 }
 \end{lstlisting}
 
-\begin{lstlisting}[language=C++, caption=Pseudocode \en{Swap In} Asli, label={lst:SwapInPseudocode}]
+Terlihat pada Kode~\ref{lst:SwapOutPseudocodeOptimized} bahwa \code{current\_tensor} (\en{tensor} saat ini) langsung saja di-\en{push} ke \code{stack}, karena \code{current\_tensor} tidak akan menjadi subjek \en{swapping}, berbeda dengan alur program bawaan di Kode~\ref{lst:SwapOutPseudocode}.
+
+Selanjutnya, program teroptimisasi memeriksa apakah memori GPU hampir penuh (heuristik terpenuhi). Bila iya, program mengambil \code{id} dari \en{oldest tensor} yang belum di-\en{swap}. Kemudian \code{stack[id].tensor} di-\en{swap out}, lalu setelah selesai \code{stack[id].tensor} di-\en{assign} dengan \code{cpu\_tensor}, yaitu \en{handle} dari \en{tensor} yang sama namun sekarang telah dipindah ke CPU. Selain itu, \code{stack[id].swapped} juga ditandai sebagai \code{true}, agar dapat diproses dengan benar oleh \code{StackPopOp} saat \en{backpropagation}.
+
+Pengaksesan \code{stack} dengan indeks di sini memang melanggar hakikat \en{stack} secara konsep (di mana hanya elemen teratas \en{stack} yang dapat dimodifikasi), namun dimungkinkan karena \code{Stack} di TensorFlow diimplementasi dengan \en{array} (\code{vector}).
+
+Demikian \en{pseudocode} program teroptimisasi dalam melakukan \en{swapping out} terhadap \en{oldest tensor} ketimbang \en{tensor} saat ini. Selanjutnya adalah \en{pseudocode} optimisasi terhadap mekanisme \en{swapping in}.
+
+\begin{lstlisting}[language=C++, caption=Pseudocode \en{Swapping In} Bawaan, label={lst:SwapInPseudocode}]
 tensor = stack.pop()
 if (tensor.swapped) {
     swap_in(tensor, (gpu_tensor) => {
@@ -180,7 +194,7 @@ if (tensor.swapped) {
 }
 \end{lstlisting}
 
-\begin{lstlisting}[language=C++, caption=Pseudocode \en{Swap In} Teroptimisasi, label={lst:SwapInPseudocodeOptimized}]
+\begin{lstlisting}[language=C++, caption=Pseudocode \en{Swapping In} Teroptimisasi, label={lst:SwapInPseudocodeOptimized}]
 tensor = stack.pop()
 if (current_tensor.swapped) {
     swap_in(tensor, (gpu_tensor) => {
@@ -190,12 +204,16 @@ if (current_tensor.swapped) {
     current_tensor = tensor
 }
 
-if (passes_heuristic) {
+if (not gpu_memory_almost_full) {
     id = stack.get_newest_swapped_tensor_id()
     swap_in(stack[id].tensor, (gpu_tensor) => {
-        // set respective stack element to unswapped
+        // set respective stack element as unswapped
         stack[id].tensor = gpu_tensor
         stack[id].swapped = false
     })
 }
 \end{lstlisting}
+
+Pada Kode~\ref{lst:SwapInPseudocodeOptimized} terlihat bahwa hingga baris ke-9, alur program sama dengan alur program bawaan TensorFlow pada Kode~\ref{lst:SwapInPseudocode}. Namun, pada kode teroptimisasi, setelahnya diperiksa apakah heuristik terpenuhi (apakah memori GPU tidak penuh, kebalikan dari heuristik \en{swapping out}). Jika iya, program mulai melakukan \en{swapping in} terhadap \en{tensor} terbaru yang belum di-\en{swap in}. Seperti disebutkan pada Bagian~\ref{optimization}, tujuan bagian program ini adalah untuk meningkatkan \en{asynchronicity} dari program, yaitu meningkatkan \en{overlapping} antara komputasi biasa dengan \en{data transfer} pada \en{memory swapping}.
+
+Demikianlah rancangan implementasi penulis untuk mengoptimisasi \en{memory swapping} di TensorFlow. Pada Bab~\ref{implementationevaluation} dibahas mengenai implementasi dan hasil pengujian optimisasi tersebut.
