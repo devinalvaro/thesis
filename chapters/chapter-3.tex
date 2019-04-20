@@ -133,3 +133,59 @@ Alasan lainnya adalah fitur \en{memory swapping} di TensorFlow hanya terdapat pa
 Setelah menganalisis permasalahan didapatkan bahwa terdapat potensi optimisasi \en{memory swapping} di TensorFlow, dengan memprioritaskan \en{tensor} dengan interval waktu yang terlama hingga digunakannya kembali saat \en{backpropagation}. Selanjutnya, ide optimisasi tersebut perlu diimplementasikan ke TensorFlow.
 
 Seperti yang disebutkan pada Bagian~\ref{potential}, ide optimisasi tersebut terinspirasi dari \citep{meng2017training}. Namun, sebenarnya \en{paper} tersebut menceritakan mekanisme dari \en{memory swapping} yang diimplementasikan sendiri oleh para penulis (bukan bawaan TensorFlow) beserta optimisasinya (dijelaskan secara lebih detail di Bagian~\ref{relatedworks}). Sedangkan fokus tugas akhir ini adalah mengoptimisasi \en{memory swapping} bawaan TensorFlow, sehingga pendekatan dan detail optimisasi yang dilakukan di tugas akhir ini berbeda dari \en{paper} tersebut, karena memang implementasi \en{memory swapping} bawaan TensorFlow berbeda jauh dari implementasi \en{memory swapping} di \en{paper} tersebut.
+
+Dengan demikian, diperlukan implementasi yang dapat mengoptimisasi sesuai ide tersebut, namun terhadap mekanisme \en{memory swapping} bawaan TensorFlow yang dijelaskan di Bagian~\ref{mechanism}. Berikut akan dijelaskan rancangan implementasi yang dibuat oleh penulis.
+
+\begin{lstlisting}[language=C++, caption=Pseudocode \en{Swap Out} Bawaan, label={lst:SwapOutPseudocode}]
+if (passes_heuristic) {
+    swap_out(current_tensor, (cpu_tensor) => {
+        stack.push(cpu_tensor)
+    })
+} else {
+    stack.push(current_tensor)
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=C++, caption=Pseudocode \en{Swap Out} Teroptimisasi, label={lst:SwapOutPseudocodeOptimized}]
+stack.push(current_tensor)
+
+if (passes_heuristic) {
+    id = stack.get_oldest_unswapped_tensor_id()
+    swap_out(stack[id].tensor, (cpu_tensor) => {
+        // set respective stack element to swapped
+        stack[id].tensor = cpu_tensor
+        stack[id].swapped = true
+    })
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=C++, caption=Pseudocode \en{Swap In} Asli, label={lst:SwapInPseudocode}]
+tensor = stack.pop()
+if (tensor.swapped) {
+    swap_in(tensor, (gpu_tensor) => {
+        current_tensor = gpu_tensor
+    })
+} else {
+    current_tensor = tensor
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=C++, caption=Pseudocode \en{Swap In} Teroptimisasi, label={lst:SwapInPseudocodeOptimized}]
+tensor = stack.pop()
+if (current_tensor.swapped) {
+    swap_in(tensor, (gpu_tensor) => {
+        current_tensor = gpu_tensor
+    })
+} else {
+    current_tensor = tensor
+}
+
+if (passes_heuristic) {
+    id = stack.get_newest_swapped_tensor_id()
+    swap_in(stack[id].tensor, (gpu_tensor) => {
+        // set respective stack element to unswapped
+        stack[id].tensor = gpu_tensor
+        stack[id].swapped = false
+    })
+}
+\end{lstlisting}
