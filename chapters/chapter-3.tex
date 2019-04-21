@@ -14,7 +14,7 @@ Namun, \en{memory swapping} memiliki \en{trade-off} tersendiri. Seperti pemindah
 
 Salah satu \en{framework} pembelajaran mesin, TensorFlow, memiliki fitur \en{memory swapping}. Namun, terdapat potensi bahwa \en{memory swapping} di TensorFlow masih kurang optimal, seperti yang dijelaskan secara lebih detail di Bagian~\ref{optimizationpotential}
 
-Melihat potensi optimisasi tersebut, fokus tugas akhir ini adalah meneliti dan mengembangkan \en{memory swapping} di TensorFlow sehingga lebih optimal dari yang sudah ada, dilihat dari segi durasi pelatihan.
+Melihat potensi optimisasi tersebut, fokus tugas akhir ini adalah meneliti dan mengembangkan \en{memory swapping} di TensorFlow sehingga lebih optimal dari yang sudah ada, agar mengurangi durasi pelatihan dibandingkan dengan \en{memory swapping} bawaan TensorFlow.
 
 \subsection{Mekanisme \en{Memory Swapping} di TensorFlow} \label{swappingmechanism}
 
@@ -130,7 +130,7 @@ Maka dari itu, seperti yang disebutkan oleh \citep{meng2017training}, \en{tensor
 
 Bila melihat heuristik \en{memory swapping} di TensorFlow yang dijelaskan di bagian sebelumnya, terlihat bahwa yang dilakukan TensorFlow justru kebalikannya. Karena ketika heuristik terpenuhi, \en{swapping} dilakukan terhadap \en{current tensor} (\en{tensor} saat ini), yang berarti interval hingga digunakannya kembali tidak terlalu lama. Terlebih lagi, \en{tensor} baru di-\en{swap in} saat akan digunakan kembali di \en{backpropagation}, mengurangi \en{asynchronicity} dari eksekusi program. Di sinilah terletak potensi optimisasi \en{memory swapping} di TensorFlow.
 
-\subsection{\en{Recurrent Neural Network} sebagai Model Uji}
+\subsection{\en{Recurrent Neural Network} sebagai Model Uji} \label{whyrnn}
 
 Arsitektur \en{deep neural network} yang dipilih untuk menjadi fokus optimisasi ini adalah \en{recurrent neural network} (RNN) yang antara \en{input layer} atau \en{output layer}-nya (atau keduanya) berjenis \en{sequence}. Alasan pemilihan arsitektur RNN adalah karena topologinya yang dinamis menurut panjang \en{input} atau \en{output}, penggunaan memori tidak dapat diprediksi sebelum eksekusi, sehingga optimisasi memori pun menjadi lebih krusial.
 
