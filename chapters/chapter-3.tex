@@ -22,7 +22,7 @@ Mengenai \en{memory swapping}, TensorFlow menyediakan kelas \code{tf.nn.dynamic\
 
 Selanjutnya, akan dijelaskan mekanisme \en{memory swapping} di TensorFlow dari sisi yang lebih \en{low-level}. Untuk itu, akan dibahas mengenai 4 kelas yang menjadi komponen utama \en{memory swapping} di TensorFlow, yaitu \code{Tensor}, \code{Stack}, \code{StackPushOp}, dan \code{StackPopOp}.
 
-\subsubsection{\code{Tensor}}
+\subsubsection{\code{Tensor}} \label{tensor}
 
 Sedikit mengulang yang telah dijelaskan di Bagian~\ref{tensorflow}, sebuah program TensorFlow dapat dilihat sebagai sebuah \en{dataflow graph}, di mana \en{tensor} melewati sisi graf dan simpul graf adalah operasi (\en{op}) terhadap \en{tensor}-\en{tensor} yang melewatinya. \en{Tensor} di sini merupakan vektor multi-dimensional yang berisi nilai-nilai yang dikomputasi oleh TensorFlow.
 
