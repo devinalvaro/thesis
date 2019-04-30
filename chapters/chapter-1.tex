@@ -33,7 +33,7 @@ Melihat potensi optimisasi tersebut, fokus tugas akhir ini adalah meneliti dan m
 
 Sebelumnya telah disebutkan bahwa salah satu metode optimisasi memori adalah \en{memory swapping}, yaitu mengurangi beban memori GPU dengan memindahkan isi memori ke CPU secara temporer, seperti yang tersedia pada TensorFlow. Berdasarkan hasil studi literatur dan analisis mekanisme \en{memory swapping} di TensorFlow, terdapat potensi bahwa mekanisme tersebut masih kurang optimal, seperti yang dijelaskan pada Bagian~\ref{optimizationpotential}. Secara singkat, solusi yang diajukan untuk mengoptimisasi \en{memory swapping} di TensorFlow adalah dengan memprioritaskan \en{swapping} pada \en{tensor} yang interval hingga digunakannya kembali terlama, sehingga meningkatkan \en{overlapping} antara komputasi dengan \en{memory swapping}.
 
-Rumusan masalah pada tugas akhir ini adalah sebagi berikut.
+Rumusan masalah pada tugas akhir ini adalah sebagai berikut.
 
 \begin{enumerate}
     \item Bagaimana mengembangkan \en{memory swapping} pada TensorFlow yang lebih optimal dari yang sudah ada, dilihat dari durasi pelatihan?

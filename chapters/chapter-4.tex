@@ -161,7 +161,7 @@ void StackPopOp::ComputeAsync(OpKernelContext* ctx, DoneCallback done) {
 
   // If device memory still > 90% full don't swap in yet.
   // ...
-  static constexpr double kOccupancy = 0.9;
+  static constexpr double kOccupancy = 0.7;
   if (stats.bytes_in_use > (stats.bytes_limit * kOccupancy)) {
     return;
   }
@@ -185,10 +185,10 @@ void StackPopOp::ComputeAsync(OpKernelContext* ctx, DoneCallback done) {
 
 Pada bagian Kode~\ref{lst:StackPopOp} di atas terlihat proses \en{swapping in} terhadap "\en{future tensors}", yaitu \en{swapped tensors} yang belum akan digunakan untuk komputasi, dengan tujuan meningkatkan \en{overlapping} antara komputasi dengan \en{memory transfer}, seperti yang telah disebutkan sebelumnya.
 
-Terdapat satu lagi hal yang perlu dibahas, yaitu herustik pada \en{swapping in}. Seperti heuristik pada \en{swapping out}, \en{swapping in} tersebut dilakukan ketika memori GPU hampir penuh. Tetapi, \en{threshold} (\code{kOccupancy}) yang digunakan lebih tinggi, yaitu 0.9 ketimbang 0.7 pada \en{swapping out}.
+Terdapat satu lagi hal yang perlu dibahas, yaitu herustik pada \en{swapping in}. Seperti heuristik pada \en{swapping out}, \en{swapping in} tersebut dilakukan ketika memori GPU hampir penuh. Dipilih nilai yang \code{kOccupancy} yang sama yaitu 0.7, untuk menyamai nilai yang digunakan di \en{swapping out}, karena nilai heuristik tersebut sudah ada di versi bawaan TensorFlow.
 
-Heuristik pada \en{swapping out} sama persis dengan versi bawaan TensorFlow. Namun, heuristik pada \en{swapping in} tidak ada pada versi bawaan TensorFlow (untuk lebih jelasnya dapat dibandingkan antara Kode~\ref{lst:SwapInPseudocode} dengan Kode~\ref{lst:SwapInPseudocodeOptimized}), sehingga tidak ada basis yang tentu untuk menentukan nilai \code{kOccupancy} pada \en{swapping in} tersebut. Dipilih nilai yang lebih tinggi dari 0.7, yaitu 0.9 untuk meningkatkan \en{overlapping} antara komputasi dengan \en{swapping in}. Pemilihan nilai yang lebih tinggi ini tidak menjadi masalah karena \en{swapping in} dilakukan saat \en{backpropagation}, di mana penggunaan memori terus menurun.
-
-Demikian penjelasan mengenai implementasi optimisasi \en{memory swapping} di TensorFlow. Berikutnya dilakukan pengujian terhadap optimisasi ini.
+Demikian penjelasan mengenai implementasi optimisasi \en{memory swapping} di TensorFlow. Berikutnya dilakukan pengujian terhadap optimisasi ini dibandingkan dengan versi bawaan TensorFlow.
 
 \section{Pengujian}
+
+TBD.

@@ -10,7 +10,7 @@ Satu hal yang  memperparah masalah ini adalah kapasitas memori GPU. Saat ini, GP
 
 Salah satu penanganan masalah tersebut adalah \en{memory swapping}, yaitu metode pengurangan beban memori dengan memindahkan isi memori secara temporer ke \en{memory pool} yang lebih besar (dan biasanya memiliki waktu akses lebih lambat). Pada kasus ini, sebagian isi memori GPU dapat dipindahkan ke memori CPU secara sementara. Dalam berbagai kasus, terutama dengan kapasitas memori yang terbatas, \en{memory swapping} merupakan satu-satunya solusi terhadap masalah OOM.
 
-Namun, \en{memory swapping} memiliki \en{trade-off} tersendiri. Seperti pemindahan data apapun, memindahkan data dari GPU ke CPU (dan sebaliknya) juga membutuhkan waktu tersendiri, berbanding lurus dengan jumlah data yang dipindahkan. Akibatnya, \en{memory swapping} menambah durasi pelatihan yang bertambahnya semakin besar seiring  bertambahnya data yang di-\en{swap}. Maka, \en{memory swapping} yang optimal perlu selektif dalam memilih data mana yang di-\en{swap} agar pelatihan model dapat berjalan tanpa OOM, juga tanpa menambah durasi pelatihan secara terlalu besar.
+Namun, \en{memory swapping} memiliki \en{trade-off} tersendiri. Seperti pemindahan data apapun, memindahkan data dari GPU ke CPU (dan sebaliknya) juga membutuhkan waktu tersendiri, berbanding lurus dengan jumlah dan ukuran data yang dipindahkan. Akibatnya, \en{memory swapping} menambah durasi pelatihan yang bertambahnya semakin besar seiring  bertambahnya data yang di-\en{swap}. Maka, \en{memory swapping} yang optimal perlu selektif dalam memilih data mana yang di-\en{swap} agar pelatihan model dapat berjalan tanpa OOM, juga tanpa menambah durasi pelatihan secara terlalu besar.
 
 Salah satu \en{framework} pembelajaran mesin, TensorFlow, memiliki fitur \en{memory swapping}. Namun, terdapat potensi bahwa \en{memory swapping} di TensorFlow masih kurang optimal, seperti yang dijelaskan secara lebih detail di Bagian~\ref{optimizationpotential}
 
@@ -73,7 +73,7 @@ void StackPushOp::ComputeAsync(OpKernelContext* ctx, DoneCallback done) {
 }
 \end{lstlisting}
 
-Terlihat pada Kode~\ref{lst:SwapOut} bahwa \code{StackPushOp} memiliki \en{method} \code{ComputeAsync} yang melakukan peletakkan \code{tensor} ke \code{stack}. \code{ComputeAsync} memiliki cara kerja sebagai berikut. Apabila \code{swap\_memory\_} bernilai \code{true} dan kondisi heuristiknya terpenuhi, maka dimulai pemindahan nilai \en{tensor} dari GPU ke memori CPU (\en{swap out}).
+Terlihat pada Kode~\ref{lst:SwapOut} bahwa \code{StackPushOp} memiliki \en{method} \code{ComputeAsync} yang melakukan peletakkan \code{tensor} ke \code{stack}. \code{ComputeAsync} memiliki cara kerja sebagai berikut. Apabila \code{swap\_memory\_} bernilai \code{true} dan kondisi heuristiknya terpenuhi, maka dimulai pemindahan nilai \en{current tensor} dari GPU ke memori CPU (\en{swap out}).
 
 Setelah pemindahan selesai, yang diletakkan ke atas \code{stack} adalah \en{instance} \code{tensor} baru (pada Kode~\ref{lst:SwapOut} dinamakan \code{cpu\_tensor}) sebagai \en{handle} terhadap nilai \en{tensor} yang sama, namun sekarang terletak di memori CPU. Untuk memperjelas konteks, \code{tensor} ini nantinya digunakan sebagai \en{handle} dalam pemindahan kembali nilai \en{tensor} dari CPU ke GPU (\en{swap in}) ketika dibutuhkan saat \en{backpropagation}.
 
