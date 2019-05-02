@@ -1,20 +1,20 @@
-% Margin
-\usepackage[top=3cm,bottom=3cm,left=4cm,right=3cm]{geometry}
-
-% LaTeX tools
+% Tools
 \usepackage{etoolbox}
 
 % Mathematics
 \usepackage{mathptmx}
 \usepackage[binary-units=true]{siunitx}
 
-% Input encoding: UTF-8
+% Input encodings
 \usepackage[utf8]{inputenc}
 
-% Language: ID (EN)
+% Languages
 \usepackage[english,bahasa]{babel}
 
-% Line spacing: 1.5
+% Margins
+\usepackage[top=3cm,bottom=3cm,left=4cm,right=3cm]{geometry}
+
+% Line spacing
 \renewcommand{\baselinestretch}{1.5}
 
 % Paragraphs
@@ -46,28 +46,25 @@
 \usepackage[hidelinks=true]{hyperref}
 \usepackage{tocbibind}
 
-% Quotes
-\usepackage{csquotes}
-
-% Graphics
-\usepackage{graphicx}
-
-% Table
-\usepackage{multirow}
-\usepackage{longtable}
-
 % Citations
+\usepackage{nameref}
 \usepackage[numbers]{natbib}
 
 \bibliographystyle{plainnat}
 \setcitestyle{authoryear,round}
 
-% References
-\usepackage{nameref}
+% Floats
+\setlength{\intextsep}{1cm}
 
-% Code listings
-\usepackage{listings}
+% Figures
+\usepackage{graphicx}
+
+% Tables
+\usepackage{multirow}
+
+% Listings
 \usepackage{color}
+\usepackage{listings}
 
 \definecolor{codegreen}{rgb}{0,0.6,0}
 \definecolor{codegray}{rgb}{0.5,0.5,0.5}
@@ -76,7 +73,7 @@
 
 \lstdefinestyle{codestyle}{
     backgroundcolor=\color{codebackground},
-    basicstyle=\footnotesize\ttfamily,
+    basicstyle=\linespread{1}\footnotesize\ttfamily,
     breakatwhitespace=false,
     breaklines=true,
     captionpos=b,
@@ -90,6 +87,11 @@
     showstringspaces=false,
     showtabs=false,
     stringstyle=\color{codepurple},
-    tabsize=2
+    tabsize=2,
 }
 \lstset{style=codestyle}
+
+% Captions
+\usepackage{caption}
+
+\captionsetup{justification=centering}
