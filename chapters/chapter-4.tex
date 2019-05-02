@@ -205,13 +205,13 @@ Berikut ditunjukkan hasil pengujian antara TensorFlow asli dan teroptimisasi dal
 
 Pada pengujian pertama, digunakan parameter-parameter sebagai berikut.
 
-\begin{itemize}
+\begin{enumerate}
   \item Ukuran \en{batch}: 3000
   \item Jumlah \en{hidden layer}: 8
   \item Ukuran \en{hidden layer}: 512
   \item Jumlah \en{unrolling}: 50
   \item Jumlah \en{epoch}: 1000
-\end{itemize}
+\end{enumerate}
 
 Tabel~\ref{table:First} menunjukkan durasi \en{training} (dalam satuan detik) kedua perlakuan pada masing-masing 10 kali percobaan. Dari hasil pengujian tersebut, terlihat bahwa versi teroptimisasi berhasil mengurangi durasi \en{training} sekitar 3.1\%. Menurut uji statistik \en{t-test}, didapatkan \en{p-value} bernilai 8.7645e-15, sehingga secara statistik dapat dinyatakan bahwa kedua perlakuan berbeda secara signifikan.
 
@@ -241,13 +241,13 @@ Tabel~\ref{table:First} menunjukkan durasi \en{training} (dalam satuan detik) ke
 
 Pada pengujian kedua, digunakan parameter-parameter yang sama dengan pengujian sebelumnya, tetapi dengan jumlah \en{epoch} digandakan.
 
-\begin{itemize}
+\begin{enumerate}
   \item Ukuran \en{batch}: 3000
   \item Jumlah \en{hidden layer}: 8
   \item Ukuran \en{hidden layer}: 512
   \item Jumlah \en{unrolling}: 50
   \item Jumlah \en{epoch}: 2000
-\end{itemize}
+\end{enumerate}
 
 Tabel~\ref{table:Second} menunjukkan durasi \en{training} (dalam satuan detik) kedua perlakuan pada masing-masing 10 kali percobaan. Dari hasil pengujian tersebut, terlihat bahwa versi teroptimisasi berhasil mengurangi durasi \en{training} sekitar 3.4\%. Menurut uji statistik \en{t-test}, didapatkan \en{p-value} bernilai 3.3438e-16, sehingga secara statistik dapat dinyatakan bahwa kedua perlakuan berbeda secara signifikan.
 
