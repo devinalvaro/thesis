@@ -12,11 +12,11 @@ Masalah tambahan mengenai persoalan OOM adalah kecilnya memori GPU, relatif terh
 
 Salah satu penanganan masalah ini adalah \en{memory swapping}, yaitu metode pengurangan beban memori dengan memindahkan isi memori secara temporer ke \en{memory pool} yang lebih besar. Pada kasus pelatihan model \en{deep learning} dengan GPU, sebagian isi memori GPU dapat dipindahkan ke memori CPU secara sementara, kemudian dipindahkan kembali ke GPU ketika dibutuhkan.
 
-Akan tetapi, \en{memory swapping} cenderung meningkatkan durasi pelatihan karena adanya \en{memory transfer overhead}, yaitu waktu yang dibutuhkan untuk memindahkan isi memori antara CPU dan GPU. Maka, \en{memory swapping} yang optimal perlu selektif dalam memilih isi memori mana yang di-\en{swap} agar pelatihan model dapat berjalan tanpa OOM tanpa menambah durasi pelatihan secara terlalu besar \citep{meng2017training}.
+Akan tetapi, \en{memory swapping} cenderung meningkatkan durasi pelatihan karena adanya \en{memory transfer overhead}, yaitu waktu yang dibutuhkan untuk memindahkan isi memori antara CPU dan GPU. Maka, \en{memory swapping} yang optimal perlu selektif dalam memilih isi memori mana yang di-\en{swap} agar pelatihan model dapat berjalan tanpa OOM, namun tanpa menambah durasi pelatihan secara terlalu besar \citep{meng2017training}.
 
 TensorFlow, sebuah \en{framework} pembelajaran mesin, memiliki fitur \en{memory swapping}. Namun, terdapat potensi bahwa \en{memory swapping} di TensorFlow masih dapat dioptimisasi, seperti yang dijelaskan di Bagian~\ref{optimizationpotential}. Secara singkat, optimisasi ini terletak pada pemilihan data mana yang di-\en{swap}, sehingga pada akhirnya mengurangi penambahan durasi pelatihan akibat \en{memory swapping}.
 
-Melihat potensi optimisasi tersebut, fokus tugas akhir ini adalah meneliti dan mengoptimisasi \en{memory swapping} di TensorFlow sehingga lebih optimal dari yang sudah ada dari segi durasi pelatihan.
+Melihat potensi optimisasi tersebut, fokus tugas akhir ini adalah meneliti dan mengoptimisasi \en{memory swapping} di TensorFlow sehingga lebih optimal dari yang sudah ada dari durasi pelatihan.
 
 \section{Rumusan Masalah}
 
@@ -36,8 +36,8 @@ Sebelumnya telah disebutkan bahwa salah satu metode optimisasi memori adalah \en
 Rumusan masalah pada tugas akhir ini adalah sebagai berikut.
 
 \begin{enumerate}
-    \item Bagaimana mengembangkan \en{memory swapping} pada TensorFlow yang lebih optimal dari yang sudah ada, dilihat dari durasi pelatihan?
-    \item Bagaimana kinerja \en{memory swapping} yang dikembangkan dibandingkan dengan \en{memory swapping} yang sudah ada di TensorFlow?
+    \item Bagaimana mengoptimisasi \en{memory swapping} di TensorFlow agar lebih optimal dilihat dari durasi pelatihan?
+    \item Bagaimana kinerja \en{memory swapping} di TensorFlow yang telah dioptimisasi dibandingkan dengan yang sebelumnya?
 \end{enumerate}
 
 \section{Tujuan}

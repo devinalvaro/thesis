@@ -12,7 +12,7 @@ Salah satu penanganan masalah tersebut adalah \en{memory swapping}, yaitu metode
 
 Namun, \en{memory swapping} memiliki \en{trade-off} tersendiri. Seperti pemindahan data apapun, memindahkan data dari GPU ke CPU (dan sebaliknya) juga membutuhkan waktu tersendiri, berbanding lurus dengan jumlah dan ukuran data yang dipindahkan. Akibatnya, \en{memory swapping} menambah durasi pelatihan yang bertambahnya semakin besar seiring  bertambahnya data yang di-\en{swap}. Maka, \en{memory swapping} yang optimal perlu selektif dalam memilih data mana yang di-\en{swap} agar pelatihan model dapat berjalan tanpa OOM, juga tanpa menambah durasi pelatihan secara terlalu besar.
 
-Salah satu \en{framework} pembelajaran mesin, TensorFlow, memiliki fitur \en{memory swapping}. Namun, terdapat potensi bahwa \en{memory swapping} di TensorFlow masih kurang optimal, seperti yang dijelaskan secara lebih detail di Bagian~\ref{optimizationpotential}
+Salah satu \en{framework} pembelajaran mesin, TensorFlow, memiliki fitur \en{memory swapping}. Namun, terdapat potensi bahwa \en{memory swapping} di TensorFlow masih kurang optimal, seperti yang dijelaskan secara lebih detail di Bagian~\ref{optimizationpotential}.
 
 Melihat potensi optimisasi tersebut, fokus tugas akhir ini adalah meneliti dan mengembangkan \en{memory swapping} di TensorFlow sehingga lebih optimal dari yang sudah ada, agar mengurangi durasi pelatihan dibandingkan dengan \en{memory swapping} bawaan TensorFlow.
 
@@ -150,7 +150,7 @@ Pada Bagian~\ref{swappingmechanism} dijelaskan bahwa setelah melewati heuristik 
 
 Kode~\ref{lst:SwapOutPseudocodeOptimized} berikut menggambarkan alur \en{swapping out} menurut implementasi tersebut, beserta Kode~\ref{lst:SwapOutPseudocode} yang menggambarkan alur \en{swapping out} bawaan TensorFlow untuk perbandingan.
 
-Perlu diperhatikan bahwa \code{swap\_out} (dan \code{swap\_in}) adalah \en{asynchronous function} yang argumen ke-2-nya adalah \en{callback function}. \en{Callback function} di kedua fungsi tersebut dinotasikan seperti berikut: \code{(args) => \{ ... \}}.
+Perlu diperhatikan bahwa \code{swap\_out} (dan \code{swap\_in}) adalah \en{asynchronous function} yang argumen ke-2-nya adalah sebuah \en{callback function}. \en{Callback function} di kedua fungsi tersebut dinotasikan seperti berikut: \code{(args) => \{ ... \}}.
 
 \begin{lstlisting}[language=C++, caption=Pseudocode \en{Swapping Out} Bawaan, label={lst:SwapOutPseudocode}]
 if (gpu_memory_almost_full) {

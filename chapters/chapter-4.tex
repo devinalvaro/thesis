@@ -4,7 +4,7 @@
 
 Pada bagian ini dijelaskan mengenai implementasi optimisasi \en{memory swapping} di TensorFlow menurut \nameref{solutiondesign}. Implementasi yang dilakukan berupa modifikasi terhadap \en{source code} TensorFlow, terutama di \en{file} \code{tensorflow/core/\\kernels/stack.cc}.
 
-Secara garis besar, implementasi dapat dibagi menjadi 2 bagian, yaitu modifikasi \code{swapping out} menurut Kode~\ref{lst:SwapOutPseudocodeOptimized} dan \en{swapping in} menurut Kode~\ref{lst:SwapInPseudocodeOptimized}.
+Secara garis besar, implementasi dapat dibagi menjadi 2 bagian, yaitu modifikasi \en{swapping out} menurut Kode~\ref{lst:SwapOutPseudocodeOptimized} dan \en{swapping in} menurut Kode~\ref{lst:SwapInPseudocodeOptimized}.
 
 \subsection{Modifikasi \en{Swapping Out}}
 
@@ -157,7 +157,6 @@ void StackPopOp::ComputeAsync(OpKernelContext* ctx, DoneCallback done) {
           swapped_tensor->swapped_to_cpu = false;
         }
         delete device_tensor;
-        stack->FinishSwappingIn(index);
       });
 }
 \end{lstlisting}
