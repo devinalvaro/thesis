@@ -174,22 +174,22 @@ Pada bagian ini dijelaskan mengenai pengujian terhadap optimisasi \en{memory swa
 
 \section{Lingkungan Pengujian}
 
-Tabel~\ref{table:Specification} berikut memaparkan spesifikasi lingkungan yang digunakan penulis dalam melakukan pengujian.
+Tabel~\ref{table:Specification} memaparkan spesifikasi lingkungan yang digunakan penulis dalam melakukan pengujian.
 
-\begin{longtable}{|l|l|}
-\hline
-\multicolumn{1}{|c|}{\textbf{Parameter}} & \multicolumn{1}{c|}{\textbf{Spesifikasi}}                                                                      \\ \hline
-\endfirsthead
-%
-\endhead
-%
-\textit{Operating System}                & Ubuntu 18.04 64-bit                                                                                            \\ \hline
-\textit{Processor}                       & Intel Xeon CPU @ 2.20GHz                                                                                       \\ \hline
-\textit{Memory}                          & 12 GB                                                                                                          \\ \hline
-\textit{GPU}                             & \begin{tabular}[c]{@{}l@{}}NVIDIA Tesla P4\\ \en{Memory}: 8 GB\\ \en{Driver}: 418.56\\ CUDA: 10.0\end{tabular} \\ \hline
+{\renewcommand{\arraystretch}{0.75}
+\begin{table}[]
+\centering
 \caption{Spesifikasi Lingkungan Pengujian}
-\label{table:Specification}\\
-\end{longtable}
+\label{table:Specification}
+\begin{tabular}{|l|l|}
+\hline
+\multicolumn{1}{|c|}{\textbf{Original}} & \multicolumn{1}{c|}{\textbf{Optimized}} \\ \hline
+\en{Operating System}                   & Ubuntu 18.04 64-bit                                                                                            \\ \hline
+\en{Processor}                          & Intel Xeon CPU @ 2.20GHz                                                                                       \\ \hline
+\en{Memory}                             & 12 GB                                                                                                          \\ \hline
+\en{GPU}                                & \begin{tabular}[c]{@{}l@{}}NVIDIA Tesla P4\\ \en{Memory}: 8 GB\\ \en{Driver}: 418.56\\ CUDA: 10.0\end{tabular} \\ \hline
+\end{tabular}
+\end{table}}
 
 \subsection{Metode Pengujian}
 
@@ -215,27 +215,27 @@ Pada pengujian pertama, digunakan parameter-parameter sebagai berikut.
 
 Tabel~\ref{table:First} menunjukkan durasi \en{training} (dalam satuan detik) kedua perlakuan pada masing-masing 10 kali percobaan. Dari hasil pengujian tersebut, terlihat bahwa versi teroptimisasi berhasil mengurangi durasi \en{training} sekitar 3.1\%. Menurut uji statistik \en{t-test}, didapatkan \en{p-value} bernilai 8.7645e-15, sehingga secara statistik dapat dinyatakan bahwa kedua perlakuan berbeda secara signifikan.
 
-\begin{longtable}{cll}
-\hline
-\multicolumn{1}{|c|}{\textbf{i}} & \multicolumn{1}{c|}{\textbf{Original}}  & \multicolumn{1}{c|}{\textbf{Optimized}} \\ \hline
-\endfirsthead
-%
-\endhead
-%
-\multicolumn{1}{|c|}{1}          & \multicolumn{1}{l|}{1710.8475177288055} & \multicolumn{1}{l|}{1659.8958191871643} \\ \hline
-\multicolumn{1}{|c|}{2}          & \multicolumn{1}{l|}{1708.529179573059}  & \multicolumn{1}{l|}{1657.4155213832855} \\ \hline
-\multicolumn{1}{|c|}{3}          & \multicolumn{1}{l|}{1718.1575810909271} & \multicolumn{1}{l|}{1657.545005083084}  \\ \hline
-\multicolumn{1}{|c|}{4}          & \multicolumn{1}{l|}{1711.9896774291992} & \multicolumn{1}{l|}{1664.026943206787}  \\ \hline
-\multicolumn{1}{|c|}{5}          & \multicolumn{1}{l|}{1716.2954456806183} & \multicolumn{1}{l|}{1660.8334894180298} \\ \hline
-\multicolumn{1}{|c|}{6}          & \multicolumn{1}{l|}{1710.3181750774384} & \multicolumn{1}{l|}{1650.7439186573029} \\ \hline
-\multicolumn{1}{|c|}{7}          & \multicolumn{1}{l|}{1710.8965182304382} & \multicolumn{1}{l|}{1659.6190533638}    \\ \hline
-\multicolumn{1}{|c|}{8}          & \multicolumn{1}{l|}{1722.2678709030151} & \multicolumn{1}{l|}{1670.1134555339813} \\ \hline
-\multicolumn{1}{|c|}{9}          & \multicolumn{1}{l|}{1714.1357491016388} & \multicolumn{1}{l|}{1656.9861009120941} \\ \hline
-\multicolumn{1}{|c|}{10}         & \multicolumn{1}{l|}{}                   & \multicolumn{1}{l|}{1659.0270841121674} \\ \hline
-\textbf{Mean}                    & 1713.7153                               & 1659.62064                              \\
+\begin{table}[]
+\centering
 \caption{Hasil pengujian kasus pertama}
-\label{table:First}\\
-\end{longtable}
+\label{table:First}
+\small
+\begin{tabular}{lll}
+\hline
+\multicolumn{1}{|l|}{i}  & \multicolumn{1}{c|}{\textbf{Original}}  & \multicolumn{1}{c|}{\textbf{Optimized}} \\ \hline
+\multicolumn{1}{|l|}{1}  & \multicolumn{1}{l|}{1710.8475177288055} & \multicolumn{1}{l|}{1659.8958191871643} \\ \hline
+\multicolumn{1}{|l|}{2}  & \multicolumn{1}{l|}{1708.529179573059}  & \multicolumn{1}{l|}{1657.4155213832855} \\ \hline
+\multicolumn{1}{|l|}{3}  & \multicolumn{1}{l|}{1718.1575810909271} & \multicolumn{1}{l|}{1657.545005083084}  \\ \hline
+\multicolumn{1}{|l|}{4}  & \multicolumn{1}{l|}{1711.9896774291992} & \multicolumn{1}{l|}{1664.026943206787}  \\ \hline
+\multicolumn{1}{|l|}{5}  & \multicolumn{1}{l|}{1716.2954456806183} & \multicolumn{1}{l|}{1660.8334894180298} \\ \hline
+\multicolumn{1}{|l|}{6}  & \multicolumn{1}{l|}{1710.3181750774384} & \multicolumn{1}{l|}{1650.7439186573029} \\ \hline
+\multicolumn{1}{|l|}{7}  & \multicolumn{1}{l|}{1710.8965182304382} & \multicolumn{1}{l|}{1659.6190533638}    \\ \hline
+\multicolumn{1}{|l|}{8}  & \multicolumn{1}{l|}{1722.2678709030151} & \multicolumn{1}{l|}{1670.1134555339813} \\ \hline
+\multicolumn{1}{|l|}{9}  & \multicolumn{1}{l|}{1714.1357491016388} & \multicolumn{1}{l|}{1656.9861009120941} \\ \hline
+\multicolumn{1}{|l|}{10} & \multicolumn{1}{l|}{}                   & \multicolumn{1}{l|}{1659.0270841121674} \\ \hline
+\textbf{Mean}            & 1713.7153                               & 1659.62064
+\end{tabular}
+\end{table}
 
 \subsubsection{Kasus Kedua}
 
@@ -251,24 +251,24 @@ Pada pengujian kedua, digunakan parameter-parameter yang sama dengan pengujian s
 
 Tabel~\ref{table:Second} menunjukkan durasi \en{training} (dalam satuan detik) kedua perlakuan pada masing-masing 10 kali percobaan. Dari hasil pengujian tersebut, terlihat bahwa versi teroptimisasi berhasil mengurangi durasi \en{training} sekitar 3.4\%. Menurut uji statistik \en{t-test}, didapatkan \en{p-value} bernilai 3.3438e-16, sehingga secara statistik dapat dinyatakan bahwa kedua perlakuan berbeda secara signifikan.
 
-\begin{longtable}{cll}
-\hline
-\multicolumn{1}{|c|}{\textbf{i}} & \multicolumn{1}{c|}{\textbf{Original}}  & \multicolumn{1}{c|}{\textbf{Optimized}} \\ \hline
-\endfirsthead
-%
-\endhead
-%
-\multicolumn{1}{|c|}{1}          & \multicolumn{1}{l|}{3419.5844151973724} & \multicolumn{1}{l|}{3310.971428632736}  \\ \hline
-\multicolumn{1}{|c|}{2}          & \multicolumn{1}{l|}{3432.882806301117}  & \multicolumn{1}{l|}{3315.9460911750793} \\ \hline
-\multicolumn{1}{|c|}{3}          & \multicolumn{1}{l|}{3413.0236432552338} & \multicolumn{1}{l|}{3304.504233598709}  \\ \hline
-\multicolumn{1}{|c|}{4}          & \multicolumn{1}{l|}{3421.1436865329742} & \multicolumn{1}{l|}{3314.9957132339478} \\ \hline
-\multicolumn{1}{|c|}{5}          & \multicolumn{1}{l|}{3402.4240250587463} & \multicolumn{1}{l|}{3328.4635627269745} \\ \hline
-\multicolumn{1}{|c|}{6}          & \multicolumn{1}{l|}{3415.1220932006836} & \multicolumn{1}{l|}{3312.9601073265076} \\ \hline
-\multicolumn{1}{|c|}{7}          & \multicolumn{1}{l|}{3414.628209590912}  & \multicolumn{1}{l|}{3313.3753986358643} \\ \hline
-\multicolumn{1}{|c|}{8}          & \multicolumn{1}{l|}{3411.1480510234833} & \multicolumn{1}{l|}{3307.7781500816345} \\ \hline
-\multicolumn{1}{|c|}{9}          & \multicolumn{1}{l|}{3414.513864994049}  & \multicolumn{1}{l|}{3327.114767551422}  \\ \hline
-\multicolumn{1}{|c|}{10}         & \multicolumn{1}{l|}{3422.7600326538086} & \multicolumn{1}{l|}{3325.095719099045}  \\ \hline
-\textbf{Mean}                    & 3416.72308                              & 3316.12052                              \\
+\begin{table}[]
+\centering
 \caption{Hasil pengujian kasus kedua}
-\label{table:Second}\\
-\end{longtable}
+\label{table:Second}
+\small
+\begin{tabular}{cll}
+\hline
+\multicolumn{1}{|c|}{i}           & \multicolumn{1}{c|}{\textbf{Original}}  & \multicolumn{1}{c|}{\textbf{Optimized}} \\ \hline
+\multicolumn{1}{|c|}{1}           & \multicolumn{1}{l|}{3419.5844151973724} & \multicolumn{1}{l|}{3310.971428632736}  \\ \hline
+\multicolumn{1}{|c|}{2}           & \multicolumn{1}{l|}{3432.882806301117}  & \multicolumn{1}{l|}{3315.9460911750793} \\ \hline
+\multicolumn{1}{|c|}{3}           & \multicolumn{1}{l|}{3413.0236432552338} & \multicolumn{1}{l|}{3304.504233598709}  \\ \hline
+\multicolumn{1}{|c|}{4}           & \multicolumn{1}{l|}{3421.1436865329742} & \multicolumn{1}{l|}{3314.9957132339478} \\ \hline
+\multicolumn{1}{|c|}{5}           & \multicolumn{1}{l|}{3402.4240250587463} & \multicolumn{1}{l|}{3328.4635627269745} \\ \hline
+\multicolumn{1}{|c|}{6}           & \multicolumn{1}{l|}{3415.1220932006836} & \multicolumn{1}{l|}{3312.9601073265076} \\ \hline
+\multicolumn{1}{|c|}{7}           & \multicolumn{1}{l|}{3414.628209590912}  & \multicolumn{1}{l|}{3313.3753986358643} \\ \hline
+\multicolumn{1}{|c|}{8}           & \multicolumn{1}{l|}{3411.1480510234833} & \multicolumn{1}{l|}{3307.7781500816345} \\ \hline
+\multicolumn{1}{|c|}{9}           & \multicolumn{1}{l|}{3414.513864994049}  & \multicolumn{1}{l|}{3327.114767551422}  \\ \hline
+\multicolumn{1}{|c|}{10}          & \multicolumn{1}{l|}{3422.7600326538086} & \multicolumn{1}{l|}{3325.095719099045}  \\ \hline
+\multicolumn{1}{l}{\textbf{Mean}} & 3416.72308                              & 3316.12052
+\end{tabular}
+\end{table}
