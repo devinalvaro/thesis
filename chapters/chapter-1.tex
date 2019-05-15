@@ -1,10 +1,6 @@
 \chapter{Pendahuluan}
 
-% Bab Pendahuluan secara umum yang dijadikan landasan kerja dan arah kerja penulis tugas akhir, berfungsi mengantar pembaca untuk membaca laporan tugas akhir secara keseluruhan.
-
 \section{Latar Belakang} \label{Background}
-
-% Latar Belakang berisi dasar pemikiran, kebutuhan atau alasan yang menjadi ide dari topik tugas akhir. Tujuan utamanya adalah untuk memberikan informasi secukupnya kepada pembaca agar memahami topik yang akan dibahas.  Saat menuliskan bagian ini, posisikan anda sebagai pembaca --- apakah anda tertarik untuk terus membaca?
 
 Pelatihan model \en{deep learning} membutuhkan memori untuk menyimpan berbagai nilai, seperti bobot, bias, hasil fungsi aktivasi, maupun data yang sedang diproses. Mengenai hal tersebut dijelaskan secara lebih detail di Bagian~\ref{MemoryUsage}. Kekurangan memori dapat mengakibatkan kegagalan pelatihan model, karena eror \en{out of memory} (OOM).
 
@@ -20,17 +16,6 @@ Melihat potensi optimisasi tersebut, fokus tugas akhir ini adalah meneliti dan m
 
 \section{Rumusan Masalah}
 
-% Rumusan Masalah, berisi masalah utama yang dibahas dalam tugas akhir. Rumusan masalah yang baik memiliki struktur sebagai berikut:
-
-% \begin{enumerate}
-%     \item Penjelasan ringkas tentang kondisi/situasi yang ada sekarang terkait dengan topik utama yang dibahas Tugas Akhir.
-%     \item Pokok persoalan dari kondisi/situasi yang ada, dapat dilihat dari kelemahan atau kekurangannya. \textbf{Bagian ini merupakan inti dari rumusan masalah.}
-%     \item Elaborasi lebih lanjut yang menekankan pentingnya untuk menyelesaikan pokok persoalan tersebut.
-%     \item Usulan singkat terkait dengan solusi yang ditawarkan untuk menyelesaikan persoalan.
-% \end{enumerate}
-
-% Penting untuk diperhatikan bahwa persoalan yang dideskripsikan pada subbab ini akan dipertanggungjawabkan di akhir pelaksanaan tugas akhir apakah terselesaikan atau tidak.
-
 Sebelumnya telah disebutkan bahwa salah satu metode optimisasi memori adalah \en{memory swapping}, yaitu mengurangi beban memori GPU dengan memindahkan isi memori ke CPU secara temporer, seperti yang tersedia pada TensorFlow. Berdasarkan hasil studi literatur dan analisis mekanisme \en{memory swapping} di TensorFlow, terdapat potensi bahwa mekanisme tersebut masih kurang optimal, seperti yang dijelaskan pada Bagian~\ref{OptimizationPotential}. Secara singkat, solusi yang diajukan untuk mengoptimisasi \en{memory swapping} di TensorFlow adalah dengan memprioritaskan \en{swapping} pada \en{tensor} yang interval hingga digunakannya kembali terlama, sehingga meningkatkan \en{overlapping} antara komputasi dengan \en{memory swapping}.
 
 Rumusan masalah pada tugas akhir ini adalah sebagai berikut.
@@ -42,13 +27,9 @@ Rumusan masalah pada tugas akhir ini adalah sebagai berikut.
 
 \section{Tujuan}
 
-% Tuliskan tujuan utama dan/atau tujuan detil yang akan dicapai dalam pelaksanaan tugas akhir. Fokuskan pada hasil akhir yang ingin diperoleh setelah tugas akhir diselesaikan, terkait dengan penyelesaian persoalan pada rumusan masalah. Penting untuk diperhatikan bahwa tujuan yang dideskripsikan pada subbab ini akan dipertanggungjawabkan di akhir pelaksanaan tugas akhir apakah tercapai atau tidak.
-
 Tujuan tugas akhir ini adalah mengoptimisasi \en{memory swapping} di TensorFlow dengan metode yang dijelaskan pada \nameref{SolutionDesign}. Untuk pengujian digunakan model RNN yang dipilih karena alasan-alasan yang dijelaskan di Bagian~\ref{WhyRNN}. Harapan tercapainya tujuan tersebut adalah mengurangi durasi pelatihan dibandingkan dengan menggunakan \en{memory swapping} bawaan TensorFlow.
 
 \section{Batasan Masalah}
-
-% Tuliskan batasan-batasan yang diambil dalam pelaksanaan tugas akhir. Batasan ini dapat dihindari (tidak perlu ada) jika topik/judul tugas akhir dibuat cukup spesifik.
 
 Tugas akhir ini memiliki batasan-batasan masalah seperti berikut.
 
@@ -59,65 +40,18 @@ Tugas akhir ini memiliki batasan-batasan masalah seperti berikut.
 
 \section{Metodologi}
 
-% Tuliskan semua tahapan yang akan dilalui selama pelaksanaan tugas akhir. Tahapan ini spesifik untuk menyelesaikan persoalan tugas akhir. Tahapan studi literatur tidak perlu dituliskan karena ini adalah pekerjaan yang harus Anda lakukan selama proses pelaksanaan tugas akhir.
-
 Tahapan pengerjaan tugas akhir ini dimulai dengan melakukan analisis dan merumuskan permasalahan yang akan dipecahkan. Selanjutnya, melakukan pencarian terhadap solusi yang tepat untuk memecahkan permasalahan tersebut, salah satunya dengan melakukan studi literatur. Setelah memutuskan solusi yang tepat, melakukan perancangan solusi serta implementasi yang akan digunakan untuk melakukan eksperimen. Langkah selanjutnya adalah mengimplementasi solusi dan melakukan eksperimen sesuai rancangan yang dibuat sebelumnya. Setelahnya, menganalisis dan mengevaluasi hasil eksperimen hingga akhirnya menarik kesimpulan terhadap rumusan permasalahan dan solusi yang diajukan.
 
-\section{Jadwal Pelaksanaan Tugas Akhir}
+\section{Sistematika Pembahasan}
 
-% Tuliskan rencana kegiatan dan jadwal (dirinci sampai per minggu) mulai dari awal pelaksanaan Tugas Akhir I s.d.\ sidang tugas akhir berikut \en{milestones} dan \en{deliverables} yang harus diberikan. Jadwal ini dapat dibantu dengan membuat sebuah tabel \en{timeline.}
+Tugas akhir ini dibagi menjadi 5 bab, yaitu Pendahuluan, Studi Literatur, Analisis Permasalahan dan Rancangan Solusi, Implementasi dan Pengujian, dan Kesimpulan dan Saran.
 
-Tabel~\ref{tbl:Schedule} menunjukkan jadwal rencana kegiatan pelaksanaan tugas akhir ini untuk setiap minggunya.
+Bab I Pendahuluan mengantarkan pembaca kepada topik tugas akhir dengan Latar Belakang, Rumusan Masalah, Tujuan, Batasan Masalah, dan Sistematika Pembahasan agar pembaca mendapatkan gambaran secara garis besar.
 
-\newpage
+Bab II Studi Literatur berisi rangkuman literatur-literatur mengenai topik-topik yang terkait dengan tugas akhir, seperti \en{deep learning}, TensorFlow, GPU, dan lain-lain.
 
-{\renewcommand{\arraystretch}{0.75}
-\begin{table}[]
-\centering
-\caption{Jadwal Pelaksanaan Tugas Akhir}
-\label{tbl:Schedule}
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{|c|c|c|c|}
-\hline
-\textbf{Tahun}         & \textbf{Bulan}             & \textbf{Minggu} & \textbf{Rencana Kegiatan}                                   \\ \hline
-\multirow{15}{*}{2018} & \multirow{3}{*}{September} & 2               & \multirow{6}{*}{Studi Literatur}                            \\ \cline{3-3}
-                       &                            & 3               &                                                             \\ \cline{3-3}
-                       &                            & 4               &                                                             \\ \cline{2-3}
-                       & \multirow{4}{*}{Oktober}   & 1               &                                                             \\ \cline{3-3}
-                       &                            & 2               &                                                             \\ \cline{3-3}
-                       &                            & 3               &                                                             \\ \cline{3-4}
-                       &                            & 4               & \multirow{3}{*}{Pendahuluan}                                \\ \cline{2-3}
-                       & \multirow{4}{*}{November}  & 1               &                                                             \\ \cline{3-3}
-                       &                            & 2               &                                                             \\ \cline{3-4}
-                       &                            & 3               & \multirow{5}{*}{Analisis Permasalahan dan Rancangan Solusi} \\ \cline{3-3}
-                       &                            & 4               &                                                             \\ \cline{2-3}
-                       & \multirow{4}{*}{Desember}  & 1               &                                                             \\ \cline{3-3}
-                       &                            & 2               &                                                             \\ \cline{3-3}
-                       &                            & 3               &                                                             \\ \cline{3-4}
-                       &                            & 4               & \multirow{2}{*}{Libur}                                      \\ \cline{1-3}
-\multirow{23}{*}{2019} & \multirow{4}{*}{Januari}   & 1               &                                                             \\ \cline{3-4}
-                       &                            & 2               & \multirow{2}{*}{Seminar TA I}                               \\ \cline{3-3}
-                       &                            & 3               &                                                             \\ \cline{3-4}
-                       &                            & 4               & \multirow{12}{*}{Implementasi}                              \\ \cline{2-3}
-                       & \multirow{4}{*}{Februari}  & 1               &                                                             \\ \cline{3-3}
-                       &                            & 2               &                                                             \\ \cline{3-3}
-                       &                            & 3               &                                                             \\ \cline{3-3}
-                       &                            & 4               &                                                             \\ \cline{2-3}
-                       & \multirow{4}{*}{Maret}     & 1               &                                                             \\ \cline{3-3}
-                       &                            & 2               &                                                             \\ \cline{3-3}
-                       &                            & 3               &                                                             \\ \cline{3-3}
-                       &                            & 4               &                                                             \\ \cline{2-3}
-                       & \multirow{4}{*}{April}     & 1               &                                                             \\ \cline{3-3}
-                       &                            & 2               &                                                             \\ \cline{3-3}
-                       &                            & 3               &                                                             \\ \cline{3-4}
-                       &                            & 4               & \multirow{2}{*}{Pengujian}                                  \\ \cline{2-3}
-                       & \multirow{4}{*}{Mei}       & 1               &                                                             \\ \cline{3-4}
-                       &                            & 2               & \multirow{2}{*}{Seminar TA II}                              \\ \cline{3-3}
-                       &                            & 3               &                                                             \\ \cline{3-4}
-                       &                            & 4               & \multirow{2}{*}{Pengujian}                                  \\ \cline{2-3}
-                       & \multirow{3}{*}{Juni}      & 1               &                                                             \\ \cline{3-4}
-                       &                            & 2               & \multirow{2}{*}{Sidang TA}                                  \\ \cline{3-3}
-                       &                            & 3               &                                                             \\ \hline
-\end{tabular}%
-}
-\end{table}}
+Bab III Analisis Permasalahan dan Rancangan Solusi merupakan hasil analisis terhadap permasalahan yang dihadapi pada tugas akhir ini dan rancangan dari solusi yang menyelesaikan permasalahan tersebut.
+
+Bab IV Implementasi dan Pengujian menjelaskan implementasi dari solusi yang telah dirancang serta memaparkan hasil pengujian implementasi tersebut.
+
+Bab V Kesimpulan dan Saran menyimpulkan dan memberikan saran pengembangan lebih lanjut tugas akhir ini.
