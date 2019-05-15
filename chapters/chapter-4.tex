@@ -1,8 +1,8 @@
-\chapter{Implementasi dan Pengujian} \label{implementationevaluation}
+\chapter{Implementasi dan Pengujian} \label{ImplementationEvaluation}
 
 \section{Implementasi}
 
-Pada bagian ini dijelaskan mengenai implementasi optimisasi \en{memory swapping} di TensorFlow menurut \nameref{solutiondesign}. Implementasi yang dilakukan berupa modifikasi terhadap \en{source code} TensorFlow, terutama di \en{file} \code{tensorflow/core/\\kernels/stack.cc}.
+Pada bagian ini dijelaskan mengenai implementasi optimisasi \en{memory swapping} di TensorFlow menurut \nameref{SolutionDesign}. Implementasi yang dilakukan berupa modifikasi terhadap \en{source code} TensorFlow, terutama di \en{file} \code{tensorflow/core/\\kernels/stack.cc}.
 
 Secara garis besar, implementasi dapat dibagi menjadi 2 bagian, yaitu modifikasi \en{swapping out} menurut Kode~\ref{lst:SwapOutPseudocodeOptimized} dan \en{swapping in} menurut Kode~\ref{lst:SwapInPseudocodeOptimized}.
 
@@ -88,7 +88,7 @@ void StackPushOp::ComputeAsync(OpKernelContext* ctx, DoneCallback done) {
 }
 \end{lstlisting}
 
-Pada bagian terakhir Kode~\ref{lst:StackPushOp} di atas terlihat proses \en{swapping out} yang dilakukan terhadap \en{oldest tensor}. \en{Swapping out} dilakukan secara \en{asynchronous} yang setelah selesai dijalankan memanggil sebuah \en{callback function}. \en{Callback} ini mengubah elemen \en{oldest tensor} di \en{stack}, dari \code{tensor} yang merujuk ke \code{device\_tensor} menjadi \code{cpu\_tensor} dan \code{swapped\_to\_cpu} menjadi \code{true} agar pada \en{swapping in} dapat diketahui bahwa \en{tensor} bersangkutan telah di-\en{swap}. (Lebih detail mengenai \code{tensor} dijelaskan pada Bagian~\ref{tensor}.)
+Pada bagian terakhir Kode~\ref{lst:StackPushOp} di atas terlihat proses \en{swapping out} yang dilakukan terhadap \en{oldest tensor}. \en{Swapping out} dilakukan secara \en{asynchronous} yang setelah selesai dijalankan memanggil sebuah \en{callback function}. \en{Callback} ini mengubah elemen \en{oldest tensor} di \en{stack}, dari \code{tensor} yang merujuk ke \code{device\_tensor} menjadi \code{cpu\_tensor} dan \code{swapped\_to\_cpu} menjadi \code{true} agar pada \en{swapping in} dapat diketahui bahwa \en{tensor} bersangkutan telah di-\en{swap}. (Lebih detail mengenai \code{tensor} dijelaskan pada Bagian~\ref{Tensor}.)
 
 Demikian implementasi pada bagian \en{swapping out}, di mana \en{oldest tensor} di-\en{swap out} agar pada \en{backpropagation} dapat di-\en{swap in} bersamaan dengan berjalannya komputasi, sehingga meningkatkan \en{asynchronicity}. Berikutnya adalah penjelasan mengenai implementasi pada bagian \en{swapping in}.
 
@@ -173,13 +173,13 @@ Pada bagian ini dijelaskan mengenai pengujian terhadap optimisasi \en{memory swa
 
 \section{Lingkungan Pengujian}
 
-Tabel~\ref{table:Specification} memaparkan spesifikasi lingkungan yang digunakan penulis dalam melakukan pengujian.
+Tabel~\ref{tbl:Specification} memaparkan spesifikasi lingkungan yang digunakan penulis dalam melakukan pengujian.
 
 {\renewcommand{\arraystretch}{0.75}
 \begin{table}[]
 \centering
 \caption{Spesifikasi Lingkungan Pengujian}
-\label{table:Specification}
+\label{tbl:Specification}
 \begin{tabular}{|l|l|}
 \hline
 \multicolumn{1}{|c|}{\textbf{Original}} & \multicolumn{1}{c|}{\textbf{Optimized}} \\ \hline
@@ -212,12 +212,12 @@ Pada pengujian pertama, digunakan parameter-parameter sebagai berikut. Pada peng
   \item Jumlah \en{epoch}: 200
 \end{enumerate}
 
-Tabel~\ref{table:First} menunjukkan durasi \en{training} (dalam satuan detik) kedua perlakuan pada masing-masing 10 kali percobaan. Dari hasil pengujian tersebut, terlihat bahwa versi teroptimisasi berhasil mengurangi durasi \en{training} sekitar 1.44\%. Menurut uji statistik \en{t-test}, didapatkan \en{p-value} bernilai 1.8493031002146812e-06, sehingga secara statistik dapat dinyatakan bahwa kedua perlakuan berbeda secara signifikan.
+Tabel~\ref{tbl:First} menunjukkan durasi \en{training} (dalam satuan detik) kedua perlakuan pada masing-masing 10 kali percobaan. Dari hasil pengujian tersebut, terlihat bahwa versi teroptimisasi berhasil mengurangi durasi \en{training} sekitar 1.44\%. Menurut uji statistik \en{t-test}, didapatkan \en{p-value} bernilai 1.8493031002146812e-06, sehingga secara statistik dapat dinyatakan bahwa kedua perlakuan berbeda secara signifikan.
 
 \begin{table}[]
 \centering
 \caption{Hasil pengujian kasus pertama}
-\label{table:First}
+\label{tbl:First}
 \small
 \begin{tabular}{cll}
 \hline
@@ -248,12 +248,12 @@ Pada pengujian kedua, digunakan parameter-parameter yang sama dengan sebelumnya 
   \item Jumlah \en{epoch}: 1000
 \end{enumerate}
 
-Tabel~\ref{table:Second} menunjukkan durasi \en{training} (dalam satuan detik) kedua perlakuan pada masing-masing 10 kali percobaan. Dari hasil pengujian tersebut, terlihat bahwa versi teroptimisasi berhasil mengurangi durasi \en{training} sekitar 1.58\%. Menurut uji statistik \en{t-test}, didapatkan \en{p-value} bernilai 9.21356126659428e-10, sehingga secara statistik dapat dinyatakan bahwa kedua perlakuan berbeda secara signifikan.
+Tabel~\ref{tbl:Second} menunjukkan durasi \en{training} (dalam satuan detik) kedua perlakuan pada masing-masing 10 kali percobaan. Dari hasil pengujian tersebut, terlihat bahwa versi teroptimisasi berhasil mengurangi durasi \en{training} sekitar 1.58\%. Menurut uji statistik \en{t-test}, didapatkan \en{p-value} bernilai 9.21356126659428e-10, sehingga secara statistik dapat dinyatakan bahwa kedua perlakuan berbeda secara signifikan.
 
 \begin{table}[]
 \centering
 \caption{Hasil pengujian kasus kedua}
-\label{table:Second}
+\label{tbl:Second}
 \small
 \begin{tabular}{cll}
 \hline
@@ -284,12 +284,12 @@ Pada pengujian ketiga, digunakan parameter-parameter sebagai berikut. Dipilih ju
   \item Jumlah \en{epoch}: 1000
 \end{enumerate}
 
-Tabel~\ref{table:Third} menunjukkan durasi \en{training} (dalam satuan detik) kedua perlakuan pada masing-masing 10 kali percobaan. Dari hasil pengujian tersebut, terlihat bahwa versi teroptimisasi berhasil mengurangi durasi \en{training} sekitar 3.1\%. Menurut uji statistik \en{t-test}, didapatkan \en{p-value} bernilai 1.1680156931633348e-15, sehingga secara statistik dapat dinyatakan bahwa kedua perlakuan berbeda secara signifikan.
+Tabel~\ref{tbl:Third} menunjukkan durasi \en{training} (dalam satuan detik) kedua perlakuan pada masing-masing 10 kali percobaan. Dari hasil pengujian tersebut, terlihat bahwa versi teroptimisasi berhasil mengurangi durasi \en{training} sekitar 3.1\%. Menurut uji statistik \en{t-test}, didapatkan \en{p-value} bernilai 1.1680156931633348e-15, sehingga secara statistik dapat dinyatakan bahwa kedua perlakuan berbeda secara signifikan.
 
 \begin{table}[]
 \centering
 \caption{Hasil pengujian kasus ketiga}
-\label{table:Third}
+\label{tbl:Third}
 \small
 \begin{tabular}{cll}
 \hline
@@ -320,12 +320,12 @@ Pada pengujian keempat, digunakan parameter-parameter yang sama dengan pengujian
   \item Jumlah \en{epoch}: 2000
 \end{enumerate}
 
-Tabel~\ref{table:Fourth} menunjukkan durasi \en{training} (dalam satuan detik) kedua perlakuan pada masing-masing 10 kali percobaan. Dari hasil pengujian tersebut, terlihat bahwa versi teroptimisasi berhasil mengurangi durasi \en{training} sekitar 3.4\%. Menurut uji statistik \en{t-test}, didapatkan \en{p-value} bernilai 3.3438e-16, sehingga secara statistik dapat dinyatakan bahwa kedua perlakuan berbeda secara signifikan.
+Tabel~\ref{tbl:Fourth} menunjukkan durasi \en{training} (dalam satuan detik) kedua perlakuan pada masing-masing 10 kali percobaan. Dari hasil pengujian tersebut, terlihat bahwa versi teroptimisasi berhasil mengurangi durasi \en{training} sekitar 3.4\%. Menurut uji statistik \en{t-test}, didapatkan \en{p-value} bernilai 3.3438e-16, sehingga secara statistik dapat dinyatakan bahwa kedua perlakuan berbeda secara signifikan.
 
 \begin{table}[]
 \centering
 \caption{Hasil pengujian kasus keempat}
-\label{table:Fourth}
+\label{tbl:Fourth}
 \small
 \begin{tabular}{cll}
 \hline
@@ -356,12 +356,12 @@ Pada pengujian ketiga, digunakan parameter-parameter sebagai berikut. Dipilih ju
   \item Jumlah \en{epoch}: 500
 \end{enumerate}
 
-Tabel~\ref{table:Fifth} menunjukkan durasi \en{training} (dalam satuan detik) kedua perlakuan pada masing-masing 10 kali percobaan. Dari hasil pengujian tersebut, terlihat bahwa versi teroptimisasi berhasil mengurangi durasi \en{training} sekitar 3.11\%. Menurut uji statistik \en{t-test}, didapatkan \en{p-value} bernilai 2.426062620387277e-18, sehingga secara statistik dapat dinyatakan bahwa kedua perlakuan berbeda secara signifikan.
+Tabel~\ref{tbl:Fifth} menunjukkan durasi \en{training} (dalam satuan detik) kedua perlakuan pada masing-masing 10 kali percobaan. Dari hasil pengujian tersebut, terlihat bahwa versi teroptimisasi berhasil mengurangi durasi \en{training} sekitar 3.11\%. Menurut uji statistik \en{t-test}, didapatkan \en{p-value} bernilai 2.426062620387277e-18, sehingga secara statistik dapat dinyatakan bahwa kedua perlakuan berbeda secara signifikan.
 
 \begin{table}[]
 \centering
 \caption{Hasil pengujian kasus kelima}
-\label{table:Fifth}
+\label{tbl:Fifth}
 \small
 \begin{tabular}{cll}
 \hline
@@ -392,12 +392,12 @@ Pada pengujian keenam, digunakan parameter-parameter yang sama dengan pengujian 
   \item Jumlah \en{epoch}: 1000
 \end{enumerate}
 
-Tabel~\ref{table:Sixth} menunjukkan durasi \en{training} (dalam satuan detik) kedua perlakuan pada masing-masing 10 kali percobaan. Dari hasil pengujian tersebut, terlihat bahwa versi teroptimisasi berhasil mengurangi durasi \en{training} sekitar 3.09\%. Menurut uji statistik \en{t-test}, didapatkan \en{p-value} bernilai 1.921296333185339e-18, sehingga secara statistik dapat dinyatakan bahwa kedua perlakuan berbeda secara signifikan.
+Tabel~\ref{tbl:Sixth} menunjukkan durasi \en{training} (dalam satuan detik) kedua perlakuan pada masing-masing 10 kali percobaan. Dari hasil pengujian tersebut, terlihat bahwa versi teroptimisasi berhasil mengurangi durasi \en{training} sekitar 3.09\%. Menurut uji statistik \en{t-test}, didapatkan \en{p-value} bernilai 1.921296333185339e-18, sehingga secara statistik dapat dinyatakan bahwa kedua perlakuan berbeda secara signifikan.
 
 \begin{table}[]
 \centering
 \caption{Hasil pengujian kasus keenam}
-\label{table:Sixth}
+\label{tbl:Sixth}
 \small
 \begin{tabular}{cll}
 \hline

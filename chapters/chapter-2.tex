@@ -19,13 +19,13 @@ Tujuan pelatihan \en{neural network} itu sendiri adalah mencari kombinasi bobot 
 
 Pada umumnya, pelatihan dilakukan dengan \en{gradient descent}, yaitu proses pencarian gradien yang optimal untuk setiap bobot dan bias dari model terhadap data yang ada. Gradien ini kemudian digunakan untuk meng-\en{update} bobot dan bias dari model. Pencarian gradien untuk parameter-parameter ini biasanya menggunakan teknik \en{backpropagation}. Pada bagian berikutnya akan dijelaskan secara singkat mengenai \en{backpropagation} berdasarkan \citep{guo2013backpropagation} dan \citep{michalski2013machine}.
 
-\subsection{\en{Backpropagation}} \label{backpropagation}
+\subsection{\en{Backpropagation}} \label{Backpropagation}
 
 Pada pelatihan \en{deep neural network}, pertama dilakukan \en{forward pass} dengan input, kemudian didapatkan \en{output}-nya. Dari \en{output} ini kemudian dihitung selisihnya dari target dengan \en{loss} atau \en{cost function}. Salah satu \en{cost function} yang umum dipakai adalah SSE (\en{summed squared error}) seperti berikut.
 
 \begin{equation}
     C = \frac{1}{2}\sum_{k}(t_{k} - o_{k})^{2}
-    \label{eq:loss}
+    \label{eq:Loss}
 \end{equation}
 
 di mana $C$ adalah nilai \en{cost function}, $t$ adalah nilai target, $o$ adalah nilai \en{output}, dan $k$ adalah indeks neuron pada \en{output layer}.
@@ -44,10 +44,10 @@ Dengan menjabarkan $\delta_{k}$ menggunakan \en{chain rule}, didapat persamaan b
 
 \begin{equation}
     \delta_{k} = \frac{\partial{C}}{\partial{net_{k}}} = \frac{\partial{C}}{\partial{o_{k}}} \frac{\partial{o_{k}}}{\partial{net_{k}}} = (t_{k} - o_{k}) a'(net_{k})
-    \label{eq:delta}
+    \label{eq:Delta}
 \end{equation}
 
-di mana $\frac{\partial{C}}{\partial{o_{k}}} = (t_{k} - o_{k})$ merupakan penurunan persamaan (\ref{eq:loss}) terhadap $o_{k}$. Selanjutnya, karena $o_{k} = a(net_{k})$, di mana $a$ adalah fungsi aktivasi neuron (misal tanh atau ReLU), maka $\frac{\partial{o_{k}}}{\partial{net_{k}}}$ adalah turunan $a$ terhadap $net_{k}$, yaitu $a'(net_{k})$ seperti ditunjukkan persamaan (\ref{eq:delta}) di atas.
+di mana $\frac{\partial{C}}{\partial{o_{k}}} = (t_{k} - o_{k})$ merupakan penurunan persamaan (\ref{eq:Loss}) terhadap $o_{k}$. Selanjutnya, karena $o_{k} = a(net_{k})$, di mana $a$ adalah fungsi aktivasi neuron (misal tanh atau ReLU), maka $\frac{\partial{o_{k}}}{\partial{net_{k}}}$ adalah turunan $a$ terhadap $net_{k}$, yaitu $a'(net_{k})$ seperti ditunjukkan persamaan (\ref{eq:Delta}) di atas.
 
 Demikian didapatkan \en{error} untuk parameter di \en{output layer}. Untuk \en{error} di \en{layer}-\en{layer} sebelumnya, dipropagasikan \en{error} dari \en{layer} sesudahnya dengan \en{chain rule} seperti berikut.
 
@@ -79,9 +79,9 @@ Pada RNN, terdapat istilah \en{sequence} dan \en{vector}. Apabila suatu \en{inpu
 
 \en{Layer} berjenis \en{sequence} seringkali nilai \en{timestep}-nya tergantung pada panjang \en{input/output}. Misalnya, pada model \en{sequence to sequence} untuk penerjemahan bahasa, nilai \en{timestep} dari \en{input layer} tergantung pada panjang kalimat yang akan diterjemahkan, begitu juga nilai \en{timestep} dari \en{output layer} tergantung pada panjang kalimat hasil terjemahan. Oleh karena itu, model RNN yang seperti demikian harus dapat secara dinamis mengadaptasikan topologinya sesuai panjang \en{input/output} yang sedang diproses.
 
-\subsubsection{\en{Backpropagation Through Time}} \label{bptt}
+\subsubsection{\en{Backpropagation Through Time}} \label{BPTT}
 
-Seperti \en{neural network} biasa, pelatihan RNN pada umumnya menggunakan \en{gradient descent} dengan \en{backpropagation} seperti pada Bagian~\ref{backpropagation}. Hanya saja, untuk setiap \en{layer} terdapat 3 jenis bobot dengan perhitungan gradien yang berbeda. Selain itu, terdapat faktor \en{timestep} yang harus diperhitungkan. Pada Gambar~\ref{fig:RecurrentNeuralNetwork}, terdapat bobot $u$, $v$, dan $w$. Berikut ditunjukkan perhitungan gradien untuk ketiga bobot tersebut berdasarkan \citep{guo2013backpropagation}.
+Seperti \en{neural network} biasa, pelatihan RNN pada umumnya menggunakan \en{gradient descent} dengan \en{backpropagation} seperti pada Bagian~\ref{Backpropagation}. Hanya saja, untuk setiap \en{layer} terdapat 3 jenis bobot dengan perhitungan gradien yang berbeda. Selain itu, terdapat faktor \en{timestep} yang harus diperhitungkan. Pada Gambar~\ref{fig:RecurrentNeuralNetwork}, terdapat bobot $u$, $v$, dan $w$. Berikut ditunjukkan perhitungan gradien untuk ketiga bobot tersebut berdasarkan \citep{guo2013backpropagation}.
 
 Bobot $v$ hanya mempengaruhi \en{output layer}, sehingga perhitungan gradiennya relatif sederhana. Berikut perhitungan gradien bobot $v_{kj}$ (bobot yang menghubungkan neuron berindeks $j$ pada \en{hidden layer} ke neuron berindeks $k$ pada \en{output layer}) pada \en{timestep} $t$.
 
@@ -113,15 +113,15 @@ Perhitungan gradien $u$ tidak jauh berbeda dengan $w$ karena dipengaruhi oleh \e
 \begin{equation}
     \frac{\partial{C_{t}}}{\partial{u_{ji}}}
     = \sum_{k} (\frac{\partial{C_{t}}}{\partial{net_{t_k}}} \frac{\partial{net_{t_k}}}{\partial{s_{t_j}}} \sum_{\tau = 0}^{t} \sum_{l} \frac{\partial{s_{t_j}}}{s_{(t-\tau)_l}} \frac{s_{(t-\tau)_l}}{\partial{u_{ji}}})
-    \label{eq:v}
 \end{equation}
+
 \subsection{Proses Pelatihan}
 
 Terdapat berbagai macam metode pelatihan model \en{deep learning}, salah satunya adalah \en{mini-batch gradient descent} (MBGD). Pada MBGD, keseluruhan \en{dataset} dibagi menjadi beberapa \en{mini-batch} (atau \en{batch}). Pada setiap \en{batch}, gradien dihitung kemudian digunakan untuk meng-\en{update} parameter, agar menurunkan \en{loss} atau \en{cost}.
 
 Apabila pelatihan telah selesai memproses seluruh \en{batch}, maka disebut telah menyelesaikan satu \en{epoch}. Biasanya, pelatihan terdiri dari banyak \en{epoch}. Tujuan MBGD membagi \en{dataset} ke \en{batch}-\en{batch} adalah mempercepat konvergensi dan menghemat penggunaan memori karena pada satu waktu hanya perlu diproses sebagian \en{training data} saja. Namun, karena gradien yang didapat pada suatu \en{batch} hanya berdasarkan sebagian sampel data saja, maka gradien ini sejatinya adalah estimasi dari gradien yang seharusnya (gradien populasi). Hal ini dapat menyebabkan penurunan kinerja model, meski pada praktiknya penurunan kinerja ini umumnya dapat diterima demi meningkatkan kecepatan pelatihan dan mengurangi penggunaan memori.
 
-\section{TensorFlow} \label{tensorflow}
+\section{TensorFlow} \label{Tensorflow}
 
 TensorFlow adalah \en{framework} pembelajaran mesin yang didesain untuk menangani pelatihan model berskala besar dan secara terdistribusi, baik untuk kebutuhan penelitian maupun industri. Dikembangkan oleh tim Google Brain dan dirilis secara \en{open source}, TensorFlow telah digunakan secara ekstensif pada berbagai proyek pembelajaran mesin, baik di dalam maupun di luar Google.
 
@@ -168,7 +168,7 @@ Gambar~\ref{fig:TensorFlowDist} mengilustrasikan hubungan antar bagian TensorFlo
     \label{fig:TensorFlowDist}
 \end{figure}
 
-\section{\en{Graphics Processing Unit}} \label{gpu}
+\section{\en{Graphics Processing Unit}} \label{GPU}
 
 Penggunaan GPU pada pelatihan \en{deep learning} merupakan salah satu faktor yang memajukan perkembangan bidang ini secara signifikan \citep{dean2012large}. Hal ini dikarenakan GPU mampu meningkatkan kecepatan dengan menjalankan pelatihan secara paralel. Sayangnya, ukuran memori GPU lebih terbatas  dari memori CPU. Umumnya, memori GPU berukuran 8-16 GB sedangkan memori CPU dapat mencapai 1 TB.
 
@@ -203,11 +203,11 @@ CUDA mendukung \en{asynchronous memory copy} dengan \code{cudaMemcpyAsync}, yait
 
 Mekanisme \en{memory copy} ini adalah sebagai berikut. Misalnya dilakukan \en{memory copy} dari \en{host} ke \en{device}, pertama-tama \en{host} menyalin isi memori ke \en{staging buffer}. Kemudian, \en{device} membaca isi memori dari \en{staging buffer}. Di saat yang bersamaan, \en{host} menyalin isi memori lainnya ke bagian lain \en{staging buffer}, yang kemudian akan dibaca oleh \en{device}, dan begitu seterusnya \citep{wilt2013cuda}.
 
-\section{Penggunaan Memori pada Pelatihan Model} \label{memoryusage}
+\section{Penggunaan Memori pada Pelatihan Model} \label{MemoryUsage}
 
 Berikut akan dibahas mengenai penyebab penggunaan memori pada pelatihan model serta perhitungannya. Selain untuk memuat \en{dataset} yang digunakan, memori juga digunakan untuk me-\en{maintain} variabel yang memuat parameter model (bobot dan bias) dan hasil fungsi aktivasi (\en{output}). Bila variabel direpresentasikan oleh 32-bit \en{floating point}, maka ukuran memori yang digunakan adalah 4 \en{byte} dikali dengan jumlah variabel yang ada. Sebagai contoh, model ResNet50 memiliki sekitar 26 juta parameter dan 16 juta \en{output} pada sekali \en{forward pass}. Maka, ukuran memori yang digunakan pada satu sampel sekitar $\num{26e6} \times \SI{4}{byte} = \SI{104}{\mega\byte}$ untuk parameter dan $\num{16e6} \times \SI{4}{byte} = \SI{64}{\mega\byte}$ untuk \en{output} \citep{hanlon2016why}.
 
-Ukuran tersebut barulah ukuran memori yang digunakan oleh satu sampel pada \en{batch}. Biasanya, pelatihan model berlangsung secara paralel, yang berarti dilakukan pencarian gradien terhadap seluruh sampel pada \en{batch} sekaligus. Berarti, perlu dimuat \en{output} seluruh sampel karena \en{output} dibutuhkan untuk pencarian gradien dengan \en{backpropagation} (seperti dijelaskan pada Bagian~\ref{backpropagation} dan \ref{bptt}).
+Ukuran tersebut barulah ukuran memori yang digunakan oleh satu sampel pada \en{batch}. Biasanya, pelatihan model berlangsung secara paralel, yang berarti dilakukan pencarian gradien terhadap seluruh sampel pada \en{batch} sekaligus. Berarti, perlu dimuat \en{output} seluruh sampel karena \en{output} dibutuhkan untuk pencarian gradien dengan \en{backpropagation} (seperti dijelaskan pada Bagian~\ref{Backpropagation} dan \ref{BPTT}).
 
 Misalnya \en{batch} berukuran 16, maka diperlukan $16 * \SI{64}{\mega\byte} = \SI{1024}{\mega\byte}$ untuk memuat seluruh \en{output} pada satu \en{batch}. Bila dijumlah dengan ukuran parameter (bobot dan bias) seperti di atas, maka diperlukan sekitar $\SI{104}{\mega\byte} + \SI{1024}{\mega\byte} = \SI{1.128}{\giga\byte}$ memori pada pelatihan model ResNet50 untuk \en{batch} berukuran 16. Perhitungan ini didukung oleh Gambar~\ref{fig:MemoryVSBatchSize} di mana pada ${batch\ size} = 16$, penggunaan memori ResNet50 (merah muda) sekitar $\SI{1000}{\mega\byte}$. Perhitungan yang sama untuk \en{batch size} lainnya juga memberikan hasil yang sesuai dengan grafik tersebut.
 
@@ -220,7 +220,7 @@ Misalnya \en{batch} berukuran 16, maka diperlukan $16 * \SI{64}{\mega\byte} = \S
 
 Dari hasil perhitungan tersebut, ditunjukkan bagaimana penggunaan memori meningkat seiring peningkatan ukuran \en{batch}. Selain itu, terlihat bahwa penggunaan terbesar memori terletak pada pemuatan hasil fungsi aktivasi (\en{output}) yang dibutuhkan untuk mencari gradien pada suatu \en{batch}. Hal ini bersesuaian dengan yang disebutkan di \citep{meng2017training} di mana \en{output} (pada \en{paper} tersebut disebut \en{feature map}) merupakan penyebab utama penggunaan memori pada pelatihan model.
 
-\section{Penelitian Terkait} \label{relatedworks}
+\section{Penelitian Terkait} \label{RelatedWorks}
 
 "Training deeper models by GPU memory optimization on TensorFlow" \citep{meng2017training} merupakan \en{paper} yang berisi penelitian untuk mengoptimisasi penggunaan memori GPU pada pelatihan model \en{deep learning} dengan TensorFlow \citep{meng2017training}. Penelitian tersebut terbatas pada sebuah komputer dengan satu GPU. Ide dari \en{paper} tersebut adalah menyimpan sebagian model dari memori GPU ke memori CPU saat pelatihan untuk mengurangi beban memori GPU.
 
