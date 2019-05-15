@@ -202,7 +202,79 @@ Berikut ditunjukkan hasil pengujian antara TensorFlow asli dan teroptimisasi dal
 
 \subsubsection{Kasus Pertama}
 
-Pada pengujian pertama, digunakan parameter-parameter sebagai berikut.
+Pada pengujian pertama, digunakan parameter-parameter sebagai berikut. Pada pengujian pertama dan kedua dipilih jumlah \en{unrolling} yang relatif kecil (20) agar dapat dibandingkan dengan pengujian-pengujian setelahnya yang menggunakan jumlah \en{unrolling} lebih besar.
+
+\begin{enumerate}
+  \item Ukuran \en{batch}: 6000
+  \item Jumlah \en{hidden layer}: 8
+  \item Ukuran \en{hidden layer}: 512
+  \item Jumlah \en{unrolling}: 20
+  \item Jumlah \en{epoch}: 200
+\end{enumerate}
+
+Tabel~\ref{table:First} menunjukkan durasi \en{training} (dalam satuan detik) kedua perlakuan pada masing-masing 10 kali percobaan. Dari hasil pengujian tersebut, terlihat bahwa versi teroptimisasi berhasil mengurangi durasi \en{training} sekitar 1.44\%. Menurut uji statistik \en{t-test}, didapatkan \en{p-value} bernilai 1.8493031002146812e-06, sehingga secara statistik dapat dinyatakan bahwa kedua perlakuan berbeda secara signifikan.
+
+\begin{table}[]
+\centering
+\caption{Hasil pengujian kasus pertama}
+\label{table:First}
+\small
+\begin{tabular}{cll}
+\hline
+\multicolumn{1}{|c|}{i}  & \multicolumn{1}{c|}{\textbf{Original}}  & \multicolumn{1}{c|}{\textbf{Optimized}} \\ \hline
+\multicolumn{1}{|c|}{1}  & \multicolumn{1}{l|}{252.15827584266663} & \multicolumn{1}{l|}{252.97898483276367} \\ \hline
+\multicolumn{1}{|c|}{2}  & \multicolumn{1}{l|}{256.4153354167938}  & \multicolumn{1}{l|}{252.72823286056519} \\ \hline
+\multicolumn{1}{|c|}{3}  & \multicolumn{1}{l|}{256.832067489624}   & \multicolumn{1}{l|}{252.96671104431152} \\ \hline
+\multicolumn{1}{|c|}{4}  & \multicolumn{1}{l|}{257.4575080871582}  & \multicolumn{1}{l|}{252.72692227363586} \\ \hline
+\multicolumn{1}{|c|}{5}  & \multicolumn{1}{l|}{256.82346057891846} & \multicolumn{1}{l|}{253.96517038345337} \\ \hline
+\multicolumn{1}{|c|}{6}  & \multicolumn{1}{l|}{256.21726179122925} & \multicolumn{1}{l|}{251.7913670539856}  \\ \hline
+\multicolumn{1}{|c|}{7}  & \multicolumn{1}{l|}{256.92102813720703} & \multicolumn{1}{l|}{252.7251443862915}  \\ \hline
+\multicolumn{1}{|c|}{8}  & \multicolumn{1}{l|}{258.0138609409332}  & \multicolumn{1}{l|}{252.35582065582275} \\ \hline
+\multicolumn{1}{|c|}{9}  & \multicolumn{1}{l|}{257.0869014263153}  & \multicolumn{1}{l|}{252.23767232894897} \\ \hline
+\multicolumn{1}{|c|}{10} & \multicolumn{1}{l|}{256.1273946762085}  & \multicolumn{1}{l|}{252.53468418121338} \\ \hline
+\textbf{Mean}            & 256.40531                               & 252.70107
+\end{tabular}
+\end{table}
+
+\subsubsection{Kasus Kedua}
+
+Pada pengujian kedua, digunakan parameter-parameter yang sama dengan sebelumnya namun dengan jumlah \en{epoch} yang 5 kali lebih besar.
+
+\begin{enumerate}
+  \item Ukuran \en{batch}: 6000
+  \item Jumlah \en{hidden layer}: 8
+  \item Ukuran \en{hidden layer}: 512
+  \item Jumlah \en{unrolling}: 20
+  \item Jumlah \en{epoch}: 1000
+\end{enumerate}
+
+Tabel~\ref{table:Second} menunjukkan durasi \en{training} (dalam satuan detik) kedua perlakuan pada masing-masing 10 kali percobaan. Dari hasil pengujian tersebut, terlihat bahwa versi teroptimisasi berhasil mengurangi durasi \en{training} sekitar 1.58\%. Menurut uji statistik \en{t-test}, didapatkan \en{p-value} bernilai 9.21356126659428e-10, sehingga secara statistik dapat dinyatakan bahwa kedua perlakuan berbeda secara signifikan.
+
+\begin{table}[]
+\centering
+\caption{Hasil pengujian kasus kedua}
+\label{table:Second}
+\small
+\begin{tabular}{cll}
+\hline
+\multicolumn{1}{|c|}{i}  & \multicolumn{1}{c|}{\textbf{Original}}  & \multicolumn{1}{c|}{\textbf{Optimized}} \\ \hline
+\multicolumn{1}{|c|}{1}  & \multicolumn{1}{l|}{1254.0009925365448} & \multicolumn{1}{l|}{1239.5168986320496} \\ \hline
+\multicolumn{1}{|c|}{2}  & \multicolumn{1}{l|}{1261.5856878757477} & \multicolumn{1}{l|}{1236.1409561634064} \\ \hline
+\multicolumn{1}{|c|}{3}  & \multicolumn{1}{l|}{1255.5529029369354} & \multicolumn{1}{l|}{1235.9044954776764} \\ \hline
+\multicolumn{1}{|c|}{4}  & \multicolumn{1}{l|}{1255.6840405464172} & \multicolumn{1}{l|}{1233.5171205997467} \\ \hline
+\multicolumn{1}{|c|}{5}  & \multicolumn{1}{l|}{1258.378760099411}  & \multicolumn{1}{l|}{1238.562110900879}  \\ \hline
+\multicolumn{1}{|c|}{6}  & \multicolumn{1}{l|}{1250.3999752998352} & \multicolumn{1}{l|}{1239.8265266418457} \\ \hline
+\multicolumn{1}{|c|}{7}  & \multicolumn{1}{l|}{1257.8104090690613} & \multicolumn{1}{l|}{1239.4132153987885} \\ \hline
+\multicolumn{1}{|c|}{8}  & \multicolumn{1}{l|}{1259.7040483951569} & \multicolumn{1}{l|}{1237.5983362197876} \\ \hline
+\multicolumn{1}{|c|}{9}  & \multicolumn{1}{l|}{1250.1268837451935} & \multicolumn{1}{l|}{1232.3407201766968} \\ \hline
+\multicolumn{1}{|c|}{10} & \multicolumn{1}{l|}{1258.8046193122864} & \multicolumn{1}{l|}{1230.5381321907043} \\ \hline
+\textbf{Mean}            & 1256.20483                              & 1236.33585
+\end{tabular}
+\end{table}
+
+\subsubsection{Kasus Ketiga}
+
+Pada pengujian ketiga, digunakan parameter-parameter sebagai berikut. Dipilih jumlah \en{unrolling} yang lebih besar dari kedua pengujian sebelumnya (50), sehingga ukuran \en{batch} juga dikurangi agar menyeimbangkan kebutuhan memori.
 
 \begin{enumerate}
   \item Ukuran \en{batch}: 3000
@@ -212,12 +284,12 @@ Pada pengujian pertama, digunakan parameter-parameter sebagai berikut.
   \item Jumlah \en{epoch}: 1000
 \end{enumerate}
 
-Tabel~\ref{table:First} menunjukkan durasi \en{training} (dalam satuan detik) kedua perlakuan pada masing-masing 10 kali percobaan. Dari hasil pengujian tersebut, terlihat bahwa versi teroptimisasi berhasil mengurangi durasi \en{training} sekitar 3.1\%. Menurut uji statistik \en{t-test}, didapatkan \en{p-value} bernilai 1.1680156931633348e-15, sehingga secara statistik dapat dinyatakan bahwa kedua perlakuan berbeda secara signifikan.
+Tabel~\ref{table:Third} menunjukkan durasi \en{training} (dalam satuan detik) kedua perlakuan pada masing-masing 10 kali percobaan. Dari hasil pengujian tersebut, terlihat bahwa versi teroptimisasi berhasil mengurangi durasi \en{training} sekitar 3.1\%. Menurut uji statistik \en{t-test}, didapatkan \en{p-value} bernilai 1.1680156931633348e-15, sehingga secara statistik dapat dinyatakan bahwa kedua perlakuan berbeda secara signifikan.
 
 \begin{table}[]
 \centering
-\caption{Hasil pengujian kasus pertama}
-\label{table:First}
+\caption{Hasil pengujian kasus ketiga}
+\label{table:Third}
 \small
 \begin{tabular}{cll}
 \hline
@@ -236,9 +308,9 @@ Tabel~\ref{table:First} menunjukkan durasi \en{training} (dalam satuan detik) ke
 \end{tabular}
 \end{table}
 
-\subsubsection{Kasus Kedua}
+\subsubsection{Kasus Keempat}
 
-Pada pengujian kedua, digunakan parameter-parameter yang sama dengan pengujian sebelumnya, tetapi dengan jumlah \en{epoch} digandakan.
+Pada pengujian keempat, digunakan parameter-parameter yang sama dengan pengujian sebelumnya, tetapi dengan jumlah \en{epoch} digandakan.
 
 \begin{enumerate}
   \item Ukuran \en{batch}: 3000
@@ -248,12 +320,12 @@ Pada pengujian kedua, digunakan parameter-parameter yang sama dengan pengujian s
   \item Jumlah \en{epoch}: 2000
 \end{enumerate}
 
-Tabel~\ref{table:Second} menunjukkan durasi \en{training} (dalam satuan detik) kedua perlakuan pada masing-masing 10 kali percobaan. Dari hasil pengujian tersebut, terlihat bahwa versi teroptimisasi berhasil mengurangi durasi \en{training} sekitar 3.4\%. Menurut uji statistik \en{t-test}, didapatkan \en{p-value} bernilai 3.3438e-16, sehingga secara statistik dapat dinyatakan bahwa kedua perlakuan berbeda secara signifikan.
+Tabel~\ref{table:Fourth} menunjukkan durasi \en{training} (dalam satuan detik) kedua perlakuan pada masing-masing 10 kali percobaan. Dari hasil pengujian tersebut, terlihat bahwa versi teroptimisasi berhasil mengurangi durasi \en{training} sekitar 3.4\%. Menurut uji statistik \en{t-test}, didapatkan \en{p-value} bernilai 3.3438e-16, sehingga secara statistik dapat dinyatakan bahwa kedua perlakuan berbeda secara signifikan.
 
 \begin{table}[]
 \centering
-\caption{Hasil pengujian kasus kedua}
-\label{table:Second}
+\caption{Hasil pengujian kasus keempat}
+\label{table:Fourth}
 \small
 \begin{tabular}{cll}
 \hline
@@ -269,5 +341,77 @@ Tabel~\ref{table:Second} menunjukkan durasi \en{training} (dalam satuan detik) k
 \multicolumn{1}{|c|}{9}           & \multicolumn{1}{l|}{3414.513864994049}  & \multicolumn{1}{l|}{3327.114767551422}  \\ \hline
 \multicolumn{1}{|c|}{10}          & \multicolumn{1}{l|}{3422.7600326538086} & \multicolumn{1}{l|}{3325.095719099045}  \\ \hline
 \multicolumn{1}{l}{\textbf{Mean}} & 3416.72308                              & 3316.12052
+\end{tabular}
+\end{table}
+
+\subsubsection{Kasus Kelima}
+
+Pada pengujian ketiga, digunakan parameter-parameter sebagai berikut. Dipilih jumlah \en{unrolling} yang lebih besar dari pengujian-pengujian sebelumnya (80), sehingga ukuran \en{batch} juga dikurangi agar menyeimbangkan kebutuhan memori.
+
+\begin{enumerate}
+  \item Ukuran \en{batch}: 2400
+  \item Jumlah \en{hidden layer}: 8
+  \item Ukuran \en{hidden layer}: 512
+  \item Jumlah \en{unrolling}: 80
+  \item Jumlah \en{epoch}: 500
+\end{enumerate}
+
+Tabel~\ref{table:Fifth} menunjukkan durasi \en{training} (dalam satuan detik) kedua perlakuan pada masing-masing 10 kali percobaan. Dari hasil pengujian tersebut, terlihat bahwa versi teroptimisasi berhasil mengurangi durasi \en{training} sekitar 3.11\%. Menurut uji statistik \en{t-test}, didapatkan \en{p-value} bernilai 2.426062620387277e-18, sehingga secara statistik dapat dinyatakan bahwa kedua perlakuan berbeda secara signifikan.
+
+\begin{table}[]
+\centering
+\caption{Hasil pengujian kasus kelima}
+\label{table:Fifth}
+\small
+\begin{tabular}{cll}
+\hline
+\multicolumn{1}{|c|}{i}           & \multicolumn{1}{c|}{\textbf{Original}}  & \multicolumn{1}{c|}{\textbf{Optimized}} \\ \hline
+\multicolumn{1}{|c|}{1}           & \multicolumn{1}{l|}{1165.6820361614227} & \multicolumn{1}{l|}{1126.7230513095856} \\ \hline
+\multicolumn{1}{|c|}{2}           & \multicolumn{1}{l|}{1163.4759526252747} & \multicolumn{1}{l|}{1130.8513023853302} \\ \hline
+\multicolumn{1}{|c|}{3}           & \multicolumn{1}{l|}{1162.6871263980865} & \multicolumn{1}{l|}{1126.5956711769104} \\ \hline
+\multicolumn{1}{|c|}{4}           & \multicolumn{1}{l|}{1165.6165866851807} & \multicolumn{1}{l|}{1127.9965732097626} \\ \hline
+\multicolumn{1}{|c|}{5}           & \multicolumn{1}{l|}{1164.6632671356201} & \multicolumn{1}{l|}{1129.0060029029846} \\ \hline
+\multicolumn{1}{|c|}{6}           & \multicolumn{1}{l|}{1163.5531344413757} & \multicolumn{1}{l|}{1126.5449559688568} \\ \hline
+\multicolumn{1}{|c|}{7}           & \multicolumn{1}{l|}{1163.979398727417}  & \multicolumn{1}{l|}{1129.5302891731262} \\ \hline
+\multicolumn{1}{|c|}{8}           & \multicolumn{1}{l|}{1165.8543801307678} & \multicolumn{1}{l|}{1127.9539105892181} \\ \hline
+\multicolumn{1}{|c|}{9}           & \multicolumn{1}{l|}{1165.2025880813599} & \multicolumn{1}{l|}{1134.730679988861}  \\ \hline
+\multicolumn{1}{|c|}{10}          & \multicolumn{1}{l|}{1166.7084350585938} & \multicolumn{1}{l|}{1124.3404479026794} \\ \hline
+\multicolumn{1}{l}{\textbf{Mean}} & 1164.74229                              & 1128.42729
+\end{tabular}
+\end{table}
+
+\subsubsection{Kasus Keenam}
+
+Pada pengujian keenam, digunakan parameter-parameter yang sama dengan pengujian sebelumnya, tetapi dengan jumlah \en{epoch} digandakan.
+
+\begin{enumerate}
+  \item Ukuran \en{batch}: 2400
+  \item Jumlah \en{hidden layer}: 8
+  \item Ukuran \en{hidden layer}: 512
+  \item Jumlah \en{unrolling}: 80
+  \item Jumlah \en{epoch}: 1000
+\end{enumerate}
+
+Tabel~\ref{table:Sixth} menunjukkan durasi \en{training} (dalam satuan detik) kedua perlakuan pada masing-masing 10 kali percobaan. Dari hasil pengujian tersebut, terlihat bahwa versi teroptimisasi berhasil mengurangi durasi \en{training} sekitar 3.09\%. Menurut uji statistik \en{t-test}, didapatkan \en{p-value} bernilai 1.921296333185339e-18, sehingga secara statistik dapat dinyatakan bahwa kedua perlakuan berbeda secara signifikan.
+
+\begin{table}[]
+\centering
+\caption{Hasil pengujian kasus keenam}
+\label{table:Sixth}
+\small
+\begin{tabular}{cll}
+\hline
+\multicolumn{1}{|c|}{i}           & \multicolumn{1}{c|}{\textbf{Original}}  & \multicolumn{1}{c|}{\textbf{Optimized}} \\ \hline
+\multicolumn{1}{|c|}{1}           & \multicolumn{1}{l|}{2325.881348848343}  & \multicolumn{1}{l|}{2259.6721198558807} \\ \hline
+\multicolumn{1}{|c|}{2}           & \multicolumn{1}{l|}{2324.937485218048}  & \multicolumn{1}{l|}{2248.6250746250153} \\ \hline
+\multicolumn{1}{|c|}{3}           & \multicolumn{1}{l|}{2324.66451215744}   & \multicolumn{1}{l|}{2257.6384501457214} \\ \hline
+\multicolumn{1}{|c|}{4}           & \multicolumn{1}{l|}{2326.308651447296}  & \multicolumn{1}{l|}{2252.499354362488}  \\ \hline
+\multicolumn{1}{|c|}{5}           & \multicolumn{1}{l|}{2329.8989474773407} & \multicolumn{1}{l|}{2242.113233089447}  \\ \hline
+\multicolumn{1}{|c|}{6}           & \multicolumn{1}{l|}{2322.9741718769073} & \multicolumn{1}{l|}{2255.954655647278}  \\ \hline
+\multicolumn{1}{|c|}{7}           & \multicolumn{1}{l|}{2327.4178791046143} & \multicolumn{1}{l|}{2256.2117512226105} \\ \hline
+\multicolumn{1}{|c|}{8}           & \multicolumn{1}{l|}{2327.0376517772675} & \multicolumn{1}{l|}{2257.8214254379272} \\ \hline
+\multicolumn{1}{|c|}{9}           & \multicolumn{1}{l|}{2328.337978363037}  & \multicolumn{1}{l|}{2256.3289828300476} \\ \hline
+\multicolumn{1}{|c|}{10}          & \multicolumn{1}{l|}{2330.1756098270416} & \multicolumn{1}{l|}{2261.2293424606323} \\ \hline
+\multicolumn{1}{l}{\textbf{Mean}} & 2326.76342                              & 2254.80944
 \end{tabular}
 \end{table}
