@@ -192,9 +192,11 @@ Tabel~\ref{tbl:Specification} memaparkan spesifikasi lingkungan yang digunakan p
 
 \subsection{Metode Pengujian}
 
-Pengujian dilakukan dengan melakukan beberapa kali \en{training} menggunakan TensorFlow asli dan teroptimisasi, kemudian durasi \en{trainig} kedua perlakuan dibandingkan dan dihitung rataannya. Selain itu, dilakukan uji statistik lain seperti \en{t-test} untuk memastikan bahwa durasi \en{training} kedua perlakuan memang berbeda.
+Setiap pengujian dilakukan dengan beberapa kali melakukan \en{training} suatu model RNN menggunakan TensorFlow asli dan teroptimisasi, kemudian durasi \en{training} kedua perlakuan dibandingkan dan dihitung rataannya. Selain itu, dilakukan uji statistik lain seperti \en{t-test} untuk memastikan bahwa durasi \en{training} kedua perlakuan memang berbeda.
 
-\en{To be continued}.
+Model yang digunakan untuk pengujian adalah char-rnn yang berdasarkan pada \citep{karpathy2015unreasonable}, namun telah diadaptasi ke TensorFlow. Secara singkat, char-rnn adalah model RNN yang menerima sekuens teks kemudian membangkitkan sekuens teks lanjutannya, huruf per huruf. Data yang digunakan merupakan teks berisi 26172 karakter.
+
+Implementasi model tersebut dengan TensorFlow menggunakan kelas \code{dynamic\_rnn} (disebutkan di Bagian~\ref{WhyRNN}) dengan parameter \code{swap\_memory=True} untuk mengijinkan TensorFlow melakukan \en{memory swapping}. Selain itu, parameter-parameter yang digunakan dalam menjalankan pengujian dipilih sedemikian rupa agar ukuran memori yang dibutuhkan melebihi ukuran memori yang ada, sehingga TensorFlow terpaksa melakukan \en{memory swapping}.
 
 \subsection{Hasil Pengujian}
 
