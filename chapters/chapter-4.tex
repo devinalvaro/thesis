@@ -92,7 +92,7 @@ Pada bagian terakhir Kode~\ref{lst:StackPushOp} di atas terlihat proses \en{swap
 
 Demikian implementasi pada bagian \en{swapping out}, di mana \en{oldest tensor} di-\en{swap out} agar pada \en{backpropagation} dapat di-\en{swap in} bersamaan dengan berjalannya komputasi, sehingga meningkatkan \en{asynchronicity}. Berikutnya adalah penjelasan mengenai implementasi pada bagian \en{swapping in}.
 
-\subsection{Modifikasi \en{Swapping In}}
+\subsection{Modifikasi \en{Swapping In}} \label{SwappingInModification}
 
 Pada bagian ini dijelaskan implementasi menurut Kode~\ref{lst:SwapInPseudocodeOptimized} yang menjelaskan optimisasi pada bagian \en{swapping in}. Namun, sebelum masuk ke bagian tersebut perlu ditunjukkan kode-kode yang mendukung implementasi tersebut.
 
@@ -191,7 +191,7 @@ Tabel~\ref{tbl:Specification} memaparkan spesifikasi lingkungan yang digunakan p
 \end{tabular}
 \end{table}}
 
-\subsection{Metode Pengujian}
+\subsection{Metode Pengujian} \label{ExperimentMethod}
 
 Setiap pengujian dilakukan dengan beberapa kali melakukan \en{training} suatu model RNN menggunakan TensorFlow yang asli dan yang teroptimisasi, kemudian durasi \en{training} kedua perlakuan dibandingkan dan dihitung rataannya. Selain itu, dilakukan uji statistik lain seperti \en{t-test} untuk memastikan bahwa durasi \en{training} kedua perlakuan memang berbeda.
 
@@ -246,6 +246,7 @@ Tabel~\ref{tbl:A1} menunjukkan hasil pengujian kasus A1. Dengan \en{t-test} dida
 \centering
 \caption{Hasil pengujian kasus A1}
 \label{tbl:A1}
+\small
 \begin{tabular}{cll}
 \hline
 \multicolumn{1}{|c|}{\textbf{i}}  & \multicolumn{1}{c|}{\en{\textbf{Original}}} & \multicolumn{1}{c|}{\en{\textbf{Optimized}}} \\ \hline
@@ -271,6 +272,7 @@ Tabel~\ref{tbl:A2} menunjukkan hasil pengujian kasus A2. Meski versi teroptimisa
 \centering
 \caption{Hasil pengujian kasus A2}
 \label{tbl:A2}
+\small
 \begin{tabular}{cll}
 \hline
 \multicolumn{1}{|c|}{\textbf{i}}  & \multicolumn{1}{c|}{\en{\textbf{Original}}} & \multicolumn{1}{c|}{\en{\textbf{Optimized}}} \\ \hline
@@ -296,6 +298,7 @@ Tabel~\ref{tbl:A3} menunjukkan hasil pengujian kasus A3. Meski versi teroptimisa
 \centering
 \caption{Hasil pengujian kasus A3}
 \label{tbl:A3}
+\small
 \begin{tabular}{cll}
 \hline
 \multicolumn{1}{|c|}{\textbf{i}}  & \multicolumn{1}{c|}{\en{\textbf{Original}}} & \multicolumn{1}{c|}{\en{\textbf{Optimized}}} \\ \hline
@@ -315,12 +318,13 @@ Tabel~\ref{tbl:A3} menunjukkan hasil pengujian kasus A3. Meski versi teroptimisa
 
 \subsubsection{Kasus A4}
 
-Tabel~\ref{tbl:A4} menunjukkan hasil pengujian kasus A4. Tidak seperti kasus-kasus sebelumnya, mulai dari kasus ini \en{p-value} dari \en{t-test} sangat kecil yaitu 8.78e-10, sehingga versi teroptimisasi dapat dikatakan berbeda secara signifikan dengan versi asli. Selain itu, versi teroptimisasi berhasil mengurangi durasi pelatihan sebesar 2.6\%.
+Tabel~\ref{tbl:A4} menunjukkan hasil pengujian kasus A4. Tidak seperti kasus-kasus sebelumnya, mulai dari kasus ini \en{p-value} dari \en{t-test} sangat kecil yaitu 8.78e-10, sehingga versi teroptimisasi dapat dikatakan berbeda secara signifikan dengan versi asli. Selain itu, versi teroptimisasi berhasil mengurangi durasi \en{training} sebesar 2.6\%.
 
 \begin{table}[htp]
 \centering
 \caption{Hasil pengujian kasus A4}
 \label{tbl:A4}
+\small
 \begin{tabular}{cll}
 \hline
 \multicolumn{1}{|c|}{\textbf{i}}  & \multicolumn{1}{c|}{\en{\textbf{Original}}} & \multicolumn{1}{c|}{\en{\textbf{Optimized}}} \\ \hline
@@ -340,12 +344,13 @@ Tabel~\ref{tbl:A4} menunjukkan hasil pengujian kasus A4. Tidak seperti kasus-kas
 
 \subsubsection{Kasus A5}
 
-Tabel~\ref{tbl:A5} menunjukkan hasil pengujian kasus A5. Pada kasus ini, versi teroptimisasi mengurangi durasi pelatihan lebih jauh dari sebelumnya, yaitu sebesar 2.98\%. Hal ini didukung dengan \en{p-value} dari \en{t-test} yang bernilai 3.73e-16.
+Tabel~\ref{tbl:A5} menunjukkan hasil pengujian kasus A5. Pada kasus ini, versi teroptimisasi mengurangi durasi \en{training} lebih jauh dari sebelumnya, yaitu sebesar 2.98\%. Hal ini didukung dengan \en{p-value} dari \en{t-test} yang bernilai 3.73e-16.
 
 \begin{table}[htp]
 \centering
 \caption{Hasil pengujian kasus A5}
 \label{tbl:A5}
+\small
 \begin{tabular}{cll}
 \hline
 \multicolumn{1}{|c|}{\textbf{i}}  & \multicolumn{1}{c|}{\en{\textbf{Original}}} & \multicolumn{1}{c|}{\en{\textbf{Optimized}}} \\ \hline
@@ -365,12 +370,13 @@ Tabel~\ref{tbl:A5} menunjukkan hasil pengujian kasus A5. Pada kasus ini, versi t
 
 \subsubsection{Kasus A6}
 
-Tabel~\ref{tbl:A6} menunjukkan hasil pengujian kasus A6. Pada kasus ini, pengurangan durasi pelatihan dari versi teroptimisasi mengalami penurunan menjadi 2.6\%. Selain itu, \en{p-value} dari \en{t-test} bernilai 8.65e-10.
+Tabel~\ref{tbl:A6} menunjukkan hasil pengujian kasus A6. Pada kasus ini, pengurangan durasi \en{training} dari versi teroptimisasi mengalami penurunan menjadi 2.6\%. Selain itu, \en{p-value} dari \en{t-test} bernilai 8.65e-10.
 
 \begin{table}[htp]
 \centering
 \caption{Hasil pengujian kasus A6}
 \label{tbl:A6}
+\small
 \begin{tabular}{cll}
 \hline
 \multicolumn{1}{|c|}{\textbf{i}}  & \multicolumn{1}{c|}{\en{\textbf{Original}}} & \multicolumn{1}{c|}{\en{\textbf{Optimized}}} \\ \hline
@@ -390,12 +396,13 @@ Tabel~\ref{tbl:A6} menunjukkan hasil pengujian kasus A6. Pada kasus ini, pengura
 
 \subsubsection{Kasus A7}
 
-Tabel~\ref{tbl:A7} menunjukkan hasil pengujian kasus A7. Pada kasus ini, versi teroptimisasi mengurangi durasi pelatihan sebesar 3.13\%. Menurut \en{t-test}, \en{p-value} kasus ini bernilai 1.5e-10.
+Tabel~\ref{tbl:A7} menunjukkan hasil pengujian kasus A7. Pada kasus ini, versi teroptimisasi mengurangi durasi \en{training} sebesar 3.13\%. Menurut \en{t-test}, \en{p-value} kasus ini bernilai 1.5e-10.
 
 \begin{table}[htp]
 \centering
 \caption{Hasil pengujian kasus A7}
 \label{tbl:A7}
+\small
 \begin{tabular}{cll}
 \hline
 \multicolumn{1}{|c|}{\textbf{i}}  & \multicolumn{1}{c|}{\en{\textbf{Original}}} & \multicolumn{1}{c|}{\en{\textbf{Optimized}}} \\ \hline
@@ -415,12 +422,13 @@ Tabel~\ref{tbl:A7} menunjukkan hasil pengujian kasus A7. Pada kasus ini, versi t
 
 \subsubsection{Kasus A8}
 
-Tabel~\ref{tbl:A8} menunjukkan hasil pengujian kasus A8. Pada kasus ini, versi teroptimisasi mengurangi durasi pelatihan sebesar 2.63\%. Menurut \en{t-test}, \en{p-value} kasus ini bernilai 2.98e-13.
+Tabel~\ref{tbl:A8} menunjukkan hasil pengujian kasus A8. Pada kasus ini, versi teroptimisasi mengurangi durasi \en{training} sebesar 2.63\%. Menurut \en{t-test}, \en{p-value} kasus ini bernilai 2.98e-13.
 
 \begin{table}[htp]
 \centering
 \caption{Hasil pengujian kasus A8}
 \label{tbl:A8}
+\small
 \begin{tabular}{cll}
 \hline
 \multicolumn{1}{|c|}{\textbf{i}}  & \multicolumn{1}{c|}{\en{\textbf{Original}}} & \multicolumn{1}{c|}{\en{\textbf{Optimized}}} \\ \hline
@@ -440,12 +448,13 @@ Tabel~\ref{tbl:A8} menunjukkan hasil pengujian kasus A8. Pada kasus ini, versi t
 
 \subsubsection{Kasus A9}
 
-Tabel~\ref{tbl:A9} menunjukkan hasil pengujian kasus A9. Pada kasus ini, versi teroptimisasi mengurangi durasi pelatihan sebesar 2.84\%. Menurut \en{t-test}, \en{p-value} kasus ini bernilai 3.83e-17.
+Tabel~\ref{tbl:A9} menunjukkan hasil pengujian kasus A9. Pada kasus ini, versi teroptimisasi mengurangi durasi \en{training} sebesar 2.84\%. Menurut \en{t-test}, \en{p-value} kasus ini bernilai 3.83e-17.
 
 \begin{table}[htp]
 \centering
 \caption{Hasil pengujian kasus A9}
 \label{tbl:A9}
+\small
 \begin{tabular}{cll}
 \hline
 \multicolumn{1}{|c|}{\textbf{i}}  & \multicolumn{1}{c|}{\en{\textbf{Original}}} & \multicolumn{1}{c|}{\en{\textbf{Optimized}}} \\ \hline
@@ -471,6 +480,7 @@ Tabel~\ref{tbl:B1} menunjukkan hasil pengujian kasus B1. Dengan \en{t-test} dida
 \centering
 \caption{Hasil pengujian kasus B1}
 \label{tbl:B1}
+\small
 \begin{tabular}{cll}
 \hline
 \multicolumn{1}{|c|}{\textbf{i}}  & \multicolumn{1}{c|}{\en{\textbf{Original}}} & \multicolumn{1}{c|}{\en{\textbf{Optimized}}} \\ \hline
@@ -490,12 +500,13 @@ Tabel~\ref{tbl:B1} menunjukkan hasil pengujian kasus B1. Dengan \en{t-test} dida
 
 \subsubsection{Kasus B2}
 
-Tabel~\ref{tbl:B2} menunjukkan hasil pengujian kasus B2. Pada kasus ini, versi teroptimisasi hanya mengurangi durasi pelatihan sebesar 0.37\%. Meskipun begitu, menurut \en{t-test}, \en{p-value} bernilai 0.0009 sehingga dapat dikatakan kedua perlakuan berbeda secara signifikan.
+Tabel~\ref{tbl:B2} menunjukkan hasil pengujian kasus B2. Pada kasus ini, versi teroptimisasi hanya mengurangi durasi \en{training} sebesar 0.37\%. Meskipun begitu, menurut \en{t-test}, \en{p-value} bernilai 0.0009 sehingga dapat dikatakan kedua perlakuan berbeda secara signifikan.
 
 \begin{table}[htp]
 \centering
 \caption{Hasil pengujian kasus B2}
 \label{tbl:B2}
+\small
 \begin{tabular}{cll}
 \hline
 \multicolumn{1}{|c|}{\textbf{i}}  & \multicolumn{1}{c|}{\en{\textbf{Original}}} & \multicolumn{1}{c|}{\en{\textbf{Optimized}}} \\ \hline
@@ -515,12 +526,13 @@ Tabel~\ref{tbl:B2} menunjukkan hasil pengujian kasus B2. Pada kasus ini, versi t
 
 \subsubsection{Kasus B3}
 
-Tabel~\ref{tbl:B3} menunjukkan hasil pengujian kasus B3. Pada kasus ini, versi teroptimisasi hanya mengurangi durasi pelatihan sebesar 0.7\%. Meskipun begitu, menurut \en{t-test}, \en{p-value} bernilai 0.0005 sehingga dapat dikatakan kedua perlakuan berbeda secara signifikan.
+Tabel~\ref{tbl:B3} menunjukkan hasil pengujian kasus B3. Pada kasus ini, versi teroptimisasi hanya mengurangi durasi \en{training} sebesar 0.7\%. Meskipun begitu, menurut \en{t-test}, \en{p-value} bernilai 0.0005 sehingga dapat dikatakan kedua perlakuan berbeda secara signifikan.
 
 \begin{table}[htp]
 \centering
 \caption{Hasil pengujian kasus B3}
 \label{tbl:B3}
+\small
 \begin{tabular}{cll}
 \hline
 \multicolumn{1}{|c|}{\textbf{i}}  & \multicolumn{1}{c|}{\en{\textbf{Original}}} & \multicolumn{1}{c|}{\en{\textbf{Optimized}}} \\ \hline
@@ -540,12 +552,13 @@ Tabel~\ref{tbl:B3} menunjukkan hasil pengujian kasus B3. Pada kasus ini, versi t
 
 \subsubsection{Kasus B4}
 
-Tabel~\ref{tbl:B4} menunjukkan hasil pengujian kasus B4. Pada kasus ini, versi teroptimisasi mengurangi durasi pelatihan sebesar 3.02\%. Berdasarkan \en{t-test}, nilai \en{p-value} kasus ini adalah 7.73e-19.
+Tabel~\ref{tbl:B4} menunjukkan hasil pengujian kasus B4. Pada kasus ini, versi teroptimisasi mengurangi durasi \en{training} sebesar 3.02\%. Berdasarkan \en{t-test}, nilai \en{p-value} kasus ini adalah 7.73e-19.
 
 \begin{table}[htp]
 \centering
 \caption{Hasil pengujian kasus B4}
 \label{tbl:B4}
+\small
 \begin{tabular}{cll}
 \hline
 \multicolumn{1}{|c|}{\textbf{i}}  & \multicolumn{1}{c|}{\en{\textbf{Original}}} & \multicolumn{1}{c|}{\en{\textbf{Optimized}}} \\ \hline
@@ -565,12 +578,13 @@ Tabel~\ref{tbl:B4} menunjukkan hasil pengujian kasus B4. Pada kasus ini, versi t
 
 \subsubsection{Kasus B5}
 
-Tabel~\ref{tbl:B5} menunjukkan hasil pengujian kasus B5. Pada kasus ini, versi teroptimisasi mengurangi durasi pelatihan sebesar 2.92\%. Berdasarkan \en{t-test}, nilai \en{p-value} kasus ini adalah 1.03e-21.
+Tabel~\ref{tbl:B5} menunjukkan hasil pengujian kasus B5. Pada kasus ini, versi teroptimisasi mengurangi durasi \en{training} sebesar 2.92\%. Berdasarkan \en{t-test}, nilai \en{p-value} kasus ini adalah 1.03e-21.
 
 \begin{table}[htp]
 \centering
 \caption{Hasil pengujian kasus B5}
 \label{tbl:B5}
+\small
 \begin{tabular}{cll}
 \hline
 \multicolumn{1}{|c|}{\textbf{i}}  & \multicolumn{1}{c|}{\en{\textbf{Original}}} & \multicolumn{1}{c|}{\en{\textbf{Optimized}}} \\ \hline
@@ -590,12 +604,13 @@ Tabel~\ref{tbl:B5} menunjukkan hasil pengujian kasus B5. Pada kasus ini, versi t
 
 \subsubsection{Kasus B6}
 
-Tabel~\ref{tbl:B6} menunjukkan hasil pengujian kasus B6. Pada kasus ini, versi teroptimisasi mengurangi durasi pelatihan sebesar 2.87\%. Berdasarkan \en{t-test}, nilai \en{p-value} kasus ini adalah 7.24e-16.
+Tabel~\ref{tbl:B6} menunjukkan hasil pengujian kasus B6. Pada kasus ini, versi teroptimisasi mengurangi durasi \en{training} sebesar 2.87\%. Berdasarkan \en{t-test}, nilai \en{p-value} kasus ini adalah 7.24e-16.
 
 \begin{table}[htp]
 \centering
 \caption{Hasil pengujian kasus B6}
 \label{tbl:B6}
+\small
 \begin{tabular}{cll}
 \hline
 \multicolumn{1}{|c|}{\textbf{i}}  & \multicolumn{1}{c|}{\en{\textbf{Original}}} & \multicolumn{1}{c|}{\en{\textbf{Optimized}}} \\ \hline
@@ -615,12 +630,13 @@ Tabel~\ref{tbl:B6} menunjukkan hasil pengujian kasus B6. Pada kasus ini, versi t
 
 \subsubsection{Kasus B7}
 
-Tabel~\ref{tbl:B7} menunjukkan hasil pengujian kasus B7. Pada kasus ini, versi teroptimisasi mengurangi durasi pelatihan sebesar 2.54\%. Menurut \en{t-test}, \en{p-value} kasus ini bernilai 2.44e-9.
+Tabel~\ref{tbl:B7} menunjukkan hasil pengujian kasus B7. Pada kasus ini, versi teroptimisasi mengurangi durasi \en{training} sebesar 2.54\%. Menurut \en{t-test}, \en{p-value} kasus ini bernilai 2.44e-9.
 
 \begin{table}[htp]
 \centering
 \caption{Hasil pengujian kasus B7}
 \label{tbl:B7}
+\small
 \begin{tabular}{cll}
 \hline
 \multicolumn{1}{|c|}{\textbf{i}}  & \multicolumn{1}{c|}{\en{\textbf{Original}}} & \multicolumn{1}{c|}{\en{\textbf{Optimized}}} \\ \hline
@@ -640,12 +656,13 @@ Tabel~\ref{tbl:B7} menunjukkan hasil pengujian kasus B7. Pada kasus ini, versi t
 
 \subsubsection{Kasus B8}
 
-Tabel~\ref{tbl:B8} menunjukkan hasil pengujian kasus B8. Pada kasus ini, versi teroptimisasi mengurangi durasi pelatihan sebesar 2.71\%. Menurut \en{t-test}, \en{p-value} kasus ini bernilai 2.8e-18.
+Tabel~\ref{tbl:B8} menunjukkan hasil pengujian kasus B8. Pada kasus ini, versi teroptimisasi mengurangi durasi \en{training} sebesar 2.71\%. Menurut \en{t-test}, \en{p-value} kasus ini bernilai 2.8e-18.
 
 \begin{table}[htp]
 \centering
 \caption{Hasil pengujian kasus B8}
 \label{tbl:B8}
+\small
 \begin{tabular}{cll}
 \hline
 \multicolumn{1}{|c|}{\textbf{i}}  & \multicolumn{1}{c|}{\en{\textbf{Original}}} & \multicolumn{1}{c|}{\en{\textbf{Optimized}}} \\ \hline
@@ -665,12 +682,13 @@ Tabel~\ref{tbl:B8} menunjukkan hasil pengujian kasus B8. Pada kasus ini, versi t
 
 \subsubsection{Kasus B9}
 
-Tabel~\ref{tbl:B9} menunjukkan hasil pengujian kasus B9. Pada kasus ini, versi teroptimisasi mengurangi durasi pelatihan sebesar 2.66\%. Menurut \en{t-test}, \en{p-value} kasus ini bernilai 4.73e-17.
+Tabel~\ref{tbl:B9} menunjukkan hasil pengujian kasus B9. Pada kasus ini, versi teroptimisasi mengurangi durasi \en{training} sebesar 2.66\%. Menurut \en{t-test}, \en{p-value} kasus ini bernilai 4.73e-17.
 
 \begin{table}[htp]
 \centering
 \caption{Hasil pengujian kasus B9}
 \label{tbl:B9}
+\small
 \begin{tabular}{cll}
 \hline
 \multicolumn{1}{|c|}{\textbf{i}} & \multicolumn{1}{c|}{\en{\textbf{Original}}} & \multicolumn{1}{c|}{\en{\textbf{Optimized}}} \\ \hline
@@ -687,3 +705,50 @@ Tabel~\ref{tbl:B9} menunjukkan hasil pengujian kasus B9. Pada kasus ini, versi t
 \textbf{Mean}                    & 1977.07522                                      & 1924.45449
 \end{tabular}
 \end{table}
+
+\subsection{Pembahasan Hasil Pengujian}
+
+Tabel~\ref{tbl:Overview} merangkum rataan kedua perlakuan, persentase selisihnya, serta apakah kedua perlakuan berbeda secara signifikan (menurut \en{t-test}) untuk masing-masing kasus pengujian.
+
+\begin{table}[]
+\centering
+\caption{Rangkuman hasil pengujian}
+\label{tbl:Overview}
+\small
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+\textbf{Kode Pengujian} & \multicolumn{1}{c|}{\textbf{Rataan \en{Original}}} & \multicolumn{1}{c|}{\textbf{Rataan \en{Optimized}}} & \multicolumn{1}{c|}{\textbf{Selisih}} & \multicolumn{1}{c|}{\textbf{Berbeda?}} \\ \hline
+A1            & 33.52523                                           & 33.56403                                            & -0.11\%                               & Tidak                                  \\ \hline
+A2            & 65.15423                                           & 64.7291                                             & 0.65\%                                & Tidak                                  \\ \hline
+A3            & 127.62171                                          & 127.15463                                           & 0.36\%                                & Tidak                                  \\ \hline
+A4            & 40.13374                                           & 39.08925                                            & 2.6\%                                 & Ya                                     \\ \hline
+A5            & 74.46792                                           & 72.24764                                            & 2.98\%                                & Ya                                     \\ \hline
+A6            & 142.81972                                          & 139.09633                                           & 2.6\%                                 & Ya                                     \\ \hline
+A7            & 50.28715                                           & 48.71249                                            & 3.13\%                                & Ya                                     \\ \hline
+A8            & 94.84399                                           & 92.35375                                            & 2.63\%                                & Ya                                     \\ \hline
+A9            & 184.27691                                          & 179.04678                                           & 2.84\%                                & Ya                                     \\ \hline
+B1            & 421.27128                                          & 420.70736                                           & 0.13\%                                & Tidak                                  \\ \hline
+B2            & 842.36554                                          & 839.1987                                            & 0.37\%                                & Ya                                     \\ \hline
+B3            & 1685.27977                                         & 1673.40191                                          & 0.7\%                                 & Ya                                     \\ \hline
+B4            & 487.36775                                          & 472.67                                              & 3.02\%                                & Ya                                     \\ \hline
+B5            & 969.60724                                          & 941.28422                                           & 2.92\%                                & Ya                                     \\ \hline
+B6            & 1931.72836                                         & 1876.21198                                          & 2.87\%                                & Ya                                     \\ \hline
+B7            & 497.82833                                          & 485.17491                                           & 2.54\%                                & Ya                                     \\ \hline
+B8            & 991.18114                                          & 964.28065                                           & 2.71\%                                & Ya                                     \\ \hline
+B9            & 1977.07522                                         & 1924.45449                                          & 2.66\%                                & Ya                                     \\ \hline
+\end{tabular}
+\end{table}
+
+Pembahasan dilakukan dengan melihat hasil pengujian, terutama bagaimana variabel-variabel seperti jumlah \en{timestep}, jumlah \en{epoch}, dan ukuran \en{dataset} mempengaruhi selisih durasi \en{training} antara kedua perlakuan.
+
+Kedua perlakuan tidak berbeda secara signifikan hanya pada kasus A1, A2, A3, dan B1. Persamaan dari kasus-kasus tersebut adalah jumlah \en{timestep} yang relatif kecil, yaitu 25. Pada semua kasus dengan jumlah \en{timestep} lebih besar, seperti 50 dan 75, kedua perlakuan berbeda secara signifikan. Kesimpulan yang dapat diambil adalah jumlah \en{timestep} perlu melewati batas tertentu agar versi teroptimisasi dapat membuat perbedaan yang signifikan.
+
+Pada kasus A1, A2, A3, B1, B2, dan B3, selisih durasi \en{training} kurang dari 0.7\%, sedangkan pada kasus-kasus sisanya selisih konsisten antara 2.5\% hingga 3.2\%. Sama seperti sebelumnya, pada kasus-kasus ini digunakan jumlah \en{timestep} yang relatif kecil, sehingga memang setelah \en{timestep} tertentu barulah versi teroptimisasi dapat mengurangi durasi \en{training} secara signifikan.
+
+Penjelasan kedua fenomena tersebut terkait dengan Bagian~\ref{Stack} yang menjelaskan bahwa jumlah \en{timestep} berbanding lurus dengan jumlah elemen \en{stack}. Jumlah elemen \en{stack} yang lebih besar memberikan waktu lebih bagi "\en{future tensors}" untuk di-\en{swap in} secara \en{asynchronous} bersamaan dengan komputasi, seperti yang dijelaskan di Bagian~\ref{SwappingInModification}.
+
+Selanjutnya, pengujian dilakukan terhadap jumlah \en{epoch} yang berbeda-beda untuk mengamati apakah lama durasi \en{training} mempengaruhi selisihnya antara kedua perlakuan. Dari hasil pengujian yang didapat, antara \en{jumlah epoch} yang kecil dan besar, selisih dapat naik (A8 ke A9) maupun turun (A8 ke B6). Maka dari itu, tidak dapat disimpulkan bahwa \en{jumlah epoch} mempengaruhi selisih antara versi asli dan versi teroptimisasi.
+
+Kemudian, antara kasus dengan prefiks "A" dan prefiks "B", hanya berbeda \en{dataset} yang digunakan, yaitu data kecil dan besar (disebut di Bagian~\ref{ExperimentMethod}). Dengan mengamati hasil pengujian, tidak terlihat pola yang menunjukkan bahwa jenis \en{dataset} mempengaruhi selisih durasi \en{training}. Artinya, versi teroptimisasi dapat bekerja untuk berbagai jenis \en{dataset}.
+
+Secara keseluruhan, dari hasil pengujian dapat disimpulkan bahwa selisih durasi \en{training} antara versi asli dan versi teroptimisasi paling dipengaruhi oleh jumlah \en{timestep}, sedangkan jumlah \en{epoch} dan jenis \en{dataset} tidak terlalu membawa pengaruh. Di bawah jumlah \en{timestep} tertentu, durasi \en{training} versi teroptimisasi tidak jauh berbeda dengan versi asli, sedangkan di atas jumlah \en{timestep} tertentu, versi teroptimisasi secara konsisten mengurangi durasi \en{training} sebesar 2.5\% hingga 3.2\%.
