@@ -203,12 +203,12 @@ Terdapat dua \en{dataset} yang digunakan untuk pengujian. Yang pertama adalah te
 
 Pengujian model dilakukan dengan berbagai variasi nilai parameter, yaitu jumlah \en{timestep}, ukuran \en{batch}, dan jumlah \en{epoch}. Pengujian terhadap berbagai jumlah \en{timestep} dilakukan karena jumlah \en{timestep} mempengaruhi ukuran \en{stack}, seperti yang dijelaskan di Bagian~\ref{Stack}. Ukuran \en{batch} pada dasarnya menyesuaikan jumlah \en{timestep}, agar kebutuhan memori TensorFlow relatif konsisten dari kasus ke kasus. Terakhir, variasi jumlah \en{epoch} bertujuan menguji \en{training} dalam berbagai durasi, karena jumlah \en{epoch} secara langsung mempengaruhi durasi \en{training} model. Pada semua kasus, model memiliki 8 \en{hidden layer} yang masing-masing memiliki 512 neuron.
 
-Tabel~\ref{tbl:Experiments} menunjukkan kode setiap kasus pengujian beserta parameter-parameter dan \en{dataset} yang digunakan.
+Tabel~\ref{tbl:Cases} menunjukkan kode setiap kasus pengujian beserta parameter-parameter dan \en{dataset} yang digunakan.
 
 \begin{table}[htp]
 \centering
 \caption{Kode, parameter, dan \en{dataset} setiap kasus pengujian}
-\label{tbl:Experiments}
+\label{tbl:Cases}
 \small
 \begin{tabular}{|l|l|l|l|l|}
 \hline
@@ -710,7 +710,7 @@ Tabel~\ref{tbl:B9} menunjukkan hasil pengujian kasus B9. Pada kasus ini, versi t
 
 Tabel~\ref{tbl:Overview} merangkum rataan kedua perlakuan, persentase selisihnya, serta apakah kedua perlakuan berbeda secara signifikan (menurut \en{t-test}) untuk masing-masing kasus pengujian.
 
-\begin{table}[]
+\begin{table}[ht]
 \centering
 \caption{Rangkuman hasil pengujian}
 \label{tbl:Overview}
@@ -749,6 +749,6 @@ Penjelasan kedua fenomena tersebut terkait dengan Bagian~\ref{Stack} yang menjel
 
 Selanjutnya, pengujian dilakukan terhadap jumlah \en{epoch} yang berbeda-beda untuk mengamati apakah lama durasi \en{training} mempengaruhi selisihnya antara kedua perlakuan. Dari hasil pengujian yang didapat, antara \en{jumlah epoch} yang kecil dan besar, selisih dapat naik (A8 ke A9) maupun turun (A8 ke B6). Maka dari itu, tidak dapat disimpulkan bahwa \en{jumlah epoch} mempengaruhi selisih antara versi asli dan versi teroptimisasi.
 
-Kemudian, antara kasus dengan prefiks "A" dan prefiks "B", hanya berbeda \en{dataset} yang digunakan, yaitu data kecil dan besar (disebut di Bagian~\ref{ExperimentMethod}). Dengan mengamati hasil pengujian, tidak terlihat pola yang menunjukkan bahwa jenis \en{dataset} mempengaruhi selisih durasi \en{training}. Artinya, versi teroptimisasi dapat bekerja untuk berbagai jenis \en{dataset}.
+Kemudian, antara kasus dengan prefiks "A" dan prefiks "B", hanya berbeda pada \en{dataset} yang digunakan, yaitu data kecil dan besar (disebut di Bagian~\ref{ExperimentMethod}). Dengan mengamati hasil pengujian, tidak terlihat pola yang menunjukkan bahwa jenis \en{dataset} mempengaruhi selisih durasi \en{training}. Artinya, versi teroptimisasi dapat bekerja untuk berbagai jenis \en{dataset}.
 
 Secara keseluruhan, dari hasil pengujian dapat disimpulkan bahwa selisih durasi \en{training} antara versi asli dan versi teroptimisasi paling dipengaruhi oleh jumlah \en{timestep}, sedangkan jumlah \en{epoch} dan jenis \en{dataset} tidak terlalu membawa pengaruh. Di bawah jumlah \en{timestep} tertentu, durasi \en{training} versi teroptimisasi tidak jauh berbeda dengan versi asli, sedangkan di atas jumlah \en{timestep} tertentu, versi teroptimisasi secara konsisten mengurangi durasi \en{training} sebesar 2.5\% hingga 3.2\%.

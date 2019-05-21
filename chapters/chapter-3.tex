@@ -4,11 +4,11 @@
 
 Di luar kinerja model, tantangan dalam melatih model \en{deep learning} meliputi lamanya durasi pelatihan dan besarnya sumber daya komputasi yang dibutuhkan, seperti kapasitas memori. Salah satu penyebabnya adalah besarnya jumlah dan ukuran \en{hidden layer} yang meningkatkan jumlah nilai-nilai yang harus dikomputasi. Selain itu, pelatihan model \en{deep learning} seringkali menggunakan \en{dataset} berukuran besar, menambah durasi pelatihan dan sumber daya yang dibutuhkan.
 
-Fokus penelitian di tugas akhir ini terletak pada optimisasi penggunaan memori untuk pelatihan model, khususnya di bagian \en{memory swapping} yang akan dijelaskan kemudian. Seperti dijelaskan di Bagian~\ref{MemoryUsage}, mayoritas memori digunakan untuk me-\en{maintain} nilai-nilai seperti bobot, bias, hasil fungsi aktivasi, serta data yang sedang diproses. Kelebihan penggunaan memori dari kapasitas yang ada dapat mengakibatkan gagalnya pelatihan model karena masalah \en{out of memory} (OOM).
+Fokus penelitian di tugas akhir ini terletak pada optimisasi penggunaan memori untuk pelatihan model, khususnya di bagian \en{memory swapping} yang akan dijelaskan kemudian. Seperti dijelaskan di Bagian~\ref{MemoryUsage}, memori digunakan untuk me-\en{maintain} nilai-nilai seperti bobot, bias, hasil fungsi aktivasi, serta data yang sedang diproses. Kelebihan penggunaan memori dari kapasitas yang ada dapat mengakibatkan gagalnya pelatihan model karena masalah \en{out of memory} (OOM).
 
 Satu hal yang  memperparah masalah ini adalah kapasitas memori GPU. Saat ini, GPU banyak digunakan untuk melatih model \en{deep learning} karena sifat paralelismenya yang tinggi, sehingga dapat melatih model dengan lebih cepat dari CPU. Namun, ukuran memori GPU cenderung lebih kecil dari ukuran memori CPU. Sebagai gambaran, saat ini memori GPU umumnya berukuran sekitar 2-16 GB sedangkan memori CPU dapat berukuran hingga 1 TB.
 
-Salah satu penanganan masalah tersebut adalah \en{memory swapping}, yaitu metode pengurangan beban memori dengan memindahkan isi memori secara temporer ke \en{memory pool} yang lebih besar (dan biasanya memiliki waktu akses lebih lambat). Pada kasus ini, sebagian isi memori GPU dapat dipindahkan ke memori CPU secara sementara. Dalam berbagai kasus, terutama dengan kapasitas memori yang terbatas, \en{memory swapping} merupakan satu-satunya solusi terhadap masalah OOM.
+Salah satu solusi masalah tersebut adalah \en{memory swapping}, yaitu metode pengurangan beban memori dengan memindahkan isi memori secara temporer ke \en{memory pool} yang lebih besar (dan biasanya memiliki waktu akses lebih lambat). Pada kasus ini, sebagian isi memori GPU dapat dipindahkan ke memori CPU secara sementara. Dalam berbagai kasus, terutama dengan kapasitas memori yang terbatas, \en{memory swapping} merupakan satu-satunya solusi terhadap masalah OOM.
 
 Namun, \en{memory swapping} memiliki \en{trade-off} tersendiri. Seperti pemindahan data apapun, memindahkan data dari GPU ke CPU (dan sebaliknya) juga membutuhkan waktu tersendiri, berbanding lurus dengan jumlah dan ukuran data yang dipindahkan. Akibatnya, \en{memory swapping} menambah durasi pelatihan yang bertambahnya semakin besar seiring  bertambahnya data yang di-\en{swap}. Maka, \en{memory swapping} yang optimal perlu selektif dalam memilih data mana yang di-\en{swap} agar pelatihan model dapat berjalan tanpa OOM, juga tanpa menambah durasi pelatihan secara terlalu besar.
 
@@ -132,11 +132,13 @@ Bila melihat heuristik \en{memory swapping} di TensorFlow yang dijelaskan di bag
 
 \subsection{\en{Recurrent Neural Network} sebagai Model Uji} \label{WhyRNN}
 
-Arsitektur \en{deep neural network} yang dipilih untuk menjadi fokus optimisasi ini adalah \en{recurrent neural network} (RNN) yang antara \en{input layer} atau \en{output layer}-nya (atau keduanya) berjenis \en{sequence}. Alasan pemilihan arsitektur RNN adalah karena topologinya yang dinamis menurut panjang \en{input} atau \en{output}, penggunaan memori tidak dapat diprediksi sebelum eksekusi, sehingga optimisasi memori pun menjadi lebih krusial.
+Arsitektur \en{deep neural network} yang dipilih untuk menjadi fokus optimisasi ini adalah \en{recurrent neural network} (RNN). Secara lebih spesifik, model berbasis RNN yang antara \en{input layer} atau \en{output layer}-nya (atau keduanya) berjenis \en{sequence}.
+
+Alasan utama pemilihan arsitektur RNN adalah karena fitur \en{memory swapping} di TensorFlow hanya terdapat pada \code{tf.nn.dynamic\_rnn} (kelas RNN dinamis), sehingga dengan memilih model berarsitektur RNN, \en{memory swapping} hasil optimisasi dapat dibandingkan dengan \en{memory swapping} bawaan dari TensorFlow.
+
+Alasan lainnya adalah karena topologi RNN yang dinamis menurut panjang \en{input} atau \en{output}, penggunaan memori tidak dapat diprediksi sebelum eksekusi, sehingga optimisasi memori pun menjadi lebih krusial.
 
 Selain itu, seperti yang dijelaskan pada Bagian~\ref{BPTT}, pelatihan RNN dengan \en{backpropagation through time} lebih kompleks dan sulit dari \en{backpropagation} biasa, karena perhitungan harus ikut memperhitungkan \en{timestep} yang ada. Faktor ini membuat pelatihan RNN cenderung membutuhkan lebih banyak waktu dan memori dari arsitektur lainnya.
-
-Alasan lainnya adalah fitur \en{memory swapping} di TensorFlow hanya terdapat pada \code{tf.nn.dynamic\_rnn} (kelas RNN dinamis), sehingga dengan memilih model berarsitektur RNN, \en{memory swapping} hasil optimisasi dapat dibandingkan dengan \en{memory swapping} bawaan dari TensorFlow.
 
 \section{Rancangan Solusi} \label{SolutionDesign}
 
