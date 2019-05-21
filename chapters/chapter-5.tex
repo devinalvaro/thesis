@@ -1,0 +1,19 @@
+\chapter{Kesimpulan dan Saran}
+
+\section{Kesimpulan}
+
+Beberapa kesimpulan yang diperoleh dari tugas akhir ini adalah sebagai berikut.
+
+\begin{enumerate}
+    \item \en{Memory swapping} di TensorFlow dapat dioptimisasi untuk mengurangi \en{overhead} terhadap durasi \en{training}, dengan mengutamakan \en{swapping} terhadap \en{tensor} yang interval hingga digunakannya kembali saat \en{backpropagation} terlama, sehingga lebih banyak \en{tensor} yang dapat di-\en{swap} secara \en{asynchronous}, meningkatkan \en{overlapping} antara komputasi dengan \en{memory swapping}.
+    \item Menurut pengujian, optimisasi \en{memory swapping} tersebut dapat mengurangi durasi \en{training} dari 2.5\% hingga 3.2\%, apabila jumlah \en{timestep} dari model mencukupi.
+\end{enumerate}
+
+\section{Saran}
+
+Beberapa saran untuk pengembangan tugas akhir ini adalah sebagai berikut.
+
+\begin{enumerate}
+    \item Menggunakan struktur data lain untuk menampung \en{tensor} yang akan di-\en{swap}, misalnya \en{priority queue} untuk memprioritaskan \en{tensor} dengan ukuran terbesar.
+    \item Menggunakan arsitektur RNN lain seperti \en{long-short term memory} (LSTM) dan \en{gated recurrent unit} (GRU) sebagai basis model.
+\end{enumerate}
