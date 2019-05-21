@@ -176,10 +176,11 @@ Pada bagian ini dijelaskan mengenai pengujian terhadap optimisasi \en{memory swa
 Tabel~\ref{tbl:Specification} memaparkan spesifikasi lingkungan yang digunakan penulis dalam melakukan pengujian.
 
 {\renewcommand{\arraystretch}{0.75}
-\begin{table}[]
+\begin{table}[htp]
 \centering
 \caption{Spesifikasi Lingkungan Pengujian}
 \label{tbl:Specification}
+\small
 \begin{tabular}{|l|l|}
 \hline
 \multicolumn{1}{|c|}{\textbf{Original}} & \multicolumn{1}{c|}{\textbf{Optimized}} \\ \hline
@@ -192,228 +193,497 @@ Tabel~\ref{tbl:Specification} memaparkan spesifikasi lingkungan yang digunakan p
 
 \subsection{Metode Pengujian}
 
-Setiap pengujian dilakukan dengan beberapa kali melakukan \en{training} suatu model RNN menggunakan TensorFlow asli dan teroptimisasi, kemudian durasi \en{training} kedua perlakuan dibandingkan dan dihitung rataannya. Selain itu, dilakukan uji statistik lain seperti \en{t-test} untuk memastikan bahwa durasi \en{training} kedua perlakuan memang berbeda.
+Setiap pengujian dilakukan dengan beberapa kali melakukan \en{training} suatu model RNN menggunakan TensorFlow yang asli dan yang teroptimisasi, kemudian durasi \en{training} kedua perlakuan dibandingkan dan dihitung rataannya. Selain itu, dilakukan uji statistik lain seperti \en{t-test} untuk memastikan bahwa durasi \en{training} kedua perlakuan memang berbeda.
 
-Model yang digunakan untuk pengujian adalah char-rnn yang berdasarkan pada \citep{karpathy2015unreasonable}, namun telah diadaptasi ke TensorFlow. Secara singkat, char-rnn adalah model RNN yang menerima sekuens teks kemudian membangkitkan sekuens teks lanjutannya, huruf per huruf. Data yang digunakan merupakan teks berisi 26172 karakter.
+Model yang digunakan untuk pengujian adalah char-rnn berdasarkan \citep{karpathy2015unreasonable}, namun telah diadaptasi ke TensorFlow. Secara singkat, char-rnn adalah model RNN yang menerima sekuens teks kemudian membangkitkan sekuens teks lanjutannya, karakter per karakter.
 
 Implementasi model tersebut dengan TensorFlow menggunakan kelas \code{dynamic\_rnn} (disebutkan di Bagian~\ref{WhyRNN}) dengan parameter \code{swap\_memory=True} untuk mengijinkan TensorFlow melakukan \en{memory swapping}. Selain itu, parameter-parameter yang digunakan dalam menjalankan pengujian dipilih sedemikian rupa agar ukuran memori yang dibutuhkan melebihi ukuran memori yang ada, sehingga TensorFlow terpaksa melakukan \en{memory swapping}.
 
+Terdapat dua \en{dataset} yang digunakan untuk pengujian. Yang pertama adalah teks berisi 291.268 karakter (285 KB), setelahnya disebut data kecil. Yang kedua adalah teks berisi 4.573.338 karakter (4.4 MB), setelahnya disebut data besar. Kedua data yang berbeda ukuran ini dipilih untuk membandingkan kinerja optimisasi terhadap data dalam berbagai ukuran. Selain itu, isi kedua data juga berbeda (data kecil bukan \en{subset} dari data besar).
+
+Pengujian model dilakukan dengan berbagai variasi nilai parameter, yaitu jumlah \en{timestep}, ukuran \en{batch}, dan jumlah \en{epoch}. Pengujian terhadap berbagai jumlah \en{timestep} dilakukan karena jumlah \en{timestep} mempengaruhi ukuran \en{stack}, seperti yang dijelaskan di Bagian~\ref{Stack}. Ukuran \en{batch} pada dasarnya menyesuaikan jumlah \en{timestep}, agar kebutuhan memori TensorFlow relatif konsisten dari kasus ke kasus. Terakhir, variasi jumlah \en{epoch} bertujuan menguji \en{training} dalam berbagai durasi, karena jumlah \en{epoch} secara langsung mempengaruhi durasi \en{training} model. Pada semua kasus, model memiliki 8 \en{hidden layer} yang masing-masing memiliki 512 neuron.
+
+Tabel~\ref{tbl:Experiments} menunjukkan kode setiap kasus pengujian beserta parameter-parameter dan \en{dataset} yang digunakan.
+
+\begin{table}[htp]
+\centering
+\caption{Kode, parameter, dan \en{dataset} setiap kasus pengujian}
+\label{tbl:Experiments}
+\small
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+\textbf{Kode Pengujian} & \textbf{Jumlah \en{Timestep}} & \textbf{Ukuran \en{Batch}} & \textbf{Jumlah \en{Epoch}} & \textbf{\en{Dataset}} \\ \hline
+A1            & 25                       & 4125                  & 10                    & Kecil            \\ \hline
+A2            & 25                       & 4125                  & 20                    & Kecil            \\ \hline
+A3            & 25                       & 4125                  & 40                    & Kecil            \\ \hline
+A4            & 50                       & 3000                  & 10                    & Kecil            \\ \hline
+A5            & 50                       & 3000                  & 20                    & Kecil            \\ \hline
+A6            & 50                       & 3000                  & 40                    & Kecil            \\ \hline
+A7            & 75                       & 2500                  & 10                    & Kecil            \\ \hline
+A8            & 75                       & 2500                  & 20                    & Kecil            \\ \hline
+A9            & 75                       & 2500                  & 40                    & Kecil            \\ \hline
+B1            & 25                       & 4125                  & 10                    & Besar            \\ \hline
+B2            & 25                       & 4125                  & 20                    & Besar            \\ \hline
+B3            & 25                       & 4125                  & 40                    & Besar            \\ \hline
+B4            & 50                       & 3000                  & 10                    & Besar            \\ \hline
+B5            & 50                       & 3000                  & 20                    & Besar            \\ \hline
+B6            & 50                       & 3000                  & 40                    & Besar            \\ \hline
+B7            & 75                       & 2500                  & 10                    & Besar            \\ \hline
+B8            & 75                       & 2500                  & 20                    & Besar            \\ \hline
+B9            & 75                       & 2500                  & 40                    & Besar            \\ \hline
+\end{tabular}
+\end{table}
+
 \subsection{Hasil Pengujian}
 
-Berikut ditunjukkan hasil pengujian antara TensorFlow asli dan teroptimisasi dalam berbagai kasus pengujian.
+Bagian ini berisi hasil setiap kasus pengujian, diikuti dengan pembahasan hasil pengujian pada bagian selanjutnya. Pada setiap pengujian, ditampilkan durasi \en{training} (dalam satuan detik) kedua perlakuan (TensorFlow asli dan teroptimisasi) pada masing-masing 10 kali percobaan.
 
-\subsubsection{Kasus Pertama}
+\subsubsection{Kasus A1}
 
-Pada pengujian pertama, digunakan parameter-parameter sebagai berikut. Pada pengujian pertama dan kedua dipilih jumlah \en{unrolling} yang relatif kecil (20) agar dapat dibandingkan dengan pengujian-pengujian setelahnya yang menggunakan jumlah \en{unrolling} lebih besar.
+Tabel~\ref{tbl:A1} menunjukkan hasil pengujian kasus A1. Dengan \en{t-test} didapat \en{p-value} 0.86, sehingga tidak dapat dikatakan bahwa versi teroptimisasi berbeda secara signifikan dengan versi asli.
 
-\begin{enumerate}
-  \item Ukuran \en{batch}: 6000
-  \item Jumlah \en{hidden layer}: 8
-  \item Ukuran \en{hidden layer}: 512
-  \item Jumlah \en{unrolling}: 20
-  \item Jumlah \en{epoch}: 200
-\end{enumerate}
-
-Tabel~\ref{tbl:First} menunjukkan durasi \en{training} (dalam satuan detik) kedua perlakuan pada masing-masing 10 kali percobaan. Dari hasil pengujian tersebut, terlihat bahwa versi teroptimisasi berhasil mengurangi durasi \en{training} sekitar 1.44\%. Menurut uji statistik \en{t-test}, didapatkan \en{p-value} bernilai 1.8493031002146812e-06, sehingga secara statistik dapat dinyatakan bahwa kedua perlakuan berbeda secara signifikan.
-
-\begin{table}[]
+\begin{table}[htp]
 \centering
-\caption{Hasil pengujian kasus pertama}
-\label{tbl:First}
-\small
+\caption{Hasil pengujian kasus A1}
+\label{tbl:A1}
 \begin{tabular}{cll}
 \hline
-\multicolumn{1}{|c|}{i}  & \multicolumn{1}{c|}{\textbf{Original}}  & \multicolumn{1}{c|}{\textbf{Optimized}} \\ \hline
-\multicolumn{1}{|c|}{1}  & \multicolumn{1}{l|}{252.15827584266663} & \multicolumn{1}{l|}{252.97898483276367} \\ \hline
-\multicolumn{1}{|c|}{2}  & \multicolumn{1}{l|}{256.4153354167938}  & \multicolumn{1}{l|}{252.72823286056519} \\ \hline
-\multicolumn{1}{|c|}{3}  & \multicolumn{1}{l|}{256.832067489624}   & \multicolumn{1}{l|}{252.96671104431152} \\ \hline
-\multicolumn{1}{|c|}{4}  & \multicolumn{1}{l|}{257.4575080871582}  & \multicolumn{1}{l|}{252.72692227363586} \\ \hline
-\multicolumn{1}{|c|}{5}  & \multicolumn{1}{l|}{256.82346057891846} & \multicolumn{1}{l|}{253.96517038345337} \\ \hline
-\multicolumn{1}{|c|}{6}  & \multicolumn{1}{l|}{256.21726179122925} & \multicolumn{1}{l|}{251.7913670539856}  \\ \hline
-\multicolumn{1}{|c|}{7}  & \multicolumn{1}{l|}{256.92102813720703} & \multicolumn{1}{l|}{252.7251443862915}  \\ \hline
-\multicolumn{1}{|c|}{8}  & \multicolumn{1}{l|}{258.0138609409332}  & \multicolumn{1}{l|}{252.35582065582275} \\ \hline
-\multicolumn{1}{|c|}{9}  & \multicolumn{1}{l|}{257.0869014263153}  & \multicolumn{1}{l|}{252.23767232894897} \\ \hline
-\multicolumn{1}{|c|}{10} & \multicolumn{1}{l|}{256.1273946762085}  & \multicolumn{1}{l|}{252.53468418121338} \\ \hline
-\textbf{Mean}            & 256.40531                               & 252.70107
+\multicolumn{1}{|c|}{\textbf{i}}  & \multicolumn{1}{c|}{\en{\textbf{Original}}} & \multicolumn{1}{c|}{\en{\textbf{Optimized}}} \\ \hline
+\multicolumn{1}{|c|}{1}           & \multicolumn{1}{l|}{33.225433349609375}         & \multicolumn{1}{l|}{33.543959617614746}          \\ \hline
+\multicolumn{1}{|c|}{2}           & \multicolumn{1}{l|}{33.300493478775024}         & \multicolumn{1}{l|}{33.364500284194946}          \\ \hline
+\multicolumn{1}{|c|}{3}           & \multicolumn{1}{l|}{34.74644994735718}          & \multicolumn{1}{l|}{33.57258701324463}           \\ \hline
+\multicolumn{1}{|c|}{4}           & \multicolumn{1}{l|}{33.64357852935791}          & \multicolumn{1}{l|}{34.97247886657715}           \\ \hline
+\multicolumn{1}{|c|}{5}           & \multicolumn{1}{l|}{33.51314330101013}          & \multicolumn{1}{l|}{33.11316227912903}           \\ \hline
+\multicolumn{1}{|c|}{6}           & \multicolumn{1}{l|}{33.47014403343201}          & \multicolumn{1}{l|}{33.4130334854126}            \\ \hline
+\multicolumn{1}{|c|}{7}           & \multicolumn{1}{l|}{33.366349935531616}         & \multicolumn{1}{l|}{33.458592891693115}          \\ \hline
+\multicolumn{1}{|c|}{8}           & \multicolumn{1}{l|}{33.29462194442749}          & \multicolumn{1}{l|}{33.58814311027527}           \\ \hline
+\multicolumn{1}{|c|}{9}           & \multicolumn{1}{l|}{33.35132122039795}          & \multicolumn{1}{l|}{33.24147891998291}           \\ \hline
+\multicolumn{1}{|c|}{10}          & \multicolumn{1}{l|}{33.34075593948364}          & \multicolumn{1}{l|}{33.37231993675232}           \\ \hline
+\multicolumn{1}{l}{\textbf{Mean}} & 33.52523                                        & 33.56403
 \end{tabular}
 \end{table}
 
-\subsubsection{Kasus Kedua}
+\subsubsection{Kasus A2}
 
-Pada pengujian kedua, digunakan parameter-parameter yang sama dengan sebelumnya namun dengan jumlah \en{epoch} yang 5 kali lebih besar.
+Tabel~\ref{tbl:A2} menunjukkan hasil pengujian kasus A2. Meski versi teroptimisasi memiliki rataan sedikit lebih rendah, \en{p-value} dari \en{t-test} masih 0.14, sehingga sama seperti kasus sebelumnya, tidak dapat dikatakan bahwa versi teroptimisasi berbeda secara signifikan dengan versi asli.
 
-\begin{enumerate}
-  \item Ukuran \en{batch}: 6000
-  \item Jumlah \en{hidden layer}: 8
-  \item Ukuran \en{hidden layer}: 512
-  \item Jumlah \en{unrolling}: 20
-  \item Jumlah \en{epoch}: 1000
-\end{enumerate}
-
-Tabel~\ref{tbl:Second} menunjukkan durasi \en{training} (dalam satuan detik) kedua perlakuan pada masing-masing 10 kali percobaan. Dari hasil pengujian tersebut, terlihat bahwa versi teroptimisasi berhasil mengurangi durasi \en{training} sekitar 1.58\%. Menurut uji statistik \en{t-test}, didapatkan \en{p-value} bernilai 9.21356126659428e-10, sehingga secara statistik dapat dinyatakan bahwa kedua perlakuan berbeda secara signifikan.
-
-\begin{table}[]
+\begin{table}[htp]
 \centering
-\caption{Hasil pengujian kasus kedua}
-\label{tbl:Second}
-\small
+\caption{Hasil pengujian kasus A2}
+\label{tbl:A2}
 \begin{tabular}{cll}
 \hline
-\multicolumn{1}{|c|}{i}  & \multicolumn{1}{c|}{\textbf{Original}}  & \multicolumn{1}{c|}{\textbf{Optimized}} \\ \hline
-\multicolumn{1}{|c|}{1}  & \multicolumn{1}{l|}{1254.0009925365448} & \multicolumn{1}{l|}{1239.5168986320496} \\ \hline
-\multicolumn{1}{|c|}{2}  & \multicolumn{1}{l|}{1261.5856878757477} & \multicolumn{1}{l|}{1236.1409561634064} \\ \hline
-\multicolumn{1}{|c|}{3}  & \multicolumn{1}{l|}{1255.5529029369354} & \multicolumn{1}{l|}{1235.9044954776764} \\ \hline
-\multicolumn{1}{|c|}{4}  & \multicolumn{1}{l|}{1255.6840405464172} & \multicolumn{1}{l|}{1233.5171205997467} \\ \hline
-\multicolumn{1}{|c|}{5}  & \multicolumn{1}{l|}{1258.378760099411}  & \multicolumn{1}{l|}{1238.562110900879}  \\ \hline
-\multicolumn{1}{|c|}{6}  & \multicolumn{1}{l|}{1250.3999752998352} & \multicolumn{1}{l|}{1239.8265266418457} \\ \hline
-\multicolumn{1}{|c|}{7}  & \multicolumn{1}{l|}{1257.8104090690613} & \multicolumn{1}{l|}{1239.4132153987885} \\ \hline
-\multicolumn{1}{|c|}{8}  & \multicolumn{1}{l|}{1259.7040483951569} & \multicolumn{1}{l|}{1237.5983362197876} \\ \hline
-\multicolumn{1}{|c|}{9}  & \multicolumn{1}{l|}{1250.1268837451935} & \multicolumn{1}{l|}{1232.3407201766968} \\ \hline
-\multicolumn{1}{|c|}{10} & \multicolumn{1}{l|}{1258.8046193122864} & \multicolumn{1}{l|}{1230.5381321907043} \\ \hline
-\textbf{Mean}            & 1256.20483                              & 1236.33585
+\multicolumn{1}{|c|}{\textbf{i}}  & \multicolumn{1}{c|}{\en{\textbf{Original}}} & \multicolumn{1}{c|}{\en{\textbf{Optimized}}} \\ \hline
+\multicolumn{1}{|c|}{1}           & \multicolumn{1}{l|}{66.12863492965698}          & \multicolumn{1}{l|}{64.3571457862854}            \\ \hline
+\multicolumn{1}{|c|}{2}           & \multicolumn{1}{l|}{64.54400324821472}          & \multicolumn{1}{l|}{64.28385186195374}           \\ \hline
+\multicolumn{1}{|c|}{3}           & \multicolumn{1}{l|}{64.79296922683716}          & \multicolumn{1}{l|}{64.79301166534424}           \\ \hline
+\multicolumn{1}{|c|}{4}           & \multicolumn{1}{l|}{65.09491682052612}          & \multicolumn{1}{l|}{64.81330513954163}           \\ \hline
+\multicolumn{1}{|c|}{5}           & \multicolumn{1}{l|}{64.75147080421448}          & \multicolumn{1}{l|}{65.87236380577087}           \\ \hline
+\multicolumn{1}{|c|}{6}           & \multicolumn{1}{l|}{65.28346109390259}          & \multicolumn{1}{l|}{64.35014033317566}           \\ \hline
+\multicolumn{1}{|c|}{7}           & \multicolumn{1}{l|}{65.07980608940125}          & \multicolumn{1}{l|}{65.6430492401123}            \\ \hline
+\multicolumn{1}{|c|}{8}           & \multicolumn{1}{l|}{66.45581388473511}          & \multicolumn{1}{l|}{64.49136257171631}           \\ \hline
+\multicolumn{1}{|c|}{9}           & \multicolumn{1}{l|}{64.73718810081482}          & \multicolumn{1}{l|}{64.37896466255188}           \\ \hline
+\multicolumn{1}{|c|}{10}          & \multicolumn{1}{l|}{64.67400527000427}          & \multicolumn{1}{l|}{64.30785369873047}           \\ \hline
+\multicolumn{1}{l}{\textbf{Mean}} & 65.15423                                        & 64.7291
 \end{tabular}
 \end{table}
 
-\subsubsection{Kasus Ketiga}
+\subsubsection{Kasus A3}
 
-Pada pengujian ketiga, digunakan parameter-parameter sebagai berikut. Dipilih jumlah \en{unrolling} yang lebih besar dari kedua pengujian sebelumnya (50), sehingga ukuran \en{batch} juga dikurangi agar menyeimbangkan kebutuhan memori.
+Tabel~\ref{tbl:A3} menunjukkan hasil pengujian kasus A3. Meski versi teroptimisasi memiliki rataan sedikit lebih rendah, \en{p-value} dari \en{t-test} masih 0.14, sehingga sama seperti kasus sebelumnya, tidak dapat dikatakan bahwa versi teroptimisasi berbeda secara signifikan dengan versi asli.
 
-\begin{enumerate}
-  \item Ukuran \en{batch}: 3000
-  \item Jumlah \en{hidden layer}: 8
-  \item Ukuran \en{hidden layer}: 512
-  \item Jumlah \en{unrolling}: 50
-  \item Jumlah \en{epoch}: 1000
-\end{enumerate}
-
-Tabel~\ref{tbl:Third} menunjukkan durasi \en{training} (dalam satuan detik) kedua perlakuan pada masing-masing 10 kali percobaan. Dari hasil pengujian tersebut, terlihat bahwa versi teroptimisasi berhasil mengurangi durasi \en{training} sekitar 3.1\%. Menurut uji statistik \en{t-test}, didapatkan \en{p-value} bernilai 1.1680156931633348e-15, sehingga secara statistik dapat dinyatakan bahwa kedua perlakuan berbeda secara signifikan.
-
-\begin{table}[]
+\begin{table}[htp]
 \centering
-\caption{Hasil pengujian kasus ketiga}
-\label{tbl:Third}
-\small
+\caption{Hasil pengujian kasus A3}
+\label{tbl:A3}
 \begin{tabular}{cll}
 \hline
-\multicolumn{1}{|c|}{i}  & \multicolumn{1}{c|}{\textbf{Original}}  & \multicolumn{1}{c|}{\textbf{Optimized}} \\ \hline
-\multicolumn{1}{|c|}{1}  & \multicolumn{1}{l|}{1710.8475177288055} & \multicolumn{1}{l|}{1659.8958191871643} \\ \hline
-\multicolumn{1}{|c|}{2}  & \multicolumn{1}{l|}{1708.529179573059}  & \multicolumn{1}{l|}{1657.4155213832855} \\ \hline
-\multicolumn{1}{|c|}{3}  & \multicolumn{1}{l|}{1718.1575810909271} & \multicolumn{1}{l|}{1657.545005083084}  \\ \hline
-\multicolumn{1}{|c|}{4}  & \multicolumn{1}{l|}{1711.9896774291992} & \multicolumn{1}{l|}{1664.026943206787}  \\ \hline
-\multicolumn{1}{|c|}{5}  & \multicolumn{1}{l|}{1716.2954456806183} & \multicolumn{1}{l|}{1660.8334894180298} \\ \hline
-\multicolumn{1}{|c|}{6}  & \multicolumn{1}{l|}{1710.3181750774384} & \multicolumn{1}{l|}{1650.7439186573029} \\ \hline
-\multicolumn{1}{|c|}{7}  & \multicolumn{1}{l|}{1710.8965182304382} & \multicolumn{1}{l|}{1659.6190533638}    \\ \hline
-\multicolumn{1}{|c|}{8}  & \multicolumn{1}{l|}{1722.2678709030151} & \multicolumn{1}{l|}{1670.1134555339813} \\ \hline
-\multicolumn{1}{|c|}{9}  & \multicolumn{1}{l|}{1714.1357491016388} & \multicolumn{1}{l|}{1656.9861009120941} \\ \hline
-\multicolumn{1}{|c|}{10} & \multicolumn{1}{l|}{1710.631816148758}  & \multicolumn{1}{l|}{1659.0270841121674} \\ \hline
-\textbf{Mean}            & 1713.40685                              & 1659.62064
+\multicolumn{1}{|c|}{\textbf{i}}  & \multicolumn{1}{c|}{\en{\textbf{Original}}} & \multicolumn{1}{c|}{\en{\textbf{Optimized}}} \\ \hline
+\multicolumn{1}{|c|}{1}           & \multicolumn{1}{l|}{127.28371238708496}         & \multicolumn{1}{l|}{126.28772187232971}          \\ \hline
+\multicolumn{1}{|c|}{2}           & \multicolumn{1}{l|}{128.12986397743225}         & \multicolumn{1}{l|}{127.92953848838806}          \\ \hline
+\multicolumn{1}{|c|}{3}           & \multicolumn{1}{l|}{127.42624640464783}         & \multicolumn{1}{l|}{128.2653489112854}           \\ \hline
+\multicolumn{1}{|c|}{4}           & \multicolumn{1}{l|}{127.49524307250977}         & \multicolumn{1}{l|}{126.79777836799622}          \\ \hline
+\multicolumn{1}{|c|}{5}           & \multicolumn{1}{l|}{127.46012616157532}         & \multicolumn{1}{l|}{126.79208564758301}          \\ \hline
+\multicolumn{1}{|c|}{6}           & \multicolumn{1}{l|}{128.38941287994385}         & \multicolumn{1}{l|}{126.9858250617981}           \\ \hline
+\multicolumn{1}{|c|}{7}           & \multicolumn{1}{l|}{128.4031105041504}          & \multicolumn{1}{l|}{128.2889633178711}           \\ \hline
+\multicolumn{1}{|c|}{8}           & \multicolumn{1}{l|}{126.78421878814697}         & \multicolumn{1}{l|}{127.4227511882782}           \\ \hline
+\multicolumn{1}{|c|}{9}           & \multicolumn{1}{l|}{127.52276182174683}         & \multicolumn{1}{l|}{126.64501905441284}          \\ \hline
+\multicolumn{1}{|c|}{10}          & \multicolumn{1}{l|}{127.322434425354}           & \multicolumn{1}{l|}{126.13128423690796}          \\ \hline
+\multicolumn{1}{l}{\textbf{Mean}} & 127.62171                                       & 127.15463
 \end{tabular}
 \end{table}
 
-\subsubsection{Kasus Keempat}
+\subsubsection{Kasus A4}
 
-Pada pengujian keempat, digunakan parameter-parameter yang sama dengan pengujian sebelumnya, tetapi dengan jumlah \en{epoch} digandakan.
+Tabel~\ref{tbl:A4} menunjukkan hasil pengujian kasus A4. Tidak seperti kasus-kasus sebelumnya, mulai dari kasus ini \en{p-value} dari \en{t-test} sangat kecil yaitu 8.78e-10, sehingga versi teroptimisasi dapat dikatakan berbeda secara signifikan dengan versi asli. Selain itu, versi teroptimisasi berhasil mengurangi durasi pelatihan sebesar 2.6\%.
 
-\begin{enumerate}
-  \item Ukuran \en{batch}: 3000
-  \item Jumlah \en{hidden layer}: 8
-  \item Ukuran \en{hidden layer}: 512
-  \item Jumlah \en{unrolling}: 50
-  \item Jumlah \en{epoch}: 2000
-\end{enumerate}
-
-Tabel~\ref{tbl:Fourth} menunjukkan durasi \en{training} (dalam satuan detik) kedua perlakuan pada masing-masing 10 kali percobaan. Dari hasil pengujian tersebut, terlihat bahwa versi teroptimisasi berhasil mengurangi durasi \en{training} sekitar 3.4\%. Menurut uji statistik \en{t-test}, didapatkan \en{p-value} bernilai 3.3438e-16, sehingga secara statistik dapat dinyatakan bahwa kedua perlakuan berbeda secara signifikan.
-
-\begin{table}[]
+\begin{table}[htp]
 \centering
-\caption{Hasil pengujian kasus keempat}
-\label{tbl:Fourth}
-\small
+\caption{Hasil pengujian kasus A4}
+\label{tbl:A4}
 \begin{tabular}{cll}
 \hline
-\multicolumn{1}{|c|}{i}           & \multicolumn{1}{c|}{\textbf{Original}}  & \multicolumn{1}{c|}{\textbf{Optimized}} \\ \hline
-\multicolumn{1}{|c|}{1}           & \multicolumn{1}{l|}{3419.5844151973724} & \multicolumn{1}{l|}{3310.971428632736}  \\ \hline
-\multicolumn{1}{|c|}{2}           & \multicolumn{1}{l|}{3432.882806301117}  & \multicolumn{1}{l|}{3315.9460911750793} \\ \hline
-\multicolumn{1}{|c|}{3}           & \multicolumn{1}{l|}{3413.0236432552338} & \multicolumn{1}{l|}{3304.504233598709}  \\ \hline
-\multicolumn{1}{|c|}{4}           & \multicolumn{1}{l|}{3421.1436865329742} & \multicolumn{1}{l|}{3314.9957132339478} \\ \hline
-\multicolumn{1}{|c|}{5}           & \multicolumn{1}{l|}{3402.4240250587463} & \multicolumn{1}{l|}{3328.4635627269745} \\ \hline
-\multicolumn{1}{|c|}{6}           & \multicolumn{1}{l|}{3415.1220932006836} & \multicolumn{1}{l|}{3312.9601073265076} \\ \hline
-\multicolumn{1}{|c|}{7}           & \multicolumn{1}{l|}{3414.628209590912}  & \multicolumn{1}{l|}{3313.3753986358643} \\ \hline
-\multicolumn{1}{|c|}{8}           & \multicolumn{1}{l|}{3411.1480510234833} & \multicolumn{1}{l|}{3307.7781500816345} \\ \hline
-\multicolumn{1}{|c|}{9}           & \multicolumn{1}{l|}{3414.513864994049}  & \multicolumn{1}{l|}{3327.114767551422}  \\ \hline
-\multicolumn{1}{|c|}{10}          & \multicolumn{1}{l|}{3422.7600326538086} & \multicolumn{1}{l|}{3325.095719099045}  \\ \hline
-\multicolumn{1}{l}{\textbf{Mean}} & 3416.72308                              & 3316.12052
+\multicolumn{1}{|c|}{\textbf{i}}  & \multicolumn{1}{c|}{\en{\textbf{Original}}} & \multicolumn{1}{c|}{\en{\textbf{Optimized}}} \\ \hline
+\multicolumn{1}{|c|}{1}           & \multicolumn{1}{l|}{40.13612484931946}          & \multicolumn{1}{l|}{39.17884802818298}           \\ \hline
+\multicolumn{1}{|c|}{2}           & \multicolumn{1}{l|}{40.041789054870605}         & \multicolumn{1}{l|}{38.904966831207275}          \\ \hline
+\multicolumn{1}{|c|}{3}           & \multicolumn{1}{l|}{40.46419858932495}          & \multicolumn{1}{l|}{38.93816804885864}           \\ \hline
+\multicolumn{1}{|c|}{4}           & \multicolumn{1}{l|}{40.2748806476593}           & \multicolumn{1}{l|}{39.33203983306885}           \\ \hline
+\multicolumn{1}{|c|}{5}           & \multicolumn{1}{l|}{40.284501791000366}         & \multicolumn{1}{l|}{39.12717938423157}           \\ \hline
+\multicolumn{1}{|c|}{6}           & \multicolumn{1}{l|}{40.02491354942322}          & \multicolumn{1}{l|}{39.145731687545776}          \\ \hline
+\multicolumn{1}{|c|}{7}           & \multicolumn{1}{l|}{40.04407596588135}          & \multicolumn{1}{l|}{39.27578830718994}           \\ \hline
+\multicolumn{1}{|c|}{8}           & \multicolumn{1}{l|}{39.96129322052002}          & \multicolumn{1}{l|}{39.3774037361145}            \\ \hline
+\multicolumn{1}{|c|}{9}           & \multicolumn{1}{l|}{40.02649664878845}          & \multicolumn{1}{l|}{38.87396168708801}           \\ \hline
+\multicolumn{1}{|c|}{10}          & \multicolumn{1}{l|}{40.079139709472656}         & \multicolumn{1}{l|}{38.73838710784912}           \\ \hline
+\multicolumn{1}{l}{\textbf{Mean}} & 40.13374                                        & 39.08925
 \end{tabular}
 \end{table}
 
-\subsubsection{Kasus Kelima}
+\subsubsection{Kasus A5}
 
-Pada pengujian ketiga, digunakan parameter-parameter sebagai berikut. Dipilih jumlah \en{unrolling} yang lebih besar dari pengujian-pengujian sebelumnya (80), sehingga ukuran \en{batch} juga dikurangi agar menyeimbangkan kebutuhan memori.
+Tabel~\ref{tbl:A5} menunjukkan hasil pengujian kasus A5. Pada kasus ini, versi teroptimisasi mengurangi durasi pelatihan lebih jauh dari sebelumnya, yaitu sebesar 2.98\%. Hal ini didukung dengan \en{p-value} dari \en{t-test} yang bernilai 3.73e-16.
 
-\begin{enumerate}
-  \item Ukuran \en{batch}: 2400
-  \item Jumlah \en{hidden layer}: 8
-  \item Ukuran \en{hidden layer}: 512
-  \item Jumlah \en{unrolling}: 80
-  \item Jumlah \en{epoch}: 500
-\end{enumerate}
-
-Tabel~\ref{tbl:Fifth} menunjukkan durasi \en{training} (dalam satuan detik) kedua perlakuan pada masing-masing 10 kali percobaan. Dari hasil pengujian tersebut, terlihat bahwa versi teroptimisasi berhasil mengurangi durasi \en{training} sekitar 3.11\%. Menurut uji statistik \en{t-test}, didapatkan \en{p-value} bernilai 2.426062620387277e-18, sehingga secara statistik dapat dinyatakan bahwa kedua perlakuan berbeda secara signifikan.
-
-\begin{table}[]
+\begin{table}[htp]
 \centering
-\caption{Hasil pengujian kasus kelima}
-\label{tbl:Fifth}
-\small
+\caption{Hasil pengujian kasus A5}
+\label{tbl:A5}
 \begin{tabular}{cll}
 \hline
-\multicolumn{1}{|c|}{i}           & \multicolumn{1}{c|}{\textbf{Original}}  & \multicolumn{1}{c|}{\textbf{Optimized}} \\ \hline
-\multicolumn{1}{|c|}{1}           & \multicolumn{1}{l|}{1165.6820361614227} & \multicolumn{1}{l|}{1126.7230513095856} \\ \hline
-\multicolumn{1}{|c|}{2}           & \multicolumn{1}{l|}{1163.4759526252747} & \multicolumn{1}{l|}{1130.8513023853302} \\ \hline
-\multicolumn{1}{|c|}{3}           & \multicolumn{1}{l|}{1162.6871263980865} & \multicolumn{1}{l|}{1126.5956711769104} \\ \hline
-\multicolumn{1}{|c|}{4}           & \multicolumn{1}{l|}{1165.6165866851807} & \multicolumn{1}{l|}{1127.9965732097626} \\ \hline
-\multicolumn{1}{|c|}{5}           & \multicolumn{1}{l|}{1164.6632671356201} & \multicolumn{1}{l|}{1129.0060029029846} \\ \hline
-\multicolumn{1}{|c|}{6}           & \multicolumn{1}{l|}{1163.5531344413757} & \multicolumn{1}{l|}{1126.5449559688568} \\ \hline
-\multicolumn{1}{|c|}{7}           & \multicolumn{1}{l|}{1163.979398727417}  & \multicolumn{1}{l|}{1129.5302891731262} \\ \hline
-\multicolumn{1}{|c|}{8}           & \multicolumn{1}{l|}{1165.8543801307678} & \multicolumn{1}{l|}{1127.9539105892181} \\ \hline
-\multicolumn{1}{|c|}{9}           & \multicolumn{1}{l|}{1165.2025880813599} & \multicolumn{1}{l|}{1134.730679988861}  \\ \hline
-\multicolumn{1}{|c|}{10}          & \multicolumn{1}{l|}{1166.7084350585938} & \multicolumn{1}{l|}{1124.3404479026794} \\ \hline
-\multicolumn{1}{l}{\textbf{Mean}} & 1164.74229                              & 1128.42729
+\multicolumn{1}{|c|}{\textbf{i}}  & \multicolumn{1}{c|}{\en{\textbf{Original}}} & \multicolumn{1}{c|}{\en{\textbf{Optimized}}} \\ \hline
+\multicolumn{1}{|c|}{1}           & \multicolumn{1}{l|}{74.41093921661377}          & \multicolumn{1}{l|}{72.1590006351471}            \\ \hline
+\multicolumn{1}{|c|}{2}           & \multicolumn{1}{l|}{74.41318488121033}          & \multicolumn{1}{l|}{72.18699049949646}           \\ \hline
+\multicolumn{1}{|c|}{3}           & \multicolumn{1}{l|}{74.40296912193298}          & \multicolumn{1}{l|}{72.28742504119873}           \\ \hline
+\multicolumn{1}{|c|}{4}           & \multicolumn{1}{l|}{74.37309646606445}          & \multicolumn{1}{l|}{72.21030902862549}           \\ \hline
+\multicolumn{1}{|c|}{5}           & \multicolumn{1}{l|}{74.36228227615356}          & \multicolumn{1}{l|}{71.93646121025085}           \\ \hline
+\multicolumn{1}{|c|}{6}           & \multicolumn{1}{l|}{74.43094205856323}          & \multicolumn{1}{l|}{72.51015377044678}           \\ \hline
+\multicolumn{1}{|c|}{7}           & \multicolumn{1}{l|}{74.56025838851929}          & \multicolumn{1}{l|}{72.26989245414734}           \\ \hline
+\multicolumn{1}{|c|}{8}           & \multicolumn{1}{l|}{74.67031264305115}          & \multicolumn{1}{l|}{72.4364082813263}            \\ \hline
+\multicolumn{1}{|c|}{9}           & \multicolumn{1}{l|}{74.49252772331238}          & \multicolumn{1}{l|}{72.14049434661865}           \\ \hline
+\multicolumn{1}{|c|}{10}          & \multicolumn{1}{l|}{74.56266045570374}          & \multicolumn{1}{l|}{72.33929324150085}           \\ \hline
+\multicolumn{1}{l}{\textbf{Mean}} & 74.46792                                        & 72.24764
 \end{tabular}
 \end{table}
 
-\subsubsection{Kasus Keenam}
+\subsubsection{Kasus A6}
 
-Pada pengujian keenam, digunakan parameter-parameter yang sama dengan pengujian sebelumnya, tetapi dengan jumlah \en{epoch} digandakan.
+Tabel~\ref{tbl:A6} menunjukkan hasil pengujian kasus A6. Pada kasus ini, pengurangan durasi pelatihan dari versi teroptimisasi mengalami penurunan menjadi 2.6\%. Selain itu, \en{p-value} dari \en{t-test} bernilai 8.65e-10.
 
-\begin{enumerate}
-  \item Ukuran \en{batch}: 2400
-  \item Jumlah \en{hidden layer}: 8
-  \item Ukuran \en{hidden layer}: 512
-  \item Jumlah \en{unrolling}: 80
-  \item Jumlah \en{epoch}: 1000
-\end{enumerate}
-
-Tabel~\ref{tbl:Sixth} menunjukkan durasi \en{training} (dalam satuan detik) kedua perlakuan pada masing-masing 10 kali percobaan. Dari hasil pengujian tersebut, terlihat bahwa versi teroptimisasi berhasil mengurangi durasi \en{training} sekitar 3.09\%. Menurut uji statistik \en{t-test}, didapatkan \en{p-value} bernilai 1.921296333185339e-18, sehingga secara statistik dapat dinyatakan bahwa kedua perlakuan berbeda secara signifikan.
-
-\begin{table}[]
+\begin{table}[htp]
 \centering
-\caption{Hasil pengujian kasus keenam}
-\label{tbl:Sixth}
-\small
+\caption{Hasil pengujian kasus A6}
+\label{tbl:A6}
 \begin{tabular}{cll}
 \hline
-\multicolumn{1}{|c|}{i}           & \multicolumn{1}{c|}{\textbf{Original}}  & \multicolumn{1}{c|}{\textbf{Optimized}} \\ \hline
-\multicolumn{1}{|c|}{1}           & \multicolumn{1}{l|}{2325.881348848343}  & \multicolumn{1}{l|}{2259.6721198558807} \\ \hline
-\multicolumn{1}{|c|}{2}           & \multicolumn{1}{l|}{2324.937485218048}  & \multicolumn{1}{l|}{2248.6250746250153} \\ \hline
-\multicolumn{1}{|c|}{3}           & \multicolumn{1}{l|}{2324.66451215744}   & \multicolumn{1}{l|}{2257.6384501457214} \\ \hline
-\multicolumn{1}{|c|}{4}           & \multicolumn{1}{l|}{2326.308651447296}  & \multicolumn{1}{l|}{2252.499354362488}  \\ \hline
-\multicolumn{1}{|c|}{5}           & \multicolumn{1}{l|}{2329.8989474773407} & \multicolumn{1}{l|}{2242.113233089447}  \\ \hline
-\multicolumn{1}{|c|}{6}           & \multicolumn{1}{l|}{2322.9741718769073} & \multicolumn{1}{l|}{2255.954655647278}  \\ \hline
-\multicolumn{1}{|c|}{7}           & \multicolumn{1}{l|}{2327.4178791046143} & \multicolumn{1}{l|}{2256.2117512226105} \\ \hline
-\multicolumn{1}{|c|}{8}           & \multicolumn{1}{l|}{2327.0376517772675} & \multicolumn{1}{l|}{2257.8214254379272} \\ \hline
-\multicolumn{1}{|c|}{9}           & \multicolumn{1}{l|}{2328.337978363037}  & \multicolumn{1}{l|}{2256.3289828300476} \\ \hline
-\multicolumn{1}{|c|}{10}          & \multicolumn{1}{l|}{2330.1756098270416} & \multicolumn{1}{l|}{2261.2293424606323} \\ \hline
-\multicolumn{1}{l}{\textbf{Mean}} & 2326.76342                              & 2254.80944
+\multicolumn{1}{|c|}{\textbf{i}}  & \multicolumn{1}{c|}{\en{\textbf{Original}}} & \multicolumn{1}{c|}{\en{\textbf{Optimized}}} \\ \hline
+\multicolumn{1}{|c|}{1}           & \multicolumn{1}{l|}{140.91950154304504}         & \multicolumn{1}{l|}{138.64457988739014}          \\ \hline
+\multicolumn{1}{|c|}{2}           & \multicolumn{1}{l|}{143.09434533119202}         & \multicolumn{1}{l|}{139.24220991134644}          \\ \hline
+\multicolumn{1}{|c|}{3}           & \multicolumn{1}{l|}{142.87442326545715}         & \multicolumn{1}{l|}{138.96000599861145}          \\ \hline
+\multicolumn{1}{|c|}{4}           & \multicolumn{1}{l|}{143.1363377571106}          & \multicolumn{1}{l|}{139.10242819786072}          \\ \hline
+\multicolumn{1}{|c|}{5}           & \multicolumn{1}{l|}{142.86951398849487}         & \multicolumn{1}{l|}{139.42319130897522}          \\ \hline
+\multicolumn{1}{|c|}{6}           & \multicolumn{1}{l|}{143.04462718963623}         & \multicolumn{1}{l|}{139.80454635620117}          \\ \hline
+\multicolumn{1}{|c|}{7}           & \multicolumn{1}{l|}{143.43231749534607}         & \multicolumn{1}{l|}{138.7737672328949}           \\ \hline
+\multicolumn{1}{|c|}{8}           & \multicolumn{1}{l|}{143.14623403549194}         & \multicolumn{1}{l|}{138.92719864845276}          \\ \hline
+\multicolumn{1}{|c|}{9}           & \multicolumn{1}{l|}{142.76287984848022}         & \multicolumn{1}{l|}{139.29908204078674}          \\ \hline
+\multicolumn{1}{|c|}{10}          & \multicolumn{1}{l|}{142.9169726371765}          & \multicolumn{1}{l|}{138.78625178337097}          \\ \hline
+\multicolumn{1}{l}{\textbf{Mean}} & 142.81972                                       & 139.09633
+\end{tabular}
+\end{table}
+
+\subsubsection{Kasus A7}
+
+Tabel~\ref{tbl:A7} menunjukkan hasil pengujian kasus A7. Pada kasus ini, versi teroptimisasi mengurangi durasi pelatihan sebesar 3.13\%. Menurut \en{t-test}, \en{p-value} kasus ini bernilai 1.5e-10.
+
+\begin{table}[htp]
+\centering
+\caption{Hasil pengujian kasus A7}
+\label{tbl:A7}
+\begin{tabular}{cll}
+\hline
+\multicolumn{1}{|c|}{\textbf{i}}  & \multicolumn{1}{c|}{\en{\textbf{Original}}} & \multicolumn{1}{c|}{\en{\textbf{Optimized}}} \\ \hline
+\multicolumn{1}{|c|}{1}           & \multicolumn{1}{l|}{50.267709732055664}         & \multicolumn{1}{l|}{48.66734170913696}           \\ \hline
+\multicolumn{1}{|c|}{2}           & \multicolumn{1}{l|}{50.27866792678833}          & \multicolumn{1}{l|}{48.92691469192505}           \\ \hline
+\multicolumn{1}{|c|}{3}           & \multicolumn{1}{l|}{50.15108680725098}          & \multicolumn{1}{l|}{48.68866848945618}           \\ \hline
+\multicolumn{1}{|c|}{4}           & \multicolumn{1}{l|}{50.484827756881714}         & \multicolumn{1}{l|}{49.00160217285156}           \\ \hline
+\multicolumn{1}{|c|}{5}           & \multicolumn{1}{l|}{50.29847717285156}          & \multicolumn{1}{l|}{48.76427745819092}           \\ \hline
+\multicolumn{1}{|c|}{6}           & \multicolumn{1}{l|}{50.36558985710144}          & \multicolumn{1}{l|}{48.69947695732117}           \\ \hline
+\multicolumn{1}{|c|}{7}           & \multicolumn{1}{l|}{50.16042232513428}          & \multicolumn{1}{l|}{48.713934898376465}          \\ \hline
+\multicolumn{1}{|c|}{8}           & \multicolumn{1}{l|}{50.38740539550781}          & \multicolumn{1}{l|}{48.90148639678955}           \\ \hline
+\multicolumn{1}{|c|}{9}           & \multicolumn{1}{l|}{50.172200202941895}         & \multicolumn{1}{l|}{48.63461136817932}           \\ \hline
+\multicolumn{1}{|c|}{10}          & \multicolumn{1}{l|}{50.305076122283936}         & \multicolumn{1}{l|}{48.1265766620636}            \\ \hline
+\multicolumn{1}{l}{\textbf{Mean}} & 50.28715                                        & 48.71249
+\end{tabular}
+\end{table}
+
+\subsubsection{Kasus A8}
+
+Tabel~\ref{tbl:A8} menunjukkan hasil pengujian kasus A8. Pada kasus ini, versi teroptimisasi mengurangi durasi pelatihan sebesar 2.63\%. Menurut \en{t-test}, \en{p-value} kasus ini bernilai 2.98e-13.
+
+\begin{table}[htp]
+\centering
+\caption{Hasil pengujian kasus A8}
+\label{tbl:A8}
+\begin{tabular}{cll}
+\hline
+\multicolumn{1}{|c|}{\textbf{i}}  & \multicolumn{1}{c|}{\en{\textbf{Original}}} & \multicolumn{1}{c|}{\en{\textbf{Optimized}}} \\ \hline
+\multicolumn{1}{|c|}{1}           & \multicolumn{1}{l|}{95.36041975021362}          & \multicolumn{1}{l|}{92.14931225776672}           \\ \hline
+\multicolumn{1}{|c|}{2}           & \multicolumn{1}{l|}{94.47323751449585}          & \multicolumn{1}{l|}{92.51886916160583}           \\ \hline
+\multicolumn{1}{|c|}{3}           & \multicolumn{1}{l|}{94.90548205375671}          & \multicolumn{1}{l|}{92.17644190788269}           \\ \hline
+\multicolumn{1}{|c|}{4}           & \multicolumn{1}{l|}{94.8862099647522}           & \multicolumn{1}{l|}{92.4691321849823}            \\ \hline
+\multicolumn{1}{|c|}{5}           & \multicolumn{1}{l|}{94.68346977233887}          & \multicolumn{1}{l|}{92.04440569877625}           \\ \hline
+\multicolumn{1}{|c|}{6}           & \multicolumn{1}{l|}{94.66735601425171}          & \multicolumn{1}{l|}{92.1714437007904}            \\ \hline
+\multicolumn{1}{|c|}{7}           & \multicolumn{1}{l|}{95.33400058746338}          & \multicolumn{1}{l|}{92.12393546104431}           \\ \hline
+\multicolumn{1}{|c|}{8}           & \multicolumn{1}{l|}{94.41763091087341}          & \multicolumn{1}{l|}{92.80223345756531}           \\ \hline
+\multicolumn{1}{|c|}{9}           & \multicolumn{1}{l|}{95.08026027679443}          & \multicolumn{1}{l|}{92.40912294387817}           \\ \hline
+\multicolumn{1}{|c|}{10}          & \multicolumn{1}{l|}{94.63182210922241}          & \multicolumn{1}{l|}{92.67259740829468}           \\ \hline
+\multicolumn{1}{l}{\textbf{Mean}} & 94.84399                                        & 92.35375
+\end{tabular}
+\end{table}
+
+\subsubsection{Kasus A9}
+
+Tabel~\ref{tbl:A9} menunjukkan hasil pengujian kasus A9. Pada kasus ini, versi teroptimisasi mengurangi durasi pelatihan sebesar 2.84\%. Menurut \en{t-test}, \en{p-value} kasus ini bernilai 3.83e-17.
+
+\begin{table}[htp]
+\centering
+\caption{Hasil pengujian kasus A9}
+\label{tbl:A9}
+\begin{tabular}{cll}
+\hline
+\multicolumn{1}{|c|}{\textbf{i}}  & \multicolumn{1}{c|}{\en{\textbf{Original}}} & \multicolumn{1}{c|}{\en{\textbf{Optimized}}} \\ \hline
+\multicolumn{1}{|c|}{1}           & \multicolumn{1}{l|}{184.15153622627258}         & \multicolumn{1}{l|}{179.35685920715332}          \\ \hline
+\multicolumn{1}{|c|}{2}           & \multicolumn{1}{l|}{183.87400341033936}         & \multicolumn{1}{l|}{178.5384087562561}           \\ \hline
+\multicolumn{1}{|c|}{3}           & \multicolumn{1}{l|}{184.23513293266296}         & \multicolumn{1}{l|}{178.9195113182068}           \\ \hline
+\multicolumn{1}{|c|}{4}           & \multicolumn{1}{l|}{184.94609141349792}         & \multicolumn{1}{l|}{178.95625042915344}          \\ \hline
+\multicolumn{1}{|c|}{5}           & \multicolumn{1}{l|}{184.47301125526428}         & \multicolumn{1}{l|}{178.88424515724182}          \\ \hline
+\multicolumn{1}{|c|}{6}           & \multicolumn{1}{l|}{184.2485635280609}          & \multicolumn{1}{l|}{179.2267963886261}           \\ \hline
+\multicolumn{1}{|c|}{7}           & \multicolumn{1}{l|}{184.3339183330536}          & \multicolumn{1}{l|}{179.6547224521637}           \\ \hline
+\multicolumn{1}{|c|}{8}           & \multicolumn{1}{l|}{184.79059147834778}         & \multicolumn{1}{l|}{178.65706658363342}          \\ \hline
+\multicolumn{1}{|c|}{9}           & \multicolumn{1}{l|}{183.53205037117004}         & \multicolumn{1}{l|}{178.99056673049927}          \\ \hline
+\multicolumn{1}{|c|}{10}          & \multicolumn{1}{l|}{184.18417716026306}         & \multicolumn{1}{l|}{179.2834174633026}           \\ \hline
+\multicolumn{1}{l}{\textbf{Mean}} & 184.27691                                       & 179.04678
+\end{tabular}
+\end{table}
+
+\subsubsection{Kasus B1}
+
+Tabel~\ref{tbl:B1} menunjukkan hasil pengujian kasus B1. Dengan \en{t-test} didapat \en{p-value} 0.26, sehingga tidak dapat dikatakan bahwa versi teroptimisasi berbeda secara signifikan dengan versi asli.
+
+\begin{table}[htp]
+\centering
+\caption{Hasil pengujian kasus B1}
+\label{tbl:B1}
+\begin{tabular}{cll}
+\hline
+\multicolumn{1}{|c|}{\textbf{i}}  & \multicolumn{1}{c|}{\en{\textbf{Original}}} & \multicolumn{1}{c|}{\en{\textbf{Optimized}}} \\ \hline
+\multicolumn{1}{|c|}{1}           & \multicolumn{1}{l|}{420.8520050048828}          & \multicolumn{1}{l|}{419.5176672935486}           \\ \hline
+\multicolumn{1}{|c|}{2}           & \multicolumn{1}{l|}{421.1976397037506}          & \multicolumn{1}{l|}{420.0213441848755}           \\ \hline
+\multicolumn{1}{|c|}{3}           & \multicolumn{1}{l|}{420.57384419441223}         & \multicolumn{1}{l|}{421.6392922401428}           \\ \hline
+\multicolumn{1}{|c|}{4}           & \multicolumn{1}{l|}{421.9959976673126}          & \multicolumn{1}{l|}{421.11664962768555}          \\ \hline
+\multicolumn{1}{|c|}{5}           & \multicolumn{1}{l|}{418.56204295158386}         & \multicolumn{1}{l|}{422.30104398727417}          \\ \hline
+\multicolumn{1}{|c|}{6}           & \multicolumn{1}{l|}{422.391574382782}           & \multicolumn{1}{l|}{421.1686770915985}           \\ \hline
+\multicolumn{1}{|c|}{7}           & \multicolumn{1}{l|}{422.525634765625}           & \multicolumn{1}{l|}{420.85806703567505}          \\ \hline
+\multicolumn{1}{|c|}{8}           & \multicolumn{1}{l|}{421.9921326637268}          & \multicolumn{1}{l|}{419.0454249382019}           \\ \hline
+\multicolumn{1}{|c|}{9}           & \multicolumn{1}{l|}{420.93663001060486}         & \multicolumn{1}{l|}{421.06646966934204}          \\ \hline
+\multicolumn{1}{|c|}{10}          & \multicolumn{1}{l|}{421.6852512359619}          & \multicolumn{1}{l|}{420.33892846107483}          \\ \hline
+\multicolumn{1}{l}{\textbf{Mean}} & 421.27128                                       & 420.70736
+\end{tabular}
+\end{table}
+
+\subsubsection{Kasus B2}
+
+Tabel~\ref{tbl:B2} menunjukkan hasil pengujian kasus B2. Pada kasus ini, versi teroptimisasi hanya mengurangi durasi pelatihan sebesar 0.37\%. Meskipun begitu, menurut \en{t-test}, \en{p-value} bernilai 0.0009 sehingga dapat dikatakan kedua perlakuan berbeda secara signifikan.
+
+\begin{table}[htp]
+\centering
+\caption{Hasil pengujian kasus B2}
+\label{tbl:B2}
+\begin{tabular}{cll}
+\hline
+\multicolumn{1}{|c|}{\textbf{i}}  & \multicolumn{1}{c|}{\en{\textbf{Original}}} & \multicolumn{1}{c|}{\en{\textbf{Optimized}}} \\ \hline
+\multicolumn{1}{|c|}{1}           & \multicolumn{1}{l|}{841.4169640541077}          & \multicolumn{1}{l|}{834.6424646377563}           \\ \hline
+\multicolumn{1}{|c|}{2}           & \multicolumn{1}{l|}{842.8569185733795}          & \multicolumn{1}{l|}{840.5790700912476}           \\ \hline
+\multicolumn{1}{|c|}{3}           & \multicolumn{1}{l|}{842.6284821033478}          & \multicolumn{1}{l|}{841.473141670227}            \\ \hline
+\multicolumn{1}{|c|}{4}           & \multicolumn{1}{l|}{842.2062222957611}          & \multicolumn{1}{l|}{839.4596951007843}           \\ \hline
+\multicolumn{1}{|c|}{5}           & \multicolumn{1}{l|}{842.6023080348969}          & \multicolumn{1}{l|}{841.4130139350891}           \\ \hline
+\multicolumn{1}{|c|}{6}           & \multicolumn{1}{l|}{842.0640499591827}          & \multicolumn{1}{l|}{837.088446855545}            \\ \hline
+\multicolumn{1}{|c|}{7}           & \multicolumn{1}{l|}{842.4598443508148}          & \multicolumn{1}{l|}{840.2163150310516}           \\ \hline
+\multicolumn{1}{|c|}{8}           & \multicolumn{1}{l|}{842.9509062767029}          & \multicolumn{1}{l|}{839.8717386722565}           \\ \hline
+\multicolumn{1}{|c|}{9}           & \multicolumn{1}{l|}{842.0658278465271}          & \multicolumn{1}{l|}{838.8177363872528}           \\ \hline
+\multicolumn{1}{|c|}{10}          & \multicolumn{1}{l|}{842.4039092063904}          & \multicolumn{1}{l|}{838.4253575801849}           \\ \hline
+\multicolumn{1}{l}{\textbf{Mean}} & 842.36554                                       & 839.1987
+\end{tabular}
+\end{table}
+
+\subsubsection{Kasus B3}
+
+Tabel~\ref{tbl:B3} menunjukkan hasil pengujian kasus B3. Pada kasus ini, versi teroptimisasi hanya mengurangi durasi pelatihan sebesar 0.7\%. Meskipun begitu, menurut \en{t-test}, \en{p-value} bernilai 0.0005 sehingga dapat dikatakan kedua perlakuan berbeda secara signifikan.
+
+\begin{table}[htp]
+\centering
+\caption{Hasil pengujian kasus B3}
+\label{tbl:B3}
+\begin{tabular}{cll}
+\hline
+\multicolumn{1}{|c|}{\textbf{i}}  & \multicolumn{1}{c|}{\en{\textbf{Original}}} & \multicolumn{1}{c|}{\en{\textbf{Optimized}}} \\ \hline
+\multicolumn{1}{|c|}{1}           & \multicolumn{1}{l|}{1683.7960169315338}         & \multicolumn{1}{l|}{1673.2739737033844}          \\ \hline
+\multicolumn{1}{|c|}{2}           & \multicolumn{1}{l|}{1687.297322511673}          & \multicolumn{1}{l|}{1679.99423289299}            \\ \hline
+\multicolumn{1}{|c|}{3}           & \multicolumn{1}{l|}{1686.4014761447906}         & \multicolumn{1}{l|}{1671.2808508872986}          \\ \hline
+\multicolumn{1}{|c|}{4}           & \multicolumn{1}{l|}{1681.5528180599213}         & \multicolumn{1}{l|}{1669.1223888397217}          \\ \hline
+\multicolumn{1}{|c|}{5}           & \multicolumn{1}{l|}{1690.638794183731}          & \multicolumn{1}{l|}{1680.7036063671112}          \\ \hline
+\multicolumn{1}{|c|}{6}           & \multicolumn{1}{l|}{1679.570838689804}          & \multicolumn{1}{l|}{1681.4491155147552}          \\ \hline
+\multicolumn{1}{|c|}{7}           & \multicolumn{1}{l|}{1687.8227655887604}         & \multicolumn{1}{l|}{1656.0113110542297}          \\ \hline
+\multicolumn{1}{|c|}{8}           & \multicolumn{1}{l|}{1681.795575618744}          & \multicolumn{1}{l|}{1676.8696596622467}          \\ \hline
+\multicolumn{1}{|c|}{9}           & \multicolumn{1}{l|}{1684.5717134475708}         & \multicolumn{1}{l|}{1674.0421373844147}          \\ \hline
+\multicolumn{1}{|c|}{10}          & \multicolumn{1}{l|}{1689.3503987789154}         & \multicolumn{1}{l|}{1671.2718181610107}          \\ \hline
+\multicolumn{1}{l}{\textbf{Mean}} & 1685.27977                                      & 1673.40191
+\end{tabular}
+\end{table}
+
+\subsubsection{Kasus B4}
+
+Tabel~\ref{tbl:B4} menunjukkan hasil pengujian kasus B4. Pada kasus ini, versi teroptimisasi mengurangi durasi pelatihan sebesar 3.02\%. Berdasarkan \en{t-test}, nilai \en{p-value} kasus ini adalah 7.73e-19.
+
+\begin{table}[htp]
+\centering
+\caption{Hasil pengujian kasus B4}
+\label{tbl:B4}
+\begin{tabular}{cll}
+\hline
+\multicolumn{1}{|c|}{\textbf{i}}  & \multicolumn{1}{c|}{\en{\textbf{Original}}} & \multicolumn{1}{c|}{\en{\textbf{Optimized}}} \\ \hline
+\multicolumn{1}{|c|}{1}           & \multicolumn{1}{l|}{487.29574179649353}         & \multicolumn{1}{l|}{472.343798160553}            \\ \hline
+\multicolumn{1}{|c|}{2}           & \multicolumn{1}{l|}{487.1750123500824}          & \multicolumn{1}{l|}{471.7209942340851}           \\ \hline
+\multicolumn{1}{|c|}{3}           & \multicolumn{1}{l|}{486.4116704463959}          & \multicolumn{1}{l|}{472.60439133644104}          \\ \hline
+\multicolumn{1}{|c|}{4}           & \multicolumn{1}{l|}{487.04327392578125}         & \multicolumn{1}{l|}{474.2424397468567}           \\ \hline
+\multicolumn{1}{|c|}{5}           & \multicolumn{1}{l|}{488.5537300109863}          & \multicolumn{1}{l|}{473.7751681804657}           \\ \hline
+\multicolumn{1}{|c|}{6}           & \multicolumn{1}{l|}{487.0935254096985}          & \multicolumn{1}{l|}{472.0223639011383}           \\ \hline
+\multicolumn{1}{|c|}{7}           & \multicolumn{1}{l|}{487.66953206062317}         & \multicolumn{1}{l|}{472.12717366218567}          \\ \hline
+\multicolumn{1}{|c|}{8}           & \multicolumn{1}{l|}{486.98822927474976}         & \multicolumn{1}{l|}{472.8724088668823}           \\ \hline
+\multicolumn{1}{|c|}{9}           & \multicolumn{1}{l|}{487.86662673950195}         & \multicolumn{1}{l|}{472.0631272792816}           \\ \hline
+\multicolumn{1}{|c|}{10}          & \multicolumn{1}{l|}{487.58010816574097}         & \multicolumn{1}{l|}{472.9280960559845}           \\ \hline
+\multicolumn{1}{l}{\textbf{Mean}} & 487.36775                                       & 472.67
+\end{tabular}
+\end{table}
+
+\subsubsection{Kasus B5}
+
+Tabel~\ref{tbl:B5} menunjukkan hasil pengujian kasus B5. Pada kasus ini, versi teroptimisasi mengurangi durasi pelatihan sebesar 2.92\%. Berdasarkan \en{t-test}, nilai \en{p-value} kasus ini adalah 1.03e-21.
+
+\begin{table}[htp]
+\centering
+\caption{Hasil pengujian kasus B5}
+\label{tbl:B5}
+\begin{tabular}{cll}
+\hline
+\multicolumn{1}{|c|}{\textbf{i}}  & \multicolumn{1}{c|}{\en{\textbf{Original}}} & \multicolumn{1}{c|}{\en{\textbf{Optimized}}} \\ \hline
+\multicolumn{1}{|c|}{1}           & \multicolumn{1}{l|}{969.5740151405334}          & \multicolumn{1}{l|}{942.8602046966553}           \\ \hline
+\multicolumn{1}{|c|}{2}           & \multicolumn{1}{l|}{971.9089589118958}          & \multicolumn{1}{l|}{939.6011493206024}           \\ \hline
+\multicolumn{1}{|c|}{3}           & \multicolumn{1}{l|}{968.7835218906403}          & \multicolumn{1}{l|}{939.6865088939667}           \\ \hline
+\multicolumn{1}{|c|}{4}           & \multicolumn{1}{l|}{968.95157289505}            & \multicolumn{1}{l|}{941.9455673694611}           \\ \hline
+\multicolumn{1}{|c|}{5}           & \multicolumn{1}{l|}{969.3444783687592}          & \multicolumn{1}{l|}{940.6934111118317}           \\ \hline
+\multicolumn{1}{|c|}{6}           & \multicolumn{1}{l|}{970.9714493751526}          & \multicolumn{1}{l|}{942.7242720127106}           \\ \hline
+\multicolumn{1}{|c|}{7}           & \multicolumn{1}{l|}{969.1799998283386}          & \multicolumn{1}{l|}{940.6590757369995}           \\ \hline
+\multicolumn{1}{|c|}{8}           & \multicolumn{1}{l|}{968.3928897380829}          & \multicolumn{1}{l|}{941.939875125885}            \\ \hline
+\multicolumn{1}{|c|}{9}           & \multicolumn{1}{l|}{968.9738261699677}          & \multicolumn{1}{l|}{941.7099456787109}           \\ \hline
+\multicolumn{1}{|c|}{10}          & \multicolumn{1}{l|}{969.9917275905609}          & \multicolumn{1}{l|}{941.0221922397614}           \\ \hline
+\multicolumn{1}{l}{\textbf{Mean}} & 969.60724                                       & 941.28422
+\end{tabular}
+\end{table}
+
+\subsubsection{Kasus B6}
+
+Tabel~\ref{tbl:B6} menunjukkan hasil pengujian kasus B6. Pada kasus ini, versi teroptimisasi mengurangi durasi pelatihan sebesar 2.87\%. Berdasarkan \en{t-test}, nilai \en{p-value} kasus ini adalah 7.24e-16.
+
+\begin{table}[htp]
+\centering
+\caption{Hasil pengujian kasus B6}
+\label{tbl:B6}
+\begin{tabular}{cll}
+\hline
+\multicolumn{1}{|c|}{\textbf{i}}  & \multicolumn{1}{c|}{\en{\textbf{Original}}} & \multicolumn{1}{c|}{\en{\textbf{Optimized}}} \\ \hline
+\multicolumn{1}{|c|}{1}           & \multicolumn{1}{l|}{1930.673156261444}          & \multicolumn{1}{l|}{1881.7857682704926}          \\ \hline
+\multicolumn{1}{|c|}{2}           & \multicolumn{1}{l|}{1935.568766117096}          & \multicolumn{1}{l|}{1870.272988319397}           \\ \hline
+\multicolumn{1}{|c|}{3}           & \multicolumn{1}{l|}{1931.9509241580963}         & \multicolumn{1}{l|}{1875.614033460617}           \\ \hline
+\multicolumn{1}{|c|}{4}           & \multicolumn{1}{l|}{1931.528177022934}          & \multicolumn{1}{l|}{1874.8612790107727}          \\ \hline
+\multicolumn{1}{|c|}{5}           & \multicolumn{1}{l|}{1930.9445390701294}         & \multicolumn{1}{l|}{1876.0342326164246}          \\ \hline
+\multicolumn{1}{|c|}{6}           & \multicolumn{1}{l|}{1931.7676932811737}         & \multicolumn{1}{l|}{1882.3104836940765}          \\ \hline
+\multicolumn{1}{|c|}{7}           & \multicolumn{1}{l|}{1931.8324806690216}         & \multicolumn{1}{l|}{1876.8986308574677}          \\ \hline
+\multicolumn{1}{|c|}{8}           & \multicolumn{1}{l|}{1927.9467866420746}         & \multicolumn{1}{l|}{1873.3782126903534}          \\ \hline
+\multicolumn{1}{|c|}{9}           & \multicolumn{1}{l|}{1935.1201288700104}         & \multicolumn{1}{l|}{1871.9598927497864}          \\ \hline
+\multicolumn{1}{|c|}{10}          & \multicolumn{1}{l|}{1929.9509518146515}         & \multicolumn{1}{l|}{1879.004242181778}           \\ \hline
+\multicolumn{1}{l}{\textbf{Mean}} & 1931.72836                                      & 1876.21198
+\end{tabular}
+\end{table}
+
+\subsubsection{Kasus B7}
+
+Tabel~\ref{tbl:B7} menunjukkan hasil pengujian kasus B7. Pada kasus ini, versi teroptimisasi mengurangi durasi pelatihan sebesar 2.54\%. Menurut \en{t-test}, \en{p-value} kasus ini bernilai 2.44e-9.
+
+\begin{table}[htp]
+\centering
+\caption{Hasil pengujian kasus B7}
+\label{tbl:B7}
+\begin{tabular}{cll}
+\hline
+\multicolumn{1}{|c|}{\textbf{i}}  & \multicolumn{1}{c|}{\en{\textbf{Original}}} & \multicolumn{1}{c|}{\en{\textbf{Optimized}}} \\ \hline
+\multicolumn{1}{|c|}{1}           & \multicolumn{1}{l|}{497.5256621837616}          & \multicolumn{1}{l|}{485.2355446815491}           \\ \hline
+\multicolumn{1}{|c|}{2}           & \multicolumn{1}{l|}{496.89878702163696}         & \multicolumn{1}{l|}{483.9988577365875}           \\ \hline
+\multicolumn{1}{|c|}{3}           & \multicolumn{1}{l|}{498.9247143268585}          & \multicolumn{1}{l|}{484.1502511501312}           \\ \hline
+\multicolumn{1}{|c|}{4}           & \multicolumn{1}{l|}{496.73374104499817}         & \multicolumn{1}{l|}{487.18865609169006}          \\ \hline
+\multicolumn{1}{|c|}{5}           & \multicolumn{1}{l|}{499.26302218437195}         & \multicolumn{1}{l|}{483.7039484977722}           \\ \hline
+\multicolumn{1}{|c|}{6}           & \multicolumn{1}{l|}{498.6834931373596}          & \multicolumn{1}{l|}{485.97945642471313}          \\ \hline
+\multicolumn{1}{|c|}{7}           & \multicolumn{1}{l|}{496.67711067199707}         & \multicolumn{1}{l|}{484.14442205429077}          \\ \hline
+\multicolumn{1}{|c|}{8}           & \multicolumn{1}{l|}{497.69861221313477}         & \multicolumn{1}{l|}{487.8638529777527}           \\ \hline
+\multicolumn{1}{|c|}{9}           & \multicolumn{1}{l|}{499.24420976638794}         & \multicolumn{1}{l|}{480.5082628726959}           \\ \hline
+\multicolumn{1}{|c|}{10}          & \multicolumn{1}{l|}{496.6339108943939}          & \multicolumn{1}{l|}{488.9758915901184}           \\ \hline
+\multicolumn{1}{l}{\textbf{Mean}} & 497.82833                                       & 485.17491
+\end{tabular}
+\end{table}
+
+\subsubsection{Kasus B8}
+
+Tabel~\ref{tbl:B8} menunjukkan hasil pengujian kasus B8. Pada kasus ini, versi teroptimisasi mengurangi durasi pelatihan sebesar 2.71\%. Menurut \en{t-test}, \en{p-value} kasus ini bernilai 2.8e-18.
+
+\begin{table}[htp]
+\centering
+\caption{Hasil pengujian kasus B8}
+\label{tbl:B8}
+\begin{tabular}{cll}
+\hline
+\multicolumn{1}{|c|}{\textbf{i}}  & \multicolumn{1}{c|}{\en{\textbf{Original}}} & \multicolumn{1}{c|}{\en{\textbf{Optimized}}} \\ \hline
+\multicolumn{1}{|c|}{1}           & \multicolumn{1}{l|}{989.7410943508148}          & \multicolumn{1}{l|}{962.6812777519226}           \\ \hline
+\multicolumn{1}{|c|}{2}           & \multicolumn{1}{l|}{990.8226969242096}          & \multicolumn{1}{l|}{963.4447431564331}           \\ \hline
+\multicolumn{1}{|c|}{3}           & \multicolumn{1}{l|}{988.5084526538849}          & \multicolumn{1}{l|}{965.2729036808014}           \\ \hline
+\multicolumn{1}{|c|}{4}           & \multicolumn{1}{l|}{992.6685571670532}          & \multicolumn{1}{l|}{963.35018658638}             \\ \hline
+\multicolumn{1}{|c|}{5}           & \multicolumn{1}{l|}{991.4316079616547}          & \multicolumn{1}{l|}{962.4873623847961}           \\ \hline
+\multicolumn{1}{|c|}{6}           & \multicolumn{1}{l|}{993.6044535636902}          & \multicolumn{1}{l|}{964.7575905323029}           \\ \hline
+\multicolumn{1}{|c|}{7}           & \multicolumn{1}{l|}{991.5941832065582}          & \multicolumn{1}{l|}{966.828458070755}            \\ \hline
+\multicolumn{1}{|c|}{8}           & \multicolumn{1}{l|}{989.194974899292}           & \multicolumn{1}{l|}{965.7361724376678}           \\ \hline
+\multicolumn{1}{|c|}{9}           & \multicolumn{1}{l|}{990.9936196804047}          & \multicolumn{1}{l|}{964.3605980873108}           \\ \hline
+\multicolumn{1}{|c|}{10}          & \multicolumn{1}{l|}{993.2517943382263}          & \multicolumn{1}{l|}{963.8871579170227}           \\ \hline
+\multicolumn{1}{l}{\textbf{Mean}} & 991.18114                                       & 964.28065
+\end{tabular}
+\end{table}
+
+\subsubsection{Kasus B9}
+
+Tabel~\ref{tbl:B9} menunjukkan hasil pengujian kasus B9. Pada kasus ini, versi teroptimisasi mengurangi durasi pelatihan sebesar 2.66\%. Menurut \en{t-test}, \en{p-value} kasus ini bernilai 4.73e-17.
+
+\begin{table}[htp]
+\centering
+\caption{Hasil pengujian kasus B9}
+\label{tbl:B9}
+\begin{tabular}{cll}
+\hline
+\multicolumn{1}{|c|}{\textbf{i}} & \multicolumn{1}{c|}{\en{\textbf{Original}}} & \multicolumn{1}{c|}{\en{\textbf{Optimized}}} \\ \hline
+\multicolumn{1}{|c|}{1}          & \multicolumn{1}{l|}{1979.7677886486053}         & \multicolumn{1}{l|}{1924.7396051883698}          \\ \hline
+\multicolumn{1}{|c|}{2}          & \multicolumn{1}{l|}{1975.929737329483}          & \multicolumn{1}{l|}{1926.9788799285889}          \\ \hline
+\multicolumn{1}{|c|}{3}          & \multicolumn{1}{l|}{1975.862783908844}          & \multicolumn{1}{l|}{1927.6497223377228}          \\ \hline
+\multicolumn{1}{|c|}{4}          & \multicolumn{1}{l|}{1977.7059586048126}         & \multicolumn{1}{l|}{1923.6978118419647}          \\ \hline
+\multicolumn{1}{|c|}{5}          & \multicolumn{1}{l|}{1977.1068603992462}         & \multicolumn{1}{l|}{1921.677785873413}           \\ \hline
+\multicolumn{1}{|c|}{6}          & \multicolumn{1}{l|}{1976.8533494472504}         & \multicolumn{1}{l|}{1922.5078818798065}          \\ \hline
+\multicolumn{1}{|c|}{7}          & \multicolumn{1}{l|}{1971.7307133674622}         & \multicolumn{1}{l|}{1929.644939661026}           \\ \hline
+\multicolumn{1}{|c|}{8}          & \multicolumn{1}{l|}{1976.1869127750397}         & \multicolumn{1}{l|}{1928.4419906139374}          \\ \hline
+\multicolumn{1}{|c|}{9}          & \multicolumn{1}{l|}{1980.8781063556671}         & \multicolumn{1}{l|}{1920.0823383331299}          \\ \hline
+\multicolumn{1}{|c|}{10}         & \multicolumn{1}{l|}{1978.7299919128418}         & \multicolumn{1}{l|}{1919.1239686012268}          \\ \hline
+\textbf{Mean}                    & 1977.07522                                      & 1924.45449
 \end{tabular}
 \end{table}
