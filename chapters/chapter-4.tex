@@ -161,7 +161,7 @@ void StackPopOp::ComputeAsync(OpKernelContext* ctx, DoneCallback done) {
 }
 \end{lstlisting}
 
-Pada bagian Kode~\ref{lst:StackPopOp} di atas terlihat proses \en{swapping in} terhadap "\en{future tensors}", yaitu \en{swapped tensors} yang belum akan digunakan untuk komputasi, dengan tujuan meningkatkan \en{overlapping} antara komputasi dengan \en{memory transfer}, seperti yang telah disebutkan sebelumnya.
+Pada bagian Kode~\ref{lst:StackPopOp} di atas terlihat proses \en{swapping in} terhadap "\en{future tensors}", yaitu \en{swapped tensors} yang belum akan digunakan untuk komputasi, dengan tujuan meningkatkan \en{overlapping} antara komputasi dengan \en{memory transfer}, seperti yang telah disebutkan.
 
 Terdapat satu lagi hal yang perlu dibahas, yaitu herustik pada \en{swapping in}. Seperti heuristik pada \en{swapping out}, \en{swapping in} tersebut dilakukan ketika memori GPU hampir penuh. Dipilih nilai yang \code{kOccupancy} yang sama yaitu 0.7, untuk menyamai nilai yang digunakan di \en{swapping out}, karena nilai heuristik tersebut sudah ada di versi bawaan TensorFlow.
 
@@ -195,7 +195,7 @@ Tabel~\ref{tbl:Specification} memaparkan spesifikasi lingkungan yang digunakan p
 
 Setiap pengujian dilakukan dengan beberapa kali melakukan \en{training} suatu model RNN menggunakan TensorFlow yang asli dan yang teroptimisasi, kemudian durasi \en{training} kedua perlakuan dibandingkan dan dihitung rataannya. Selain itu, dilakukan uji statistik lain seperti \en{t-test} untuk memastikan bahwa durasi \en{training} kedua perlakuan memang berbeda.
 
-Model yang digunakan untuk pengujian adalah char-rnn berdasarkan \citep{karpathy2015unreasonable}, namun telah diadaptasi ke TensorFlow. Secara singkat, char-rnn adalah model RNN yang menerima sekuens teks kemudian membangkitkan sekuens teks lanjutannya, karakter per karakter.
+Model yang digunakan untuk pengujian adalah Char-RNN berdasarkan \citep{karpathy2015unreasonable}, namun telah diadaptasi ke TensorFlow. Secara singkat, char-rnn adalah model RNN yang menerima sekuens teks kemudian membangkitkan sekuens teks lanjutannya, karakter per karakter.
 
 Implementasi model tersebut dengan TensorFlow menggunakan kelas \code{dynamic\_rnn} (disebutkan di Bagian~\ref{WhyRNN}) dengan parameter \code{swap\_memory=True} untuk mengijinkan TensorFlow melakukan \en{memory swapping}. Selain itu, parameter-parameter yang digunakan dalam menjalankan pengujian dipilih sedemikian rupa agar ukuran memori yang dibutuhkan melebihi ukuran memori yang ada, sehingga TensorFlow terpaksa melakukan \en{memory swapping}.
 

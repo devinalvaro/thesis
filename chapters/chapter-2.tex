@@ -30,7 +30,7 @@ Pada pelatihan \en{deep neural network}, pertama dilakukan \en{forward pass} den
 
 di mana $C$ adalah nilai \en{cost function}, $t$ adalah nilai target, $o$ adalah nilai \en{output}, dan $k$ adalah indeks neuron pada \en{output layer}.
 
-Seperti disebutkan sebelumnya, pada \en{gradient descent} dicari gradien masing-masing bobot dan bias yang kemudian digunakan untuk meng-\en{update} parameter bersangkutan. Gradien dicari dengan mencari turunan $C$ terhadap masing-masing bobot ($w$) dan bias ($b$). Untuk mempersingkat, hanya akan dijelaskan pencarian gradien terhadap bobot, namun pencarian gradien terhadap bias serupa.
+Seperti yang telah disebutkan, pada \en{gradient descent} dicari gradien masing-masing bobot dan bias yang kemudian digunakan untuk meng-\en{update} parameter bersangkutan. Gradien dicari dengan mencari turunan $C$ terhadap masing-masing bobot ($w$) dan bias ($b$). Untuk mempersingkat, hanya akan dijelaskan pencarian gradien terhadap bobot, namun pencarian gradien terhadap bias serupa.
 
 Berikut adalah gradien terhadap bobot $w_{kj}$, yaitu bobot yang berasal dari sebuah neuron (berindeks $j$) pada sebuah \en{layer} menuju neuron (berindeks $k$) pada \en{layer} selanjutnya.
 
@@ -58,7 +58,7 @@ Demikian didapatkan \en{error} untuk parameter di \en{output layer}. Untuk \en{e
     = \sum_{k} \delta_{k} w_{kj} a'(net_{j})
 \end{equation}
 
-Dapat diperhatikan bahwa untuk mendapatkan $\delta_{j}$ diperlukan $\delta_{k}$ untuk semua $k$, yaitu indeks neuron-neuron pada \en{layer} sesudahnya. Demikianlah mengapa teknik ini disebut \en{backpropagation} karena pencarian gradien yang dilakukan dengan mempropagasikan \en{error} dari \en{layer} belakang ke depan. Seperti disebutkan sebelumnya, gradien yang didapat kemudian digunakan untuk meng-\en{update} parameter bersangkutan.
+Dapat diperhatikan bahwa untuk mendapatkan $\delta_{j}$ diperlukan $\delta_{k}$ untuk semua $k$, yaitu indeks neuron-neuron pada \en{layer} sesudahnya. Demikianlah mengapa teknik ini disebut \en{backpropagation} karena pencarian gradien yang dilakukan dengan mempropagasikan \en{error} dari \en{layer} belakang ke depan. Seperti yang telah disebutkan, gradien yang didapat kemudian digunakan untuk meng-\en{update} parameter bersangkutan.
 
 \subsection{\en{Recurrent Neural Network}}
 
@@ -101,7 +101,7 @@ Karena bobot $w$ dipengaruhi oleh \en{hidden state} seluruh \en{timestep}, maka 
     \label{eq:W}
 \end{equation}
 
-$w_{ji}$ menghubungkan neuron berindeks $i$ dengan neuron berindeks $j$ pada \en{layer} sesudahnya bukan hanya pada satu \en{timestep} saja, melainkan di seluruh \en{timestep} (seperti disebutkan sebelumnya, bobot yang sama digunakan untuk seluruh \en{timestep}). Maka dari itu, terdapat hubungan dengan seluruh neuron (berindeks $l$) pada seluruh \en{timestep} (berindeks $t - \tau$). Hubungan ini memberikan lanjutan persamaan (\ref{eq:W}) berikut.
+$w_{ji}$ menghubungkan neuron berindeks $i$ dengan neuron berindeks $j$ pada \en{layer} sesudahnya bukan hanya pada satu \en{timestep} saja, melainkan di seluruh \en{timestep} (seperti yang telah disebutkan, bobot yang sama digunakan untuk seluruh \en{timestep}). Maka dari itu, terdapat hubungan dengan seluruh neuron (berindeks $l$) pada seluruh \en{timestep} (berindeks $t - \tau$). Hubungan ini memberikan lanjutan persamaan (\ref{eq:W}) berikut.
 
 \begin{equation}
     \frac{\partial{C_{t}}}{\partial{w_{ji}}}
@@ -235,7 +235,7 @@ Optimisasi dilakukan dengan mengimplementasikan operasi baru yang disebut (\text
 
 Agar dapat mengoptimisasi dengan baik, perlu dipertimbangkan \en{tensor} mana yang perlu di-\en{swap}. Apabila semua \en{tensor} di-\en{swap}, akan menyebabkan penurunan kinerja model karena \en{memory transfer overhead} yang besar. Menurut \en{paper} tersebut, \en{tensor}-\en{tensor} yang terbaik untuk di-\en{swap} adalah yang interval hingga diperlukannya kembali saat \en{backpropagation} paling lama. Harapannya, \en{overlapping} antara komputasi dengan \en{asynchronous memory copy} meningkat, sehingga mengurangi durasi pelatihan karena semakin banyak \en{memory copy} yang berjalan bersama dengan komputasi.
 
-Eksperimen pada \en{paper} tersebut dilakukan dengan beberapa \en{pre-trained model} seperti ResNet, Inception, dan NMT, pada sebuah komputer dengan satu GPU (Tesla M40) dengan kapasitas memori 12GB. Menurut hasil eksperimen yang ditunjukkan Gambar~\ref{fig:SwapOutInResult} tersebut, didapatkan bahwa pada model-model yang diuji, ukuran \en{batch} dapat ditingkatkan hingga 3 kali, sedangkan penggunaan memori maksimum menurun hingga 2-3 kali lipat. Bahkan, model-model seperti ResNet-1001 dan ResNet-2000 yang sebelumnya tidak dapat dilatih karena \en{out of memory} (OOM), menjadi dapat dilatih. Di sisi lain, durasi \en{training} mengalami peningkatan kurang dari 10\%, karena adanya \en{memory transfer overhead} seperti yang telah disebutkan sebelumnya.
+Eksperimen pada \en{paper} tersebut dilakukan dengan beberapa \en{pre-trained model} seperti ResNet, Inception, dan NMT, pada sebuah komputer dengan satu GPU (Tesla M40) dengan kapasitas memori 12GB. Menurut hasil eksperimen yang ditunjukkan Gambar~\ref{fig:SwapOutInResult} tersebut, didapatkan bahwa pada model-model yang diuji, ukuran \en{batch} dapat ditingkatkan hingga 3 kali, sedangkan penggunaan memori maksimum menurun hingga 2-3 kali lipat. Bahkan, model-model seperti ResNet-1001 dan ResNet-2000 yang sebelumnya tidak dapat dilatih karena \en{out of memory} (OOM), menjadi dapat dilatih. Di sisi lain, durasi \en{training} mengalami peningkatan kurang dari 10\%, karena adanya \en{memory transfer overhead} seperti yang telah disebutkan.
 
 \begin{figure}[htp]
     \centering
