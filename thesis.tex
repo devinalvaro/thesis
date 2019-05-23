@@ -16,14 +16,18 @@
     \input{config/document}
 
     % Preface
-    \input{miscs/cover}
-    \input{miscs/inner-cover}
-    \input{miscs/declaration}
-    \input{miscs/abstract}
-    \input{miscs/forewords}
+    \newpage
 
+    \input{pages/cover}
+    \input{pages/acknowledgment}
+
+    \newpage
     \pagenumbering{roman}
     \setcounter{page}{1}
+
+    \input{pages/declaration}
+    \input{pages/abstract}
+    \input{pages/forewords}
 
     \tableofcontents
     \listoffigures
@@ -32,7 +36,6 @@
 
     % Chapters
     \newpage
-
     \pagenumbering{arabic}
     \setcounter{page}{1}
 
@@ -43,5 +46,5 @@
     \input{chapters/chapter-5}
 
     % Bibliography
-    \bibliography{miscs/references}
+    \bibliography{pages/references}
 \end{document}
