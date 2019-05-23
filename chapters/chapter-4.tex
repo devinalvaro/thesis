@@ -203,7 +203,7 @@ Terdapat dua \en{dataset} yang digunakan untuk pengujian. Yang pertama adalah te
 
 Pengujian model dilakukan dengan berbagai variasi nilai parameter, yaitu jumlah \en{timestep}, ukuran \en{batch}, dan jumlah \en{epoch}. Pengujian terhadap berbagai jumlah \en{timestep} dilakukan karena jumlah \en{timestep} mempengaruhi ukuran \en{stack}, seperti yang dijelaskan di Bagian~\ref{Stack}. Ukuran \en{batch} pada dasarnya menyesuaikan jumlah \en{timestep}, agar kebutuhan memori TensorFlow relatif konsisten dari kasus ke kasus. Terakhir, variasi jumlah \en{epoch} bertujuan menguji \en{training} dalam berbagai durasi, karena jumlah \en{epoch} secara langsung mempengaruhi durasi \en{training} model. Pada semua kasus, model memiliki 8 \en{hidden layer} yang masing-masing memiliki 512 neuron.
 
-Tabel~\ref{tbl:Cases} menunjukkan kode setiap kasus pengujian beserta parameter-parameter dan \en{dataset} yang digunakan.
+Tabel~\ref{tbl:Cases} menunjukkan kode setiap kasus pengujian beserta parameter-parameter dan \en{dataset} yang digunakan. Kasus-kasus dengan prefiks "A" menggunakan data kecil sedangkan data besar digunakan kasus-kasus berprefiks "B". Kasus-kasus berprefiks sama dibagi lebih lanjut menjadi 3 grup. Grup pertama bersufiks 1-3, dengan jumlah \en{timestep} 25, grup kedua bersufiks 4-6 dengan jumlah \en{timestep} 50, dan grup ketiga bersufiks 7-9, dengan jumlah \en{timestep} 75. Pada setiap grup tersebut, semakin tinggi angka sufiks berarti semakin tinggi jumlah \en{epoch}-nya, yaitu antara 10, 20, dan 40.
 
 \begin{table}[htp]
 \centering
