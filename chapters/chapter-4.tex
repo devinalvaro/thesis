@@ -2,7 +2,7 @@
 
 \section{Implementasi}
 
-Pada bagian ini dijelaskan mengenai implementasi optimisasi \en{memory swapping} di TensorFlow menurut \nameref{SolutionDesign}. Implementasi yang dilakukan berupa modifikasi terhadap \en{source code} TensorFlow, terutama di \en{file} \code{tensorflow/core/\\kernels/stack.cc}.
+Pada bagian ini dijelaskan mengenai implementasi optimisasi \en{memory swapping} di TensorFlow menurut \nameref{SolutionDesign}. Implementasi yang dilakukan berupa modifikasi terhadap \en{kernel} TensorFlow, terutama di \en{file} \code{tensorflow/core/kernels/\\stack.cc}. Karena modifikasi dilakukan di level \en{kernel}, optimisasi ini transparan dari sudut pandang \en{end-user} TensorFlow.
 
 Secara garis besar, implementasi dapat dibagi menjadi 2 bagian, yaitu modifikasi \en{swapping out} menurut Kode~\ref{lst:SwapOutPseudocodeOptimized} dan \en{swapping in} menurut Kode~\ref{lst:SwapInPseudocodeOptimized}.
 
@@ -175,7 +175,6 @@ Pada bagian ini dijelaskan mengenai pengujian terhadap optimisasi \en{memory swa
 
 Tabel~\ref{tbl:Specification} memaparkan spesifikasi lingkungan yang digunakan penulis dalam melakukan pengujian.
 
-{\renewcommand{\arraystretch}{0.75}
 \begin{table}[htp]
 \centering
 \caption{Spesifikasi Lingkungan Pengujian}
@@ -189,7 +188,7 @@ Tabel~\ref{tbl:Specification} memaparkan spesifikasi lingkungan yang digunakan p
 \en{Memory}                             & 12 GB                                                                                                          \\ \hline
 \en{GPU}                                & \begin{tabular}[c]{@{}l@{}}NVIDIA Tesla P4\\ \en{Memory}: 8 GB\\ \en{Driver}: 418.56\\ CUDA: 10.0\end{tabular} \\ \hline
 \end{tabular}
-\end{table}}
+\end{table}
 
 \subsection{Metode Pengujian} \label{ExperimentMethod}
 

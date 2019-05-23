@@ -36,7 +36,7 @@ Pada bagian-bagian selanjutnya, penulisan \code{tensor} seperti demikian merujuk
 
 Saat \en{forward pass} berlangsung, \en{output tensor} dari sebuah \en{op} diletakkan ke sebuah \en{stack} agar ketika \en{backpropagation}, \en{op} bersangkutan dapat mengambil kembali \en{tensor} yang diletakkan ke \en{stack} tadi dengan urutan yang benar \citep{tensorflow2016implementation}.
 
-\en{Stack} yang dimaksud adalah kelas \code{Stack} yang terdapat di \en{codebase} TensorFlow, tepatnya pada \en{file} \code{tensorflow/core/kernels/stack.cc}. Perlu diperhatikan bahwa setiap \en{op} memiliki \code{stack}-nya sendiri.
+\en{Stack} yang dimaksud adalah kelas \code{Stack} yang terdapat di \en{codebase} TensorFlow, tepatnya pada \en{file} \code{tensorflow/core/kernels/stack.cc}. Perlu menjadi perhatian bahwa setiap \en{op} memiliki \code{stack}-nya sendiri.
 
 Dalam konteks \en{backpropagation} biasa, penggunaan \code{stack} ini menimbulkan pertanyaan, karena bukankah dalam \en{backpropagation}, hanya terdapat satu nilai \en{tensor} saja yang perlu diambil untuk setiap \en{op}. Kalau begitu, mengapa TensorFlow harus menggunakan \en{stack} untuk menyimpan \en{tensor}?
 
@@ -90,7 +90,7 @@ Sebaliknya, bila \en{memory swapping} tidak dilakukan baik karena \code{swap\_me
 
 \subsubsection{\code{StackPopOp}}
 
-Setelah membahas \code{StackPushOp}, selanjutnya adalah pembahasan mengenai \code{StackPopOp}, kelas yang bertanggung jawab dalam pengambilan \code{tensor} dari atas \code{stack}. Berikut adalah cuplikan kode \code{StackPopOp} yang telah dimodifikasi sehingga hanya menampilkan bagian yang menjadi perhatian.
+Setelah membahas \code{StackPushOp}, selanjutnya adalah pembahasan mengenai \code{Stack\\PopOp}, kelas yang bertanggung jawab dalam pengambilan \code{tensor} dari atas \code{stack}. Berikut adalah cuplikan kode \code{StackPopOp} yang telah dimodifikasi sehingga hanya menampilkan bagian yang menjadi perhatian.
 
 \begin{lstlisting}[language=C++, caption=\code{StackPopOp} (\code{tensorflow/core/kernels/stack.cc}), label={lst:SwapIn}]
 void StackPopOp::ComputeAsync(OpKernelContext* ctx, DoneCallback done) {
