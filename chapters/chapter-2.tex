@@ -13,7 +13,7 @@ Ide dasar \en{deep neural network} adalah memodelkan fitur-fitur dari data beser
     \label{fig:DeepNeuralNetwork}
 \end{figure}
 
-Seperti \en{neural network} pada \en{shallow learning}, setiap hubungan neuron antar \en{layer} memiliki bobot (\en{weight}) yang nilainya merepresentasikan signifikansi hubungan antar neuron tersebut. Selain bobot, terdapat juga bias yang secara langsung mempengaruhi nilai setiap neuron (tidak seperti bobot yang mempengaruhi hubungan antara neuron), dengan nilainya merepresentasikan signifikasi suatu neuron. Secara garis besar, tujuan setiap neuron dan hubungan antar neuron adalah mengenali pola atau fitur dari data sehingga dapat memprediksi \en{output} dengan benar \citep{nielsen2015neural}.
+Seperti \en{neural network} pada \en{shallow learning}, setiap hubungan neuron antar \en{layer} memiliki bobot (\en{weight}) yang nilainya merepresentasikan signifikansi hubungan antar neuron tersebut. Selain bobot, terdapat juga bias yang secara langsung mempengaruhi signifikasi setiap neuron (tidak seperti bobot yang mempengaruhi hubungan antara neuron). Secara garis besar, tujuan setiap neuron dan hubungan antar neuron adalah mengenali pola atau fitur dari data sehingga dapat memprediksi \en{output} dengan benar \citep{nielsen2015neural}.
 
 Tujuan pelatihan \en{neural network} itu sendiri adalah mencari kombinasi bobot dan bias setiap neuron dan hubungannya sedemikian sehingga dari input dihasilkan \en{output} yang paling mendekati target. Ukuran dekatnya \en{output} dengan target adalah \en{loss} atau \en{cost function}, yaitu fungsi yang menghasilkan selisih antara \en{output} dan target. Semakin kecil \en{cost}, maka model semakin optimal.
 
@@ -195,7 +195,7 @@ Selain \en{block} dan \en{thread}, CUDA juga mengabstraksikan memori GPU. Pada C
 
 Pada CUDA, CPU disebut \en{host} sehingga memori CPU disebut \en{host memory} dan GPU disebut \en{device} sehingga memori GPU disebut \en{device memory}. Pada umumnya, kode yang dijalankan di \en{host} tidak dapat langsung mengakses \en{device memory} dan begitu juga sebaliknya. Untuk itu, perlu dilakukan transfer memori dari \en{device} ke \en{host} atau sebaliknya. Penjelasan lebih lanjut mengenai transfer memori ini akan dibahas pada bagian selanjutnya.
 
-Sejak CUDA 6 terdapat fitur \en{unified memory}, yaitu abstraksi memori yang dapat diakses secara langsung baik oleh \en{host} maupun \en{device}. Di balik layar, tetap dilakukan transfer memori antar \en{host} dan \en{device}, namun secara otomatis dilakukan oleh kernel CUDA, sehingga memudahkan \en{programmer} meskipun cenderung mengakibatkan kinerja yang lebih buruk. Hingga versi 1.12, TensorFlow belum secara resmi mendukung \en{unified memory} sehingga pada tugas akhir ini \en{unified memory} diabaikan.
+Sejak CUDA 6 terdapat fitur \en{unified memory}, yaitu abstraksi memori yang dapat diakses secara langsung baik oleh \en{host} maupun \en{device}. Di balik layar, tetap dilakukan transfer memori antar \en{host} dan \en{device}, namun secara otomatis dilakukan oleh kernel CUDA, sehingga memudahkan \en{programmer} meskipun cenderung mengakibatkan kinerja yang lebih buruk.
 
 \subsubsection{\en{Asynchronous Memory Copy}}
 

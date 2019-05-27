@@ -96,7 +96,7 @@ Demikian implementasi pada bagian \en{swapping out}, di mana \en{oldest tensor} 
 
 Pada bagian ini dijelaskan implementasi menurut Kode~\ref{lst:SwapInPseudocodeOptimized} yang menjelaskan optimisasi pada bagian \en{swapping in}. Namun, sebelum masuk ke bagian tersebut perlu ditunjukkan kode-kode yang mendukung implementasi tersebut.
 
-Sebelumnya, pada Kode~\ref{lst:GetTensorToSwapOut}, indeks di-\en{push} ke \code{swapped\_ids\_}, yaitu sebuah \en{stack} yang menyimpan indeks-indeks \en{tensor} yang di-\en{swap}. Digunakan \en{stack} karena kebalikan dari \en{swapping out}, \en{swapping in} dilakukan terhadap \en{swapped tensor} yang terbaru (\en{most recent}) dahulu. Kode~\ref{lst:SwappedTensorIds} menunjukkan deklarasi \en{swapped\_ids\_}.
+Sebelumnya, pada Kode~\ref{lst:GetTensorToSwapOut}, indeks di-\en{push} ke \code{swapped\_ids\_}, yaitu sebuah \en{stack} yang menyimpan indeks-indeks \en{tensor} yang di-\en{swap}. Digunakan \en{stack} karena berkebalikan dari \en{swapping out}, \en{swapping in} dilakukan terhadap \en{swapped tensor} yang terbaru (\en{most recent}) dahulu. Kode~\ref{lst:SwappedTensorIds} menunjukkan deklarasi \en{swapped\_ids\_}.
 
 \begin{lstlisting}[language=C++, caption=Deklarasi \code{swapped\_ids\_}, label={lst:SwappedTensorIds}]
 class Stack {
@@ -163,7 +163,7 @@ void StackPopOp::ComputeAsync(OpKernelContext* ctx, DoneCallback done) {
 
 Pada bagian Kode~\ref{lst:StackPopOp} di atas terlihat proses \en{swapping in} terhadap "\en{future tensors}", yaitu \en{swapped tensors} yang belum akan digunakan untuk komputasi, dengan tujuan meningkatkan \en{overlapping} antara komputasi dengan \en{memory transfer}, seperti yang telah disebutkan.
 
-Terdapat satu lagi hal yang perlu dibahas, yaitu herustik pada \en{swapping in}. Seperti heuristik pada \en{swapping out}, \en{swapping in} tersebut dilakukan ketika memori GPU hampir penuh. Dipilih nilai yang \code{kOccupancy} yang sama yaitu 0.7, untuk menyamai nilai yang digunakan di \en{swapping out}, karena nilai heuristik tersebut sudah ada di versi bawaan TensorFlow.
+Terdapat satu lagi hal yang perlu dibahas, yaitu heurustik pada \en{swapping in}. Seperti heuristik pada \en{swapping out}, \en{swapping in} dilakukan ketika memori GPU hampir penuh. Dipilih nilai yang \code{kOccupancy} yang sama yaitu 0.7, untuk menyamai nilai yang digunakan di \en{swapping out}, karena nilai heuristik tersebut sudah ada di versi bawaan TensorFlow.
 
 Demikian penjelasan mengenai implementasi optimisasi \en{memory swapping} di TensorFlow. Berikutnya dilakukan pengujian terhadap optimisasi ini dibandingkan dengan versi bawaan TensorFlow.
 
