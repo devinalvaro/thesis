@@ -216,7 +216,7 @@ if (tensor.swapped) {
 
 \begin{lstlisting}[language=C++, caption=Pseudocode \en{Swapping In} Teroptimisasi, label={lst:SwapInPseudocodeOptimized}]
 tensor = stack.pop()
-if (current_tensor.swapped) {
+if (tensor.swapped) {
     swap_in(tensor, (gpu_tensor) => {
         current_tensor = gpu_tensor
     })
