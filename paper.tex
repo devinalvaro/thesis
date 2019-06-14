@@ -32,9 +32,9 @@ imam@informatika.org}
 \begin{abstract}
     The ever-increasing sizes of deep learning models and datasets used increase the need for memory, as insufficient memory may abort a training process. Adding to this problem, deep learning trainings tend to use GPUs over CPUs for better training speed, where in general a GPU has significantly less memory than its CPU counterpart.
 
-    One solution is \textit{memory swapping}, a way to free some memory by temporarily moving data to another memory pool, in this case moving data from a GPU memory to a CPU memory. However, since moving data takes time---the larger the data the more the time---using memory swapping in a training can significantly increase the training duration. Therefore, an optimal memory swapping has to be selective on how much and which data to swap.
+    One solution is \textit{memory swapping}, a way to free some memory by temporarily moving data to another memory pool, in this case moving data from a GPU memory to a CPU memory. However, since moving data takes time---the larger the data the more the time---performing memory swapping in a training can significantly increase the training duration. Therefore, an optimal memory swapping has to be selective on how much and which data to swap.
 
-    TensorFlow, a machine learning framework, features memory swapping that, based on our analysis over its implementation, can be optimized to reduce the increase to training duration it causes. The optimization is done is by prioritizing oldest tensors (data representation in TensorFlow) which, because of a certain backpropagation property, allows the asynchronicity of program execution to increase, ultimately reducing training duration.
+    TensorFlow, a machine learning framework, features memory swapping that, based on our analysis over its implementation, can be optimized to reduce the increase on training duration it causes. The optimization is done is by prioritizing oldest tensors (\textit{tensor} is the basic data unit in TensorFlow) which, because of a certain backpropagation property, allows the asynchronicity of program execution to increase, ultimately reducing training duration.
 
     Based on our experiments, the optimization reduces up to around 3\% of training duration on certain cases.
 \end{abstract}
@@ -43,7 +43,15 @@ imam@informatika.org}
 memory swapping, TensorFlow, asynchronous, backpropagation
 \end{IEEEkeywords}
 
-% \section{Introduction}
+\section{Introduction}
+
+Training deep learning models requires a certain amount of memory for storing weights, biases, outputs, and the dataset. The lack of memory in a training may cause \textit{out of memory} (OOM) error which aborts the training. Adding to this problem is the widespread use of GPUs for training, where in general a GPU has less memory than a CPU \cite{b1}.
+
+One solution to this problem is \textit{memory swapping}, a way to free some memory in the primary memory pool by temporarily moving data to another memory pool. In the case of training with a GPU, this means moving data from a GPU memory to a CPU memory. However, since moving data takes time---the larger the data the more the time---performing memory swapping in a training can significantly increase the training duration. Therefore, an optimal memory swapping has to be selective on how much and which data to swap \cite{b2}.
+
+TensorFlow, an open source machine learning framework, features memory swapping. Based on our analysis, which is explained in a later section, memory swapping in TensorFlow can be optimized to reduce the increase on training duration it causes. In short, the optimization is done is by prioritizing oldest tensors (\textit{tensor} is a multidimensional vector, the basic data unit in TensorFlow) which, because of a certain backpropagation property, allows the asynchronicity of program execution to increase, ultimately reducing training duration \cite{b2}.
+
+In this paper, we further describe the memory swapping optimization and how it can be implemented to TensorFlow's source code. Based on our experiments, on certain cases the optimized version can train in up to around 3\% less time than the original version.
 
 % \section{Related Works}
 
@@ -55,14 +63,9 @@ memory swapping, TensorFlow, asynchronous, backpropagation
 
 % \section{Conclusion}
 
-% \begin{thebibliography}{00}
-% \bibitem{b1} G. Eason, B. Noble, and I. N. Sneddon, ``On certain integrals of Lipschitz-Hankel type involving products of Bessel functions,'' Phil. Trans. Roy. Soc. London, vol. A247, pp. 529--551, April 1955.
-% \bibitem{b2} J. Clerk Maxwell, A Treatise on Electricity and Magnetism, 3rd ed., vol. 2. Oxford: Clarendon, 1892, pp.68--73.
-% \bibitem{b3} I. S. Jacobs and C. P. Bean, ``Fine particles, thin films and exchange anisotropy,'' in Magnetism, vol. III, G. T. Rado and H. Suhl, Eds. New York: Academic, 1963, pp. 271--350.
-% \bibitem{b4} K. Elissa, ``Title of paper if known,'' unpublished.
-% \bibitem{b5} R. Nicole, ``Title of paper with only first word capitalized,'' J. Name Stand. Abbrev., in press.
-% \bibitem{b6} Y. Yorozu, M. Hirano, K. Oka, and Y. Tagawa, ``Electron spectroscopy studies on magneto-optical media and plastic substrate interface,'' IEEE Transl. J. Magn. Japan, vol. 2, pp. 740--741, August 1987 [Digests 9th Annual Conf. Magnetics Japan, p. 301, 1982].
-% \bibitem{b7} M. Young, The Technical Writer's Handbook. Mill Valley, CA: University Science, 1989.
-% \end{thebibliography}
+\begin{thebibliography}{00}
+\bibitem{b1} Dean, Jeffrey, et al. "Large scale distributed deep networks." Advances in neural information processing systems. 2012.
+\bibitem{b2} Meng, Chen, et al. "Training deeper models by GPU memory optimization on TensorFlow." Proc. of ML Systems Workshop in NIPS. 2017.
+\end{thebibliography}
 
 \end{document}
