@@ -53,7 +53,13 @@ TensorFlow, an open source machine learning framework, features memory swapping.
 
 In this paper, we further describe the memory swapping optimization and how it can be implemented to TensorFlow's source code. Based on our experiments, on certain cases the optimized version can train in up to around 3\% less time than the original version.
 
-% \section{Related Works}
+\section{Related Works}
+
+"Training deeper models by GPU memory optimization on TensorFlow" by Meng et al. (2017) explores some memory problems in training deep learning models and proposes some solutions specifics to TensorFlow. Firstly, it addresses the OOM error in a training. Then, the paper proposes memory swapping as a solution to the OOM problem, and presents its own implementation of memory swapping in TensorFlow. Lastly, it gives some ideas on optimizing memory swapping in the context of training deep learning models, specifically on trainings with backpropagation. The paper explores some other topics mostly unrelated to this paper.
+
+Meng et al's paper is the main reference of this paper, as many topics explored in both papers are similar. However, both papers differ in various ways. As we previously mentioned, Meng et al implemented \textit{their own} version of memory swapping in TensorFlow and the paper explained some of the optimizations. In contrast, we optimize the memory swapping \textit{already present} in TensorFlow, using one of the optimization methods in Meng et al's implementation.
+
+Based on our observations, Meng et al's implementation of memory swapping in TensorFlow is significantly different than TensorFlow's own memory swapping. Thus, we only use the core idea of an optimization method in Meng et al's implementation, and adapt it to TensorFlow's own memory swapping.
 
 % \section{Memory Swapping in TensorFlow}
 
