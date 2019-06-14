@@ -12,7 +12,7 @@
 
 \begin{document}
 
-\title{Optimizing TensorFlow's Memory Swapping by Prioritizing Oldest Tensors}
+\title{Optimizing TensorFlow's Memory Swapping by Prioritizing Earlier Tensors}
 
 \author{\IEEEauthorblockN{Devin Alvaro}
 \IEEEauthorblockA{\textit{School of Electrical Engineering and Informatics} \\
@@ -34,7 +34,7 @@ imam@informatika.org}
 
     One solution is \textit{memory swapping}, a way to free some memory by temporarily moving data to another memory pool, in this case moving data from a GPU memory to a CPU memory. However, since moving data takes time---the larger the data the more the time---performing memory swapping in a training can significantly increase the training duration. Therefore, an optimal memory swapping has to be selective on how much and which data to swap.
 
-    TensorFlow, a machine learning framework, features memory swapping that, based on our analysis over its implementation, can be optimized to reduce the increase on training duration it causes. The optimization is done is by prioritizing oldest tensors (\textit{tensor} is the basic data unit in TensorFlow) which, because of a certain backpropagation property, allows the asynchronicity of program execution to increase, ultimately reducing training duration.
+    TensorFlow, a machine learning framework, features memory swapping that, based on our analysis over its implementation, can be optimized to reduce the increase on training duration it causes. The optimization is done is by prioritizing earlier tensors (\textit{tensor} is the basic data unit in TensorFlow) which, because of a certain backpropagation property, allows the asynchronicity of program execution to increase, ultimately reducing training duration.
 
     Based on our experiments, the optimization reduces up to around 3\% of training duration on certain cases.
 \end{abstract}
@@ -45,21 +45,27 @@ memory swapping, TensorFlow, asynchronous, backpropagation
 
 \section{Introduction}
 
-Training deep learning models requires a certain amount of memory for storing weights, biases, outputs, and the dataset. The lack of memory in a training may cause \textit{out of memory} (OOM) error which aborts the training. Adding to this problem is the widespread use of GPUs for training, where in general a GPU has less memory than a CPU \cite{b1}.
+Training deep learning models requires a certain amount of memory for storing weights, biases, outputs, and the dataset. The lack of memory in a training may cause \textit{out of memory} (OOM) error which aborts the training. Adding to this problem is the widespread use of GPUs for training, where in general a GPU has less memory than a CPU \cite{dean}.
 
-One solution to this problem is \textit{memory swapping}, a way to free some memory in the primary memory pool by temporarily moving data to another memory pool. In the case of training with a GPU, this means moving data from a GPU memory to a CPU memory. However, since moving data takes time---the larger the data the more the time---performing memory swapping in a training can significantly increase the training duration. Therefore, an optimal memory swapping has to be selective on how much and which data to swap \cite{b2}.
+One solution to this problem is \textit{memory swapping}, a way to free some memory in the primary memory pool by temporarily moving data to another memory pool. In the case of training with a GPU, this means moving data from a GPU memory to a CPU memory. However, since moving data takes time---the larger the data the more the time---performing memory swapping in a training can significantly increase the training duration. Therefore, an optimal memory swapping has to be selective on how much and which data to swap \cite{meng}.
 
-TensorFlow, an open source machine learning framework, features memory swapping. Based on our analysis, which is explained in a later section, memory swapping in TensorFlow can be optimized to reduce the increase on training duration it causes. In short, the optimization is done is by prioritizing oldest tensors (\textit{tensor} is a multidimensional vector, the basic data unit in TensorFlow) which, because of a certain backpropagation property, allows the asynchronicity of program execution to increase, ultimately reducing training duration \cite{b2}.
+TensorFlow, an open source machine learning framework, features memory swapping. Based on our analysis, which is explained in a later section, memory swapping in TensorFlow can be optimized to reduce the increase on training duration it causes. In short, the optimization is done is by prioritizing earlier tensors (\textit{tensor} is a multi-dimensional arrays, the basic data unit in TensorFlow \cite{abadi}) which, because of a certain backpropagation property, allows the asynchronicity of program execution to increase, ultimately reducing training duration.
 
 In this paper, we further describe the memory swapping optimization and how it can be implemented to TensorFlow's source code. Based on our experiments, on certain cases the optimized version can train in up to around 3\% less time than the original version.
 
 \section{Related Works}
 
-"Training deeper models by GPU memory optimization on TensorFlow" by Meng et al. (2017) explores some memory problems in training deep learning models and proposes some solutions specifics to TensorFlow. Firstly, it addresses the OOM error in a training. Then, the paper proposes memory swapping as a solution to the OOM problem, and presents its own implementation of memory swapping in TensorFlow. Lastly, it gives some ideas on optimizing memory swapping in the context of training deep learning models, specifically on trainings with backpropagation. The paper explores some other topics mostly unrelated to this paper.
+"Training deeper models by GPU memory optimization on TensorFlow" by Meng, Chen, et al. (2017) explores some memory problems in training deep learning models and proposes some solutions specifics to TensorFlow. Firstly, it addresses the OOM error in a training. Then, the paper proposes memory swapping as a solution to the OOM problem, and presents its own implementation of memory swapping in TensorFlow. Lastly, it gives some ideas on optimizing memory swapping in the context of training deep learning models, specifically on trainings with backpropagation. The paper explores some other topics mostly unrelated to this paper.
 
-Meng et al's paper is the main reference of this paper, as many topics explored in both papers are similar. However, both papers differ in various ways. As we previously mentioned, Meng et al implemented \textit{their own} version of memory swapping in TensorFlow and the paper explained some of the optimizations. In contrast, we optimize the memory swapping \textit{already present} in TensorFlow, using one of the optimization methods in Meng et al's implementation.
+Meng, Chen, et al's paper is the main reference of this paper, as many topics explored in both papers are similar. However, both papers differ in various ways. As we previously mentioned, Meng, Chen, et al implemented \textit{their own} version of memory swapping in TensorFlow and the paper explained some of the optimizations. In contrast, we optimize the memory swapping \textit{already present} in TensorFlow, using one of the optimization methods in Meng, Chen, et al's implementation.
 
-Based on our observations, Meng et al's implementation of memory swapping in TensorFlow is significantly different than TensorFlow's own memory swapping. Thus, we only use the core idea of an optimization method in Meng et al's implementation, and adapt it to TensorFlow's own memory swapping.
+Based on our observations, Meng, Chen, et al's implementation of memory swapping in TensorFlow is significantly different than TensorFlow's own memory swapping. Thus, we only use the core idea of an optimization method in Meng, Chen, et al's implementation, and adapt it to TensorFlow's own memory swapping.
+
+Before describing the optimization idea, we will briefly explain the deep learning training. In a training with backpropagation, there are two phases: feed forward and backpropagation. In the feed forward phase, the process goes from the input layer to the output layer, calculating outputs of each (hidden) layer's neurons. Afterwards, in the backpropagation phase, the process goes in reverse from the output layer to the input layer, calculating gradients of each (hidden) layer's neurons, used to adjust model parameters so that the overall error is minimized \cite{nielsen}.
+
+In calculating the gradient of a neuron, the neuron's output calculated in the feed forward phase is needed once more. Consequently, outputs have to be stored to allow recalling them in the backpropagation phase, which means they occupy the memory space. Furthermore, since the feed forwad goes from start-to-end and the backpropagation goes from end-to-start, this means that the earlier the outputs are calculated, the longer they are stored until being resued in the backpropagation phase. Vice versa, the later the outputs are calculated, the sooner they are going to be reused in the backpropagation phase.
+
+Based on those observations, the optimization idea is as follows. Earlier outputs (called "tensors" afterwards, since these outputs are represented as tensors in TensorFlow) occupy the memory space the longer until reused. Therefore, earlier tensors the best candidates to be memory swapped, because they let more time for the memory swapper to move them from the GPU to the CPU, and back. Since tensors are moved asynchronously, this can increase the overlapping between computations and swappings, thus reducing the overall training duration \cite{meng}.
 
 % \section{TensorFlow's Memory Swapping}
 
@@ -70,8 +76,10 @@ Based on our observations, Meng et al's implementation of memory swapping in Ten
 % \section{Conclusion}
 
 \begin{thebibliography}{00}
-\bibitem{b1} Dean, Jeffrey, et al. "Large scale distributed deep networks." Advances in neural information processing systems. 2012.
-\bibitem{b2} Meng, Chen, et al. "Training deeper models by GPU memory optimization on TensorFlow." Proc. of ML Systems Workshop in NIPS. 2017.
+    \bibitem{dean} Dean, Jeffrey, et al. "Large scale distributed deep networks." Advances in neural information processing systems. 2012.
+    \bibitem{meng} Meng, Chen, et al. "Training deeper models by GPU memory optimization on TensorFlow." Proc. of ML Systems Workshop in NIPS. 2017.
+    \bibitem{abadi} Abadi, Martín, et al. "Tensorflow: A system for large-scale machine learning." 12th {USENIX} Symposium on Operating Systems Design and Implementation ({OSDI} 16). 2016.
+    \bibitem{nielsen} Nielsen, Michael A. Neural networks and deep learning. Vol. 25. San Francisco, CA, USA:: Determination press, 2015.
 \end{thebibliography}
 
 \end{document}
