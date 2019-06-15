@@ -83,7 +83,7 @@ In calculating the gradient of a neuron, the neuron's output calculated in the f
 
 Based on those observations, the optimization idea is as follows. Earlier outputs (called "tensors" afterwards, since these outputs are represented as tensors in TensorFlow) occupy the memory space the longer until reused. Therefore, earlier tensors the best candidates to be memory swapped, because they let more time for the memory swapper to move them from the GPU to the CPU, and back. Since tensors are moved asynchronously, this can increase the overlapping between computations and swappings, thus reducing the overall training duration \cite{meng}.
 
-\section{TensorFlow's Memory Swapping}
+\section{TensorFlow's Memory Swapping} \label{sec:memoryswapping}
 
 In this section we discuss TensorFlow's memory swapping. For the end-users, TensorFlow provides the class \texttt{tf.nn.dynamic\_rnn} which accepts the parameter \texttt{swap\_memory=True} to allow memory swapping. Since only one class allows memory swapping and it's based on recurrent neural network (RNN), from now on we only concern ourselves with RNN models.
 
@@ -126,7 +126,9 @@ if (gpu_memory >= 70% full) {
 }
 \end{lstlisting}
 
-From the code, we can see the heuristics for swapping out. If the GPU memory is still less than 70\% full, \texttt{current\_tensor} isn't swapped, it's immediately pushed to the \texttt{stack}. On the contrary, if the GPU memory is 70\% full or more, \texttt{current\_tensor} (located in GPU) is swapped to the CPU first, then a new \texttt{cpu\_tensor} pointing to the same data moved to the CPU memory is pushed to \texttt{stack}. This fits the illustration in \autoref{fig:TensorStack}.
+From the code, we can see the heuristic for swapping out. If the GPU memory is still less than 70\% full, \texttt{current\_tensor} isn't swapped, it's immediately pushed to the \texttt{stack}. On the contrary, if the GPU memory is 70\% full or more, \texttt{current\_tensor} (located in GPU) is swapped to the CPU first, then a new \texttt{cpu\_tensor} pointing to the same data moved to the CPU memory is pushed to \texttt{stack}. This fits the illustration in \autoref{fig:TensorStack}.
+
+Note the \texttt{(...) => \{ ... \}} syntax which represents an asynchronous callback. Since in TensorFlow tensors are swapped asynchronously, this means \texttt{swap\_out} also runs asynchronously, with the asynchronous callback being called after it's done.
 
 \subsection{Swapping In}
 
@@ -153,9 +155,62 @@ TensorFlow begins to swap tensors out once it detects that the GPU memory is alm
 
 In the backpropagation phase, output tensors (calculated in the feed forward phase) need to be reused. With \texttt{stack}, TensorFlow popped the top element, which is the \texttt{tensor} to be processed. Before processing the \texttt{tensor}, TensorFlow checks if it was previously swapped out, in which case it's swapped back in. If it wasn't swapped out, then it's in the GPU already, ready to be processed.
 
-There are two main takeaways. The first is that swapped tensors are the latest tensors. The second is that even if tensors are swapped asynchronously, they are only swapped in when needed. For reasons we explained in \autoref{sec:relatedworks}, earlier tensors are hypothetically the better candidates for memory swapping, the main reason is that they let the memory swapper to asynchronously swap them in, along with other computations. This can potentially increase the asynchronicity of the program, reducing the overall training duration.
+There are two main takeaways. The first is that swapped tensors are the latest tensors. The second is that even if tensors are swapped asynchronously, they are only swapped in when needed. For reasons we explained in Section~\ref{sec:relatedworks}, earlier tensors are hypothetically the better candidates for memory swapping, the main reason is that they let the memory swapper to asynchronously swap them in, along with other computations. This can potentially increase the asynchronicity of the program, reducing the overall training duration.
 
-% \section{Design and Implementation}
+\section{Design and Implementation}
+
+After discussing the optimization method in Section~\ref{sec:relatedworks} and how TensorFlow's memory swapping works in Section~\ref{sec:memoryswapping}, in this section we will describe how can the optimization method be implemented in TensorFlow's memory swapping.
+
+The main thing in \texttt{StackPushOp} (\autoref{lst:StackPushOp}) that needs to change is how it swaps out the current tensor, instead of the earliest tensor. To accomodate this, we modify the code to the one roughly depicted by \autoref{lst:StackPushOpOptimized}.
+
+\begin{lstlisting}[label=lst:StackPushOpOptimized, caption=Swapping out pseudocode (optimized)]
+stack.push(current_tensor)
+
+if (gpu_memory >= 70% full) {
+    id = stack.get_earliest_tensor_id()
+    swap_out(stack[id].tensor,
+             (cpu_tensor) => {
+        stack[id].tensor = cpu_tensor
+        stack[id].swapped = true
+    })
+}
+\end{lstlisting}
+
+As seen at the beginning of the code, \texttt{current\_tensor} is pushed immediately to \texttt{stack}, since it won't be swapped. Instead, the earliest unswapped tensor is swapped out, identified with \texttt{id} obtained through \texttt{get\_earliest\_tensor\_id()} method (whose implementation won't be explained). With \texttt{id} obtained, we can access the earliest unswapped tensor at \texttt{stack[id]}. Accessing the non-top element may seem violating the rule of a stack, but this is possible because \texttt{stack} in TensorFlow is implemented with C++ vector. After the swapping out the earliest tensor is done, in the asynchronous callback we mark it as swapped and replace the \texttt{tensor} to the one pointing to the CPU memory. Also, note that the heuristic is unchanged from the original version.
+
+\autoref{fig:TensorStackOptimized} illustrates \texttt{Stack} and \texttt{Tensor} with the above optimization, in contrast to the original version in \autoref{fig:TensorStack}. The difference is that on the right side, after swapping out, instead of the top \texttt{tensor} pointing to the CPU memory, it is not the lowest \texttt{tensor} pointing to the CPU memory, since it (earliest tensor) is the one being swapped out.
+
+\begin{figure}[htp]
+    \centering
+    \includegraphics[width=1\linewidth]{figures/tensor-stack-optimized.png}
+    \caption{\texttt{Stack} and \texttt{Tensor}; \textbf{left}: pre-swapping; \textbf{right}: after swapping the earliest tensor.}
+    \label{fig:TensorStackOptimized}
+\end{figure}
+
+Next is the optimization for swapping in. The main change is that since now it's the earlier tensors being swapped out, we can swap in tensors more asynchronously, instead of only swapping them at the moment they're needed, as in the original version. This swapping in optimization is depicted in \autoref{lst:StackPopOpOptimized}.
+
+\begin{lstlisting}[label=lst:StackPopOpOptimized, caption=Swapping in pseudocode (optimized)]
+tensor = stack.pop()
+if (tensor.swapped) {
+    swap_in(tensor, (gpu_tensor) => {
+        current_tensor = gpu_tensor
+    })
+} else {
+    current_tensor = tensor
+}
+
+if (not gpu_memory_almost_full) {
+    id = stack.get_newest_swapped_tensor_id()
+    swap_in(stack[id].tensor, (gpu_tensor) => {
+        stack[id].tensor = gpu_tensor
+        stack[id].swapped = false
+    })
+}
+\end{lstlisting}
+
+As can be seen, the first half of the code is exactly the same as the code in \autoref{lst:StackPopOp}. The difference is, aside of that, we also asynchronously swap in "future tensors", swapped tensors that will be needed at a later time. As we previously mentioned in Section~\ref{sec:relatedworks} and Section~\ref{sec:memoryswapping}, this is to increase the asynchronicity of the program, ultimately reducing the overall training duration. That, is core of the optimization.
+
+The implementation of this optimization is done by modifying the TensorFlow kernel in \texttt{tensorflow/core/kernels/stack.cc}, roughly depicted by the pseudocodes listed above. Since the optimization is implemented at kernel-level, this optimization is transparent to end-users.
 
 % \section{Experiments}
 
