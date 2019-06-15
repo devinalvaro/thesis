@@ -10,6 +10,22 @@
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 
+% ---- %
+\usepackage[hidelinks]{hyperref}
+
+\usepackage{letltxmacro}
+\LetLtxMacro\oldttfamily\ttfamily
+\DeclareRobustCommand{\ttfamily}{\oldttfamily\csname ttsize\endcsname}
+\def\ttsize{\small}
+
+\usepackage{listings}
+\lstset{
+  basicstyle=\ttfamily,
+  captionpos=b,
+  frame=single,
+}
+% ---- %
+
 \begin{document}
 
 \title{Optimizing TensorFlow's Memory Swapping by Prioritizing Earlier Tensors}
@@ -53,7 +69,7 @@ TensorFlow, an open source machine learning framework, features memory swapping.
 
 In this paper, we further describe the memory swapping optimization and how it can be implemented to TensorFlow's source code. Based on our experiments, on certain cases the optimized version can train in up to around 3\% less time than the original version.
 
-\section{Related Works}
+\section{Related Works} \label{sec:relatedworks}
 
 "Training deeper models by GPU memory optimization on TensorFlow" by Meng, Chen, et al. (2017) explores some memory problems in training deep learning models and proposes some solutions specifics to TensorFlow. Firstly, it addresses the OOM error in a training. Then, the paper proposes memory swapping as a solution to the OOM problem, and presents its own implementation of memory swapping in TensorFlow. Lastly, it gives some ideas on optimizing memory swapping in the context of training deep learning models, specifically on trainings with backpropagation. The paper explores some other topics mostly unrelated to this paper.
 
@@ -67,7 +83,77 @@ In calculating the gradient of a neuron, the neuron's output calculated in the f
 
 Based on those observations, the optimization idea is as follows. Earlier outputs (called "tensors" afterwards, since these outputs are represented as tensors in TensorFlow) occupy the memory space the longer until reused. Therefore, earlier tensors the best candidates to be memory swapped, because they let more time for the memory swapper to move them from the GPU to the CPU, and back. Since tensors are moved asynchronously, this can increase the overlapping between computations and swappings, thus reducing the overall training duration \cite{meng}.
 
-% \section{TensorFlow's Memory Swapping}
+\section{TensorFlow's Memory Swapping}
+
+In this section we discuss TensorFlow's memory swapping. For the end-users, TensorFlow provides the class \texttt{tf.nn.dynamic\_rnn} which accepts the parameter \texttt{swap\_memory=True} to allow memory swapping. Since only one class allows memory swapping and it's based on recurrent neural network (RNN), from now on we only concern ourselves with RNN models.
+
+Now, we go deeper into the internals of TensorFlow's memory swapping. In TensorFlow, memory swapping is centered around classes such as \texttt{Stack}, \texttt{StackPushOp}, and \texttt{StackPopOp} located at \texttt{tensorflow/core/kernels/stack.cc} in the source code. However, before getting into them, we need to explain about tensors and ops.
+
+\subsection{Tensor and Op}
+
+A TensorFlow program can be seen as a dataflow graph, where operations (op) are the nodes, and tensors flow along the edges, processed as they pass through an op.
+
+Class \texttt{Tensor} in the source code represents a tensor. It is to be noted that this class is only a handle to the real tensor data in the memory, whether the GPU's or the CPU's. From this point on, a tensor written as \texttt{tensor} means an instance of class \texttt{Tensor}.
+
+Meanwhile, different ops are represented by different classes. Some of which are related to memory swapping, our next subjects of discussion.
+
+\subsection{Stack}
+
+As we previously mentioned, outputs from the feed forward phase have to be stored to allow reusing them in the backpropagation phase. In TensorFlow, for some ops, each has a local stack represented by class \texttt{Stack}, so that output tensors can be reused in the right order. Based on our observations, the number of stack elements is directly proportional to the timestep/unrolling (an RNN term not explained in this paper, readers may refer to \cite{hinton}), thus we conclude that each stack element (output tensor) comes from a certain timestep, with the uppermost element coming from the last timestep, and the lowest element coming from the first timestep.
+
+\autoref{fig:TensorStack} illustrates \texttt{Stack}, \texttt{Tensor}, and how they relate to TensorFlow's memory swapping. As seen on the figure, the stack contains tensors from the least recent timestep to the most recent timestep, with the uppermost tensor coming from the most recent timestep. Each stack element is an instance of \texttt{Tensor}, each points to the real tensor data in the memory. On the left side, all elements point to the GPU memory. The right side illustrates what happens after swapping the uppermost element, as the tensor data are moved from the GPU to the CPU, it now points to the CPU memory.
+
+\begin{figure}[htp]
+    \centering
+    \includegraphics[width=1\linewidth]{figures/tensor-stack.png}
+    \caption{\texttt{Stack} and \texttt{Tensor}; \textbf{left}: pre-swapping; \textbf{right}: after swapping the latest tensor.}
+    \label{fig:TensorStack}
+\end{figure}
+
+Next, we will discuss about \texttt{StackPushOp} and \texttt{StackPopOp}.
+
+\subsection{Swapping Out}
+
+\texttt{StackPushOp} is the class responsible for pushing \texttt{tensor} to \texttt{stack}, and possibly swapping out if conditions allow. \autoref{lst:StackPushOp} shows the pseudocode of a part of \texttt{StackPushOp}'s code (located at \texttt{tensorflow/core/kernels/stack.cc}) where it performs swapping out.
+
+\begin{lstlisting}[label=lst:StackPushOp, caption=Swapping out pseudocode]
+if (gpu_memory >= 70% full) {
+    swap_out(current_tensor, (cpu_tensor) => {
+        stack.push(cpu_tensor)
+    })
+} else {
+    stack.push(current_tensor)
+}
+\end{lstlisting}
+
+From the code, we can see the heuristics for swapping out. If the GPU memory is still less than 70\% full, \texttt{current\_tensor} isn't swapped, it's immediately pushed to the \texttt{stack}. On the contrary, if the GPU memory is 70\% full or more, \texttt{current\_tensor} (located in GPU) is swapped to the CPU first, then a new \texttt{cpu\_tensor} pointing to the same data moved to the CPU memory is pushed to \texttt{stack}. This fits the illustration in \autoref{fig:TensorStack}.
+
+\subsection{Swapping In}
+
+\texttt{StackPopOp} is the class responsible for popping the top \texttt{tensor} from \texttt{stack}, and swapping it back if it was previously swapped out. \autoref{lst:StackPopOp} shows the pseudocode of a part of \texttt{StackPopOp}'s code (located at \texttt{tensorflow/core/kernels/stack.cc}) where it performs swapping in.
+
+\begin{lstlisting}[label=lst:StackPopOp, caption=Swapping in pseudocode]
+tensor = stack.pop()
+if (tensor.swapped) {
+    swap_in(tensor, (gpu_tensor) => {
+        current_tensor = gpu_tensor
+    })
+} else {
+    current_tensor = tensor
+}
+\end{lstlisting}
+
+From the code, we can see when does TensorFlow swap tensors in. When the training process needs to reuse output tensors (in the backpropagation phase, as we previously explained), it pops top \texttt{tensor} from the \texttt{stack}. TensorFlow then checks if it points to the GPU or the CPU memory. If it points to the GPU memory, then the process can immediately proceeds to process \texttt{current\_tensor} as its data is already located in the GPU memory. Conversely, if it points to the CPU memory, the tensor first needs to be swapped in from the CPU memory to the CPU memory. Like the swapping out, this swapping in runs asynchronously.
+
+\subsection{Summary and Analysis}
+
+In this subsection we summarize the mechanism of TensorFlow's memory swapping and briefly show our analysis over it.
+
+TensorFlow begins to swap tensors out once it detects that the GPU memory is almost full, specifically 70\% full. It is to be noted that the tensor it swaps out is the current tensor, which means swapped tensors tend to be the latests. Whether swapped or not, \texttt{current\_tensor} is pushed to the top of the \texttt{stack}.
+
+In the backpropagation phase, output tensors (calculated in the feed forward phase) need to be reused. With \texttt{stack}, TensorFlow popped the top element, which is the \texttt{tensor} to be processed. Before processing the \texttt{tensor}, TensorFlow checks if it was previously swapped out, in which case it's swapped back in. If it wasn't swapped out, then it's in the GPU already, ready to be processed.
+
+There are two main takeaways. The first is that swapped tensors are the latest tensors. The second is that even if tensors are swapped asynchronously, they are only swapped in when needed. For reasons we explained in \autoref{sec:relatedworks}, earlier tensors are hypothetically the better candidates for memory swapping, the main reason is that they let the memory swapper to asynchronously swap them in, along with other computations. This can potentially increase the asynchronicity of the program, reducing the overall training duration.
 
 % \section{Design and Implementation}
 
@@ -80,6 +166,7 @@ Based on those observations, the optimization idea is as follows. Earlier output
     \bibitem{meng} Meng, Chen, et al. "Training deeper models by GPU memory optimization on TensorFlow." Proc. of ML Systems Workshop in NIPS. 2017.
     \bibitem{abadi} Abadi, Martín, et al. "Tensorflow: A system for large-scale machine learning." 12th {USENIX} Symposium on Operating Systems Design and Implementation ({OSDI} 16). 2016.
     \bibitem{nielsen} Nielsen, Michael A. Neural networks and deep learning. Vol. 25. San Francisco, CA, USA:: Determination press, 2015.
+    \bibitem{hinton} Rumelhart, David E., Geoffrey E. Hinton, and Ronald J. Williams. "Learning representations by back-propagating errors." Cognitive modeling 5.3 (1988): 1.
 \end{thebibliography}
 
 \end{document}
