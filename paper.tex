@@ -24,6 +24,8 @@
   captionpos=b,
   frame=single,
 }
+
+\renewcommand{\arraystretch}{1.25}
 % ---- %
 
 \begin{document}
@@ -99,7 +101,7 @@ Meanwhile, different ops are represented by different classes. Some of which are
 
 \subsection{Stack}
 
-As we previously mentioned, outputs from the feed forward phase have to be stored to allow reusing them in the backpropagation phase. In TensorFlow, for some ops, each has a local stack represented by class \texttt{Stack}, so that output tensors can be reused in the right order. Based on our observations, the number of stack elements is directly proportional to the timestep/unrolling (an RNN term not explained in this paper, readers may refer to \cite{hinton}), thus we conclude that each stack element (output tensor) comes from a certain timestep, with the uppermost element coming from the last timestep, and the lowest element coming from the first timestep.
+As we previously mentioned, outputs from the feed forward phase have to be stored to allow reusing them in the backpropagation phase. In TensorFlow, for some ops, each has a local stack represented by class \texttt{Stack}, so that output tensors can be reused in the right order. Based on our observations, the number of stack elements is directly proportional to the timestep/unrolling (an RNN term not explained in this paper, readers may refer to \cite{lecun} \cite{hinton}), thus we conclude that each stack element (output tensor) comes from a certain timestep, with the uppermost element coming from the last timestep, and the lowest element coming from the first timestep.
 
 \autoref{fig:TensorStack} illustrates \texttt{Stack}, \texttt{Tensor}, and how they relate to TensorFlow's memory swapping. As seen on the figure, the stack contains tensors from the least recent timestep to the most recent timestep, with the uppermost tensor coming from the most recent timestep. Each stack element is an instance of \texttt{Tensor}, each points to the real tensor data in the memory. On the left side, all elements point to the GPU memory. The right side illustrates what happens after swapping the uppermost element, as the tensor data are moved from the GPU to the CPU, it now points to the CPU memory.
 
@@ -157,7 +159,7 @@ In the backpropagation phase, output tensors (calculated in the feed forward pha
 
 There are two main takeaways. The first is that swapped tensors are the latest tensors. The second is that even if tensors are swapped asynchronously, they are only swapped in when needed. For reasons we explained in Section~\ref{sec:relatedworks}, earlier tensors are hypothetically the better candidates for memory swapping, the main reason is that they let the memory swapper to asynchronously swap them in, along with other computations. This can potentially increase the asynchronicity of the program, reducing the overall training duration.
 
-\section{Design and Implementation}
+\section{Design and Implementation} \label{sec:designimplementation}
 
 After discussing the optimization method in Section~\ref{sec:relatedworks} and how TensorFlow's memory swapping works in Section~\ref{sec:memoryswapping}, in this section we will describe how can the optimization method be implemented in TensorFlow's memory swapping.
 
@@ -212,16 +214,104 @@ As can be seen, the first half of the code is exactly the same as the code in \a
 
 The implementation of this optimization is done by modifying the TensorFlow kernel in \texttt{tensorflow/core/kernels/stack.cc}, roughly depicted by the pseudocodes listed above. Since the optimization is implemented at kernel-level, this optimization is transparent to end-users.
 
-% \section{Experiments}
+\section{Experiments}
 
-% \section{Conclusion}
+In this section we share the experiments on the optimization implementation. We run the experiments on a single machine with Intel Xeon CPU @ 2.20 GHz, 12 GB RAM, and NVIDIA Tesla P4 (with 8 GB memory).
+
+\subsection{Method}
+
+In the experiments, we compare the training duration (in seconds) between the original version and the optimized version of TensorFlow. In each experiment case, we run both versions on the same parameter and dataset, 10 times. From the 10 runs, we derive the means of both versions, and test whether they are statistically different with t-test.
+
+We use the \textit{char-rnn} model as described in \cite{karpathy}, implemented in TensorFlow using \texttt{tf.nn.dynamic\_rnn} (mentioned in Section~\ref{sec:memoryswapping}) with \texttt{swap\_memory=True} to allow memory swapping. In short, char-rnn is an RNN model that takes a sequence of characters, then generates the next sequence of characters.
+
+The experiment cases can be divided into two parts, the ones using the small dataset and the ones using the large dataset. The small dataset is a text containing 291,268 characters (285 KB) while the large dataset is a text containing 4,573,338 characters (4.4 MB). We deem the contents of the text unimportant for the paper's context, but between both datasets, the contents are different.
+
+The variable (hyper)parameters are timestep, batch size, and epoch. Timestep is an experiment variable because we want to observe how it affects the optimization, since timestep is related to \texttt{stack} size. Meanwhile, the batch size's role as an experiment variable is to keep the memory usage relatively constant in all cases, as we want to keep the memory usage above the GPU memory capacity (to force memory swapping). Epoch is also an experiment variable because the number of epoch highly affects training duration (the larger the epoch the longer the training).
+
+\subsection{Result}
+
+\autoref{tbl:Cases} shows the ID of each experiment case, along with the parameters and the datasets used. IDs of experiments using the small dataset are prefixed with "A", while IDs of experiments using the large dataset are prefixed with "B". For both sides, the experiment cases are the combinations of low, medium, and high value of timestep and epoch.
+
+\begin{table}[htp]
+\centering
+\caption{Parameters and datasets of each case}
+\label{tbl:Cases}
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+\textbf{ID} & \textbf{Timestep} & \textbf{Batch size} & \textbf{Epoch} & \textbf{Dataset size} \\ \hline
+A1          & 25                & 4125                & 10             & 285 KB                \\ \hline
+A2          & 25                & 4125                & 20             & 285 KB                \\ \hline
+A3          & 25                & 4125                & 40             & 285 KB                \\ \hline
+A4          & 50                & 3000                & 10             & 285 KB                \\ \hline
+A5          & 50                & 3000                & 20             & 285 KB                \\ \hline
+A6          & 50                & 3000                & 40             & 285 KB                \\ \hline
+A7          & 75                & 2500                & 10             & 285 KB                \\ \hline
+A8          & 75                & 2500                & 20             & 285 KB                \\ \hline
+A9          & 75                & 2500                & 40             & 285 KB                \\ \hline
+B1          & 25                & 4125                & 10             & 4.4 MB                \\ \hline
+B2          & 25                & 4125                & 20             & 4.4 MB                \\ \hline
+B3          & 25                & 4125                & 40             & 4.4 MB                \\ \hline
+B4          & 50                & 3000                & 10             & 4.4 MB                \\ \hline
+B5          & 50                & 3000                & 20             & 4.4 MB                \\ \hline
+B6          & 50                & 3000                & 40             & 4.4 MB                \\ \hline
+B7          & 75                & 2500                & 10             & 4.4 MB                \\ \hline
+B8          & 75                & 2500                & 20             & 4.4 MB                \\ \hline
+B9          & 75                & 2500                & 40             & 4.4 MB                \\ \hline
+\end{tabular}
+\end{table}
+
+The experiment results are shown in \autoref{tbl:Overview}, where each case is respective to the one having the same ID in \autoref{tbl:Cases}.
+
+\begin{table}[htp]
+\centering
+\caption{Experiment results}
+\label{tbl:Overview}
+\begin{tabular}{|l|l|l|l|}
+\hline
+\textbf{ID} & \multicolumn{1}{c|}{\textbf{Original Mean (s)}} & \multicolumn{1}{c|}{\textbf{Optimized Mean (s)}} & \multicolumn{1}{c|}{\textbf{Improvement}}  \\ \hline
+A1          & 33.52523                                        & 33.56403                                         & -0.11\%                                    \\ \hline
+A2          & 65.15423                                        & 64.7291                                          & 0.65\%                                     \\ \hline
+A3          & 127.62171                                       & 127.15463                                        & 0.36\%                                     \\ \hline
+A4          & 40.13374                                        & 39.08925                                         & 2.6\%                                      \\ \hline
+A5          & 74.46792                                        & 72.24764                                         & 2.98\%                                     \\ \hline
+A6          & 142.81972                                       & 139.09633                                        & 2.6\%                                      \\ \hline
+A7          & 50.28715                                        & 48.71249                                         & 3.13\%                                     \\ \hline
+A8          & 94.84399                                        & 92.35375                                         & 2.63\%                                     \\ \hline
+A9          & 184.27691                                       & 179.04678                                        & 2.84\%                                     \\ \hline
+B1          & 421.27128                                       & 420.70736                                        & 0.13\%                                     \\ \hline
+B2          & 842.36554                                       & 839.1987                                         & 0.37\%                                     \\ \hline
+B3          & 1685.27977                                      & 1673.40191                                       & 0.7\%                                      \\ \hline
+B4          & 487.36775                                       & 472.67                                           & 3.02\%                                     \\ \hline
+B5          & 969.60724                                       & 941.28422                                        & 2.92\%                                     \\ \hline
+B6          & 1931.72836                                      & 1876.21198                                       & 2.87\%                                     \\ \hline
+B7          & 497.82833                                       & 485.17491                                        & 2.54\%                                     \\ \hline
+B8          & 991.18114                                       & 964.28065                                        & 2.71\%                                     \\ \hline
+B9          & 1977.07522                                      & 1924.45449                                       & 2.66\%                                     \\ \hline
+\end{tabular}
+\end{table}
+
+In all cases, means of both versions are statistically different according to t-test, except for cases A1, A2, A3, and B1. The similarity of those four cases is that they use low timestep. The other two cases with low timestep (B2 and B3) also yield low improvements. Meanwhile, all cases with medium and high timesteps yield significant improvements. These reasons lead us to conclude that the timestep need to exceed a certain threshold to yield significant improvements.
+
+The explanation for this is that since higher timestep leads to larger \texttt{stack} size, this let more swapped tensors to be asynchronously swapped in along with the computation. We explained this more deeply in Section~\ref{sec:designimplementation}.
+
+Next we observe cases with different epochs, to see whether there is any relation between epoch and improvement. Looking at the cases, we get varied results, in some cases the improvement increases as the epoch increases (such as A8 to A9), and in some cases the reverse happens (such as A8 to B6). Therefore, no conclusion can be made about the relation between epoch and improvement.
+
+Lastly, by observing cases with different datasets (cases prefixed with "A" and "B"), no pattern emerges which show that dataset affects the improvement. This means that the optimization should work on various datasets.
+
+Overall, from the experiment results we can conclude timestep affects the improvement the most, while epoch and dataset don't bring the same effect. At lower timestep, the optimized version doesn't bring any significant improvements, while at timesteps above certain threshold, the optimized version consistently reduces training durations by 2.5\% to 3.2\%.
+
+\section{Conclusion}
+
+In this paper, we have discussed about TensorFlow's memory swapping and how it can be optimized by prioritizing earlier tensors, which allows more asynchronous swapping, ultimately reducing training duration. Based on our experiments, the optimized version reduces training durations by 2.5\% to 3.2\% on cases with high enough timestep.
 
 \begin{thebibliography}{00}
     \bibitem{dean} Dean, Jeffrey, et al. "Large scale distributed deep networks." Advances in neural information processing systems. 2012.
     \bibitem{meng} Meng, Chen, et al. "Training deeper models by GPU memory optimization on TensorFlow." Proc. of ML Systems Workshop in NIPS. 2017.
     \bibitem{abadi} Abadi, Martín, et al. "Tensorflow: A system for large-scale machine learning." 12th {USENIX} Symposium on Operating Systems Design and Implementation ({OSDI} 16). 2016.
     \bibitem{nielsen} Nielsen, Michael A. Neural networks and deep learning. Vol. 25. San Francisco, CA, USA:: Determination press, 2015.
+    \bibitem{lecun} LeCun, Yann, Yoshua Bengio, and Geoffrey Hinton. "Deep learning." nature 521.7553 (2015): 436.
     \bibitem{hinton} Rumelhart, David E., Geoffrey E. Hinton, and Ronald J. Williams. "Learning representations by back-propagating errors." Cognitive modeling 5.3 (1988): 1.
+    \bibitem{karpathy} Karpathy, Andrej. "The unreasonable effectiveness of recurrent neural networks." Andrej Karpathy blog 21 (2015).
 \end{thebibliography}
 
 \end{document}
