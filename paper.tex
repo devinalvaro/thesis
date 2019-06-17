@@ -54,7 +54,7 @@ imam@informatika.org}
 
     TensorFlow, a machine learning framework, features memory swapping that, based on our analysis over its implementation, can be optimized to reduce the increase on training duration it causes. The optimization is done is by prioritizing earlier tensors (\textit{tensor} is the basic data unit in TensorFlow) which, because of a certain backpropagation property, allows the asynchronicity of program execution to increase, ultimately reducing training duration.
 
-    Based on our experiments, the optimization reduces up to around 3\% of training duration on certain cases.
+    Based on our experiments on Char-RNN models with various hyperparameters and datasets (of size 285 KB and 4.4 MB), the optimization reduces up to around 3\% of training duration on certain cases.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -71,19 +71,19 @@ TensorFlow, an open source machine learning framework, features memory swapping.
 
 In this paper, we further describe the memory swapping optimization and how it can be implemented to TensorFlow's source code. Based on our experiments, on certain cases the optimized version can train in up to around 3\% less time than the original version.
 
-\section{Related Works} \label{sec:relatedworks}
+\section{Related Works}
 
-"Training deeper models by GPU memory optimization on TensorFlow" by Meng, Chen, et al. (2017) explores some memory problems in training deep learning models and proposes some solutions specifics to TensorFlow. Firstly, it addresses the OOM error in a training. Then, the paper proposes memory swapping as a solution to the OOM problem, and presents its own implementation of memory swapping in TensorFlow. Lastly, it gives some ideas on optimizing memory swapping in the context of training deep learning models, specifically on trainings with backpropagation. The paper explores some other topics mostly unrelated to this paper.
+\cite{meng} explores some memory problems in training deep learning models and proposes some solutions specifics to TensorFlow. Firstly, it addresses the OOM error in a training. Then, the paper proposes memory swapping as a solution to the OOM problem, and presents its own implementation of memory swapping in TensorFlow. Lastly, it gives some ideas on optimizing memory swapping in the context of training deep learning models, specifically on trainings with backpropagation.
 
-Meng, Chen, et al's paper is the main reference of this paper, as many topics explored in both papers are similar. However, both papers differ in various ways. As we previously mentioned, Meng, Chen, et al implemented \textit{their own} version of memory swapping in TensorFlow and the paper explained some of the optimizations. In contrast, we optimize the memory swapping \textit{already present} in TensorFlow, using one of the optimization methods in Meng, Chen, et al's implementation.
+This paper differs from \cite{meng} as the authors implemented \textit{their own} version of memory swapping in TensorFlow along with some of the optimizations. In contrast, we optimize the memory swapping \textit{already present} in TensorFlow, using one of the optimizations in \cite{meng}'s implementation, which, based on our observations, is significantly different than TensorFlow's own memory swapping. Thus, we only use the core idea of the optimization, and adapt it to TensorFlow's own memory swapping.
 
-Based on our observations, Meng, Chen, et al's implementation of memory swapping in TensorFlow is significantly different than TensorFlow's own memory swapping. Thus, we only use the core idea of an optimization method in Meng, Chen, et al's implementation, and adapt it to TensorFlow's own memory swapping.
+\section{Deep Learning Training and The Optimization} \label{sec:optimization}
 
-Before describing the optimization idea, we will briefly explain the deep learning training. In a training with backpropagation, there are two phases: feed forward and backpropagation. In the feed forward phase, the process goes from the input layer to the output layer, calculating outputs of each (hidden) layer's neurons. Afterwards, in the backpropagation phase, the process goes in reverse from the output layer to the input layer, calculating gradients of each (hidden) layer's neurons, used to adjust model parameters so that the overall error is minimized \cite{nielsen}.
+Before describing the optimization idea, we will briefly explain about deep learning training. In a training with backpropagation, there are two phases: feed forward and backpropagation. In the feed forward phase, the process goes from the input layer to the output layer, calculating outputs of each (hidden) layer's neurons. Afterwards, in the backpropagation phase, the process goes in reverse from the output layer to the input layer, calculating gradients of each (hidden) layer's neurons, used to adjust model parameters so that the overall error is minimized \cite{nielsen}.
 
 In calculating the gradient of a neuron, the neuron's output calculated in the feed forward phase is needed once more. Consequently, outputs have to be stored to allow recalling them in the backpropagation phase, which means they occupy the memory space. Furthermore, since the feed forwad goes from start-to-end and the backpropagation goes from end-to-start, this means that the earlier the outputs are calculated, the longer they are stored until being resued in the backpropagation phase. Vice versa, the later the outputs are calculated, the sooner they are going to be reused in the backpropagation phase.
 
-Based on those observations, the optimization idea is as follows. Earlier outputs (called "tensors" afterwards, since these outputs are represented as tensors in TensorFlow) occupy the memory space the longer until reused. Therefore, earlier tensors the best candidates to be memory swapped, because they let more time for the memory swapper to move them from the GPU to the CPU, and back. Since tensors are moved asynchronously, this can increase the overlapping between computations and swappings, thus reducing the overall training duration \cite{meng}.
+Based on those observations, the optimization idea from \cite{meng} is as follows. Earlier outputs (called "tensors" afterwards, since these outputs are represented as tensors in TensorFlow) occupy the memory space the longer until reused. Therefore, earlier tensors are the best candidates to be memory swapped, because they let more time for the memory swapper to move them from the GPU to the CPU, and back. Since tensors are moved asynchronously, this can increase the overlapping between computations and swappings, thus reducing the overall training duration \cite{meng}.
 
 \section{TensorFlow's Memory Swapping} \label{sec:memoryswapping}
 
@@ -157,11 +157,11 @@ TensorFlow begins to swap tensors out once it detects that the GPU memory is alm
 
 In the backpropagation phase, output tensors (calculated in the feed forward phase) need to be reused. With \texttt{stack}, TensorFlow popped the top element, which is the \texttt{tensor} to be processed. Before processing the \texttt{tensor}, TensorFlow checks if it was previously swapped out, in which case it's swapped back in. If it wasn't swapped out, then it's in the GPU already, ready to be processed.
 
-There are two main takeaways. The first is that swapped tensors are the latest tensors. The second is that even if tensors are swapped asynchronously, they are only swapped in when needed. For reasons we explained in Section~\ref{sec:relatedworks}, earlier tensors are hypothetically the better candidates for memory swapping, the main reason is that they let the memory swapper to asynchronously swap them in, along with other computations. This can potentially increase the asynchronicity of the program, reducing the overall training duration.
+There are two main takeaways. The first is that swapped tensors are the latest tensors. The second is that even if tensors are swapped asynchronously, they are only swapped in when needed. For reasons we explained in Section~\ref{sec:optimization}, earlier tensors are hypothetically the better candidates for memory swapping, the main reason is that they let the memory swapper to asynchronously swap them in, along with other computations. This can potentially increase the asynchronicity of the program, reducing the overall training duration.
 
 \section{Design and Implementation} \label{sec:designimplementation}
 
-After discussing the optimization method in Section~\ref{sec:relatedworks} and how TensorFlow's memory swapping works in Section~\ref{sec:memoryswapping}, in this section we will describe how can the optimization method be implemented in TensorFlow's memory swapping.
+After discussing the optimization method in Section~\ref{sec:optimization} and how TensorFlow's memory swapping works in Section~\ref{sec:memoryswapping}, in this section we will describe how can the optimization method be implemented in TensorFlow's memory swapping.
 
 The main thing in \texttt{StackPushOp} (\autoref{lst:StackPushOp}) that needs to change is how it swaps out the current tensor, instead of the earliest tensor. To accomodate this, we modify the code to the one roughly depicted by \autoref{lst:StackPushOpOptimized}.
 
@@ -210,7 +210,7 @@ if (not gpu_memory_almost_full) {
 }
 \end{lstlisting}
 
-As can be seen, the first half of the code is exactly the same as the code in \autoref{lst:StackPopOp}. The difference is, aside of that, we also asynchronously swap in "future tensors", swapped tensors that will be needed at a later time. As we previously mentioned in Section~\ref{sec:relatedworks} and Section~\ref{sec:memoryswapping}, this is to increase the asynchronicity of the program, ultimately reducing the overall training duration. That, is core of the optimization.
+As can be seen, the first half of the code is exactly the same as the code in \autoref{lst:StackPopOp}. The difference is, aside of that, we also asynchronously swap in "future tensors", swapped tensors that will be needed at a later time. As we previously mentioned in Section~\ref{sec:optimization} and Section~\ref{sec:memoryswapping}, this is to increase the asynchronicity of the program, ultimately reducing the overall training duration. That, is core of the optimization.
 
 The implementation of this optimization is done by modifying the TensorFlow kernel in \texttt{tensorflow/core/kernels/stack.cc}, roughly depicted by the pseudocodes listed above. Since the optimization is implemented at kernel-level, this optimization is transparent to end-users.
 
@@ -222,7 +222,7 @@ In this section we share the experiments on the optimization implementation. We 
 
 In the experiments, we compare the training duration (in seconds) between the original version and the optimized version of TensorFlow. In each experiment case, we run both versions on the same parameter and dataset, 10 times. From the 10 runs, we derive the means of both versions, and test whether they are statistically different with t-test.
 
-We use the \textit{char-rnn} model as described in \cite{karpathy}, implemented in TensorFlow using \texttt{tf.nn.dynamic\_rnn} (mentioned in Section~\ref{sec:memoryswapping}) with \texttt{swap\_memory=True} to allow memory swapping. In short, char-rnn is an RNN model that takes a sequence of characters, then generates the next sequence of characters.
+We use the \textit{Char-RNN} model as described in \cite{karpathy}, implemented in TensorFlow using \texttt{tf.nn.dynamic\_rnn} (mentioned in Section~\ref{sec:memoryswapping}) with \texttt{swap\_memory=True} to allow memory swapping. In short, Char-RNN is an RNN model that takes a sequence of characters, then generates the next sequence of characters.
 
 The experiment cases can be divided into two parts, the ones using the small dataset and the ones using the large dataset. The small dataset is a text containing 291,268 characters (285 KB) while the large dataset is a text containing 4,573,338 characters (4.4 MB). We deem the contents of the text unimportant for the paper's context, but between both datasets, the contents are different.
 
