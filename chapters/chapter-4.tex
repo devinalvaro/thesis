@@ -2,13 +2,13 @@
 
 \section{Implementasi}
 
-Pada bagian ini dijelaskan mengenai implementasi \en{improvement} \en{memory swapping} di TensorFlow menurut \nameref{SolutionDesign}. Implementasi yang dilakukan berupa modifikasi terhadap \en{kernel} TensorFlow, terutama di \en{file} \code{tensorflow/core/kernels/\\stack.cc}. Karena modifikasi dilakukan di level \en{kernel}, \en{improvement} ini transparan dari sudut pandang \en{end-user} TensorFlow.
+Pada bagian ini dijelaskan mengenai implementasi peningkatan kinerja \en{memory swapping} di TensorFlow menurut \nameref{SolutionDesign}. Implementasi yang dilakukan berupa modifikasi terhadap \en{kernel} TensorFlow, terutama di \en{file} \code{tensorflow/core/kernels/\\stack.cc}. Karena modifikasi dilakukan di level \en{kernel}, peningkatan kinerja ini transparan dari sudut pandang \en{end-user} TensorFlow.
 
 Secara garis besar, implementasi dapat dibagi menjadi 2 bagian, yaitu modifikasi \en{swapping out} menurut Kode~\ref{lst:SwapOutPseudocodeOptimized} dan \en{swapping in} menurut Kode~\ref{lst:SwapInPseudocodeOptimized}.
 
 \subsection{Modifikasi \en{Swapping Out}}
 
-Pada Kode~\ref{lst:SwapOutPseudocodeOptimized} yang menjelaskan \en{improvement} \en{swapping out}, terdapat metode \code{get\_\\oldest\_unswapped\_tensor\_id} yang berfungsi mengembalikan indeks dari \en{oldest tensor} yang belum di-\en{swap}. Dari sini, \code{Stack} perlu dimodifikasi untuk mengakomodasi metode tersebut.
+Pada Kode~\ref{lst:SwapOutPseudocodeOptimized} yang menjelaskan peningkatan kinerja \en{swapping out}, terdapat metode \code{get\_\\oldest\_unswapped\_tensor\_id} yang berfungsi mengembalikan indeks dari \en{oldest tensor} yang belum di-\en{swap}. Dari sini, \code{Stack} perlu dimodifikasi untuk mengakomodasi metode tersebut.
 
 Pertama, dibutuhkan sebuah \en{queue} untuk menyimpan indeks-indeks \en{tensor} yang belum di-\en{swap}. \en{Queue} dipilih agar indeks \en{tensor} yang di-\en{dequeue} adalah yang terawal (\en{oldest}). Selanjutnya, metode \code{Push} pada \code{Stack} juga perlu dimodifikasi agar ketika sebuah \en{tensor} di-\en{push} ke \en{stack}, indeksnya juga di-\en{enqueue} ke \en{queue} tersebut. Kode~\ref{lst:UnswappedTensorIds} menunjukkan deklarasi \en{queue} dan modifikasi \code{Push} tersebut.
 
@@ -94,7 +94,7 @@ Demikian implementasi pada bagian \en{swapping out}, di mana \en{oldest tensor} 
 
 \subsection{Modifikasi \en{Swapping In}} \label{SwappingInModification}
 
-Pada bagian ini dijelaskan implementasi menurut Kode~\ref{lst:SwapInPseudocodeOptimized} yang menjelaskan \en{improvement} pada bagian \en{swapping in}. Namun, sebelum masuk ke bagian tersebut perlu ditunjukkan kode-kode yang mendukung implementasi tersebut.
+Pada bagian ini dijelaskan implementasi menurut Kode~\ref{lst:SwapInPseudocodeOptimized} yang menjelaskan peningkatan kinerja pada bagian \en{swapping in}. Namun, sebelum masuk ke bagian tersebut perlu ditunjukkan kode-kode yang mendukung implementasi tersebut.
 
 Sebelumnya, pada Kode~\ref{lst:GetTensorToSwapOut}, indeks di-\en{push} ke \code{swapped\_ids\_}, yaitu sebuah \en{stack} yang menyimpan indeks-indeks \en{tensor} yang di-\en{swap}. Digunakan \en{stack} karena berkebalikan dari \en{swapping out}, \en{swapping in} dilakukan terhadap \en{swapped tensor} yang terbaru (\en{most recent}) dahulu. Kode~\ref{lst:SwappedTensorIds} menunjukkan deklarasi \en{swapped\_ids\_}.
 
@@ -165,11 +165,11 @@ Pada bagian Kode~\ref{lst:StackPopOp} di atas terlihat proses \en{swapping in} t
 
 Terdapat satu lagi hal yang perlu dibahas, yaitu heurustik pada \en{swapping in}. Seperti heuristik pada \en{swapping out}, \en{swapping in} dilakukan ketika memori GPU hampir penuh. Dipilih nilai yang \code{kOccupancy} yang sama yaitu 0.7, untuk menyamai nilai yang digunakan di \en{swapping out}, karena nilai heuristik tersebut sudah ada di versi bawaan TensorFlow.
 
-Demikian penjelasan mengenai implementasi \en{improvement} \en{memory swapping} di TensorFlow. Berikutnya dilakukan pengujian terhadap \en{improvement} ini dibandingkan dengan versi bawaan TensorFlow.
+Demikian penjelasan mengenai implementasi peningkatan kinerja \en{memory swapping} di TensorFlow. Berikutnya dilakukan pengujian terhadap peningkatan kinerja ini dibandingkan dengan versi bawaan TensorFlow.
 
 \section{Pengujian}
 
-Pada bagian ini dijelaskan mengenai pengujian terhadap \en{improvement} \en{memory swapping} di TensorFlow yang telah diimplementasikan. Berikut dijelaskan lingkungan pengujian, metode pengujian, dan hasil pengujian dalam berbagai kasus pengujian.
+Pada bagian ini dijelaskan mengenai pengujian terhadap peningkatan kinerja \en{memory swapping} di TensorFlow yang telah diimplementasikan. Berikut dijelaskan lingkungan pengujian, metode pengujian, dan hasil pengujian dalam berbagai kasus pengujian.
 
 \subsection{Lingkungan Pengujian}
 
@@ -198,7 +198,7 @@ Model yang digunakan untuk pengujian adalah Char-RNN berdasarkan \citep{karpathy
 
 Implementasi model tersebut dengan TensorFlow menggunakan kelas \code{dynamic\_rnn} (disebutkan di Bagian~\ref{WhyRNN}) dengan parameter \code{swap\_memory=True} untuk mengijinkan TensorFlow melakukan \en{memory swapping}. Selain itu, parameter-parameter yang digunakan dalam menjalankan pengujian dipilih sedemikian rupa agar ukuran memori yang dibutuhkan melebihi ukuran memori yang ada, sehingga TensorFlow terpaksa melakukan \en{memory swapping}.
 
-Terdapat dua \en{dataset} yang digunakan untuk pengujian. Yang pertama adalah teks berisi 291.268 karakter (285 KB), setelahnya disebut data kecil. Yang kedua adalah teks berisi 4.573.338 karakter (4.4 MB), setelahnya disebut data besar. Kedua data yang berbeda ukuran ini dipilih untuk membandingkan kinerja \en{improvement} terhadap data dalam berbagai ukuran. Selain itu, isi kedua data juga berbeda (data kecil bukan \en{subset} dari data besar).
+Terdapat dua \en{dataset} yang digunakan untuk pengujian. Yang pertama adalah teks berisi 291.268 karakter (285 KB), setelahnya disebut data kecil. Yang kedua adalah teks berisi 4.573.338 karakter (4.4 MB), setelahnya disebut data besar. Kedua data yang berbeda ukuran ini dipilih untuk membandingkan kinerja peningkatan kinerja terhadap data dalam berbagai ukuran. Selain itu, isi kedua data juga berbeda (data kecil bukan \en{subset} dari data besar).
 
 Pengujian model dilakukan dengan berbagai variasi nilai parameter, yaitu jumlah \en{timestep}, ukuran \en{batch}, dan jumlah \en{epoch}. Pengujian terhadap berbagai jumlah \en{timestep} dilakukan karena jumlah \en{timestep} mempengaruhi ukuran \en{stack}, seperti yang dijelaskan di Bagian~\ref{Stack}. Ukuran \en{batch} pada dasarnya menyesuaikan jumlah \en{timestep}, agar kebutuhan memori TensorFlow relatif konsisten dari kasus ke kasus. Terakhir, variasi jumlah \en{epoch} bertujuan menguji \en{training} dalam berbagai durasi, karena jumlah \en{epoch} secara langsung mempengaruhi durasi \en{training} model. Pada semua kasus, model memiliki 8 \en{hidden layer} yang masing-masing memiliki 512 neuron.
 

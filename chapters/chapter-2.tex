@@ -222,9 +222,9 @@ Dari hasil perhitungan tersebut, ditunjukkan bagaimana penggunaan memori meningk
 
 \section{Penelitian Terkait} \label{RelatedWorks}
 
-"Training deeper models by GPU memory optimization on TensorFlow" \citep{meng2017training} merupakan \en{paper} yang berisi penelitian untuk meng-\en{improve} penggunaan memori GPU pada pelatihan model \en{deep learning} dengan TensorFlow \citep{meng2017training}. Penelitian tersebut terbatas pada sebuah komputer dengan satu GPU. Ide dari \en{paper} tersebut adalah menyimpan sebagian model dari memori GPU ke memori CPU saat pelatihan untuk mengurangi beban memori GPU.
+"Training deeper models by GPU memory optimization on TensorFlow" \citep{meng2017training} merupakan \en{paper} yang berisi penelitian untuk meningkatkan kinerja penggunaan memori GPU pada pelatihan model \en{deep learning} dengan TensorFlow \citep{meng2017training}. Penelitian tersebut terbatas pada sebuah komputer dengan satu GPU. Ide dari \en{paper} tersebut adalah menyimpan sebagian model dari memori GPU ke memori CPU saat pelatihan untuk mengurangi beban memori GPU.
 
-\en{Improvement} dilakukan dengan mengimplementasikan operasi baru yang disebut (\textbf{swap out/in}) untuk men-\en{swap} \en{tensor} dari memori GPU ke CPU. Dengan operasi baru ini, graf TensorFlow yang sudah ada dimodifikasi sehingga operasi disisipkan ke hubungan \en{vertice} yang mengalirkan tensor yang di-\en{swap}. Operasi \textbf{swap out/in} ini diilustrasikan oleh Gambar~\ref{fig:SwapOutIn}.
+peningkatan kinerja dilakukan dengan mengimplementasikan operasi baru yang disebut (\textbf{swap out/in}) untuk men-\en{swap} \en{tensor} dari memori GPU ke CPU. Dengan operasi baru ini, graf TensorFlow yang sudah ada dimodifikasi sehingga operasi disisipkan ke hubungan \en{vertice} yang mengalirkan tensor yang di-\en{swap}. Operasi \textbf{swap out/in} ini diilustrasikan oleh Gambar~\ref{fig:SwapOutIn}.
 
 \begin{figure}[htp]
     \centering
@@ -233,7 +233,7 @@ Dari hasil perhitungan tersebut, ditunjukkan bagaimana penggunaan memori meningk
     \label{fig:SwapOutIn}
 \end{figure}
 
-Agar dapat meng-\en{improve} dengan baik, perlu dipertimbangkan \en{tensor} mana yang perlu di-\en{swap}. Apabila semua \en{tensor} di-\en{swap}, akan menyebabkan penurunan kinerja model karena \en{memory transfer overhead} yang besar. Menurut \en{paper} tersebut, \en{tensor}-\en{tensor} yang terbaik untuk di-\en{swap} adalah yang interval hingga diperlukannya kembali saat \en{backpropagation} paling lama. Harapannya, \en{overlapping} antara komputasi dengan \en{asynchronous memory copy} meningkat, sehingga mengurangi durasi pelatihan karena semakin banyak \en{memory copy} yang berjalan bersama dengan komputasi.
+Agar dapat meningkatkan kinerja dengan baik, perlu dipertimbangkan \en{tensor} mana yang perlu di-\en{swap}. Apabila semua \en{tensor} di-\en{swap}, akan menyebabkan penurunan kinerja model karena \en{memory transfer overhead} yang besar. Menurut \en{paper} tersebut, \en{tensor}-\en{tensor} yang terbaik untuk di-\en{swap} adalah yang interval hingga diperlukannya kembali saat \en{backpropagation} paling lama. Harapannya, \en{overlapping} antara komputasi dengan \en{asynchronous memory copy} meningkat, sehingga mengurangi durasi pelatihan karena semakin banyak \en{memory copy} yang berjalan bersama dengan komputasi.
 
 Eksperimen pada \en{paper} tersebut dilakukan dengan beberapa \en{pre-trained model} seperti ResNet, Inception, dan NMT, pada sebuah komputer dengan satu GPU (Tesla M40) dengan kapasitas memori 12GB. Menurut hasil eksperimen yang ditunjukkan Gambar~\ref{fig:SwapOutInResult} tersebut, didapatkan bahwa pada model-model yang diuji, ukuran \en{batch} dapat ditingkatkan hingga 3 kali, sedangkan penggunaan memori maksimum menurun hingga 2-3 kali lipat. Bahkan, model-model seperti ResNet-1001 dan ResNet-2000 yang sebelumnya tidak dapat dilatih karena \en{out of memory} (OOM), menjadi dapat dilatih. Di sisi lain, durasi \en{training} mengalami peningkatan kurang dari 10\%, karena adanya \en{memory transfer overhead} seperti yang telah disebutkan.
 
