@@ -2,13 +2,13 @@
 
 \section{Implementasi}
 
-Pada bagian ini dijelaskan mengenai implementasi optimisasi \en{memory swapping} di TensorFlow menurut \nameref{SolutionDesign}. Implementasi yang dilakukan berupa modifikasi terhadap \en{kernel} TensorFlow, terutama di \en{file} \code{tensorflow/core/kernels/\\stack.cc}. Karena modifikasi dilakukan di level \en{kernel}, optimisasi ini transparan dari sudut pandang \en{end-user} TensorFlow.
+Pada bagian ini dijelaskan mengenai implementasi \en{improvement} \en{memory swapping} di TensorFlow menurut \nameref{SolutionDesign}. Implementasi yang dilakukan berupa modifikasi terhadap \en{kernel} TensorFlow, terutama di \en{file} \code{tensorflow/core/kernels/\\stack.cc}. Karena modifikasi dilakukan di level \en{kernel}, \en{improvement} ini transparan dari sudut pandang \en{end-user} TensorFlow.
 
 Secara garis besar, implementasi dapat dibagi menjadi 2 bagian, yaitu modifikasi \en{swapping out} menurut Kode~\ref{lst:SwapOutPseudocodeOptimized} dan \en{swapping in} menurut Kode~\ref{lst:SwapInPseudocodeOptimized}.
 
 \subsection{Modifikasi \en{Swapping Out}}
 
-Pada Kode~\ref{lst:SwapOutPseudocodeOptimized} yang menjelaskan optimisasi \en{swapping out}, terdapat metode \code{get\_\\oldest\_unswapped\_tensor\_id} yang berfungsi mengembalikan indeks dari \en{oldest tensor} yang belum di-\en{swap}. Dari sini, \code{Stack} perlu dimodifikasi untuk mengakomodasi metode tersebut.
+Pada Kode~\ref{lst:SwapOutPseudocodeOptimized} yang menjelaskan \en{improvement} \en{swapping out}, terdapat metode \code{get\_\\oldest\_unswapped\_tensor\_id} yang berfungsi mengembalikan indeks dari \en{oldest tensor} yang belum di-\en{swap}. Dari sini, \code{Stack} perlu dimodifikasi untuk mengakomodasi metode tersebut.
 
 Pertama, dibutuhkan sebuah \en{queue} untuk menyimpan indeks-indeks \en{tensor} yang belum di-\en{swap}. \en{Queue} dipilih agar indeks \en{tensor} yang di-\en{dequeue} adalah yang terawal (\en{oldest}). Selanjutnya, metode \code{Push} pada \code{Stack} juga perlu dimodifikasi agar ketika sebuah \en{tensor} di-\en{push} ke \en{stack}, indeksnya juga di-\en{enqueue} ke \en{queue} tersebut. Kode~\ref{lst:UnswappedTensorIds} menunjukkan deklarasi \en{queue} dan modifikasi \code{Push} tersebut.
 
@@ -94,7 +94,7 @@ Demikian implementasi pada bagian \en{swapping out}, di mana \en{oldest tensor} 
 
 \subsection{Modifikasi \en{Swapping In}} \label{SwappingInModification}
 
-Pada bagian ini dijelaskan implementasi menurut Kode~\ref{lst:SwapInPseudocodeOptimized} yang menjelaskan optimisasi pada bagian \en{swapping in}. Namun, sebelum masuk ke bagian tersebut perlu ditunjukkan kode-kode yang mendukung implementasi tersebut.
+Pada bagian ini dijelaskan implementasi menurut Kode~\ref{lst:SwapInPseudocodeOptimized} yang menjelaskan \en{improvement} pada bagian \en{swapping in}. Namun, sebelum masuk ke bagian tersebut perlu ditunjukkan kode-kode yang mendukung implementasi tersebut.
 
 Sebelumnya, pada Kode~\ref{lst:GetTensorToSwapOut}, indeks di-\en{push} ke \code{swapped\_ids\_}, yaitu sebuah \en{stack} yang menyimpan indeks-indeks \en{tensor} yang di-\en{swap}. Digunakan \en{stack} karena berkebalikan dari \en{swapping out}, \en{swapping in} dilakukan terhadap \en{swapped tensor} yang terbaru (\en{most recent}) dahulu. Kode~\ref{lst:SwappedTensorIds} menunjukkan deklarasi \en{swapped\_ids\_}.
 
@@ -165,11 +165,11 @@ Pada bagian Kode~\ref{lst:StackPopOp} di atas terlihat proses \en{swapping in} t
 
 Terdapat satu lagi hal yang perlu dibahas, yaitu heurustik pada \en{swapping in}. Seperti heuristik pada \en{swapping out}, \en{swapping in} dilakukan ketika memori GPU hampir penuh. Dipilih nilai yang \code{kOccupancy} yang sama yaitu 0.7, untuk menyamai nilai yang digunakan di \en{swapping out}, karena nilai heuristik tersebut sudah ada di versi bawaan TensorFlow.
 
-Demikian penjelasan mengenai implementasi optimisasi \en{memory swapping} di TensorFlow. Berikutnya dilakukan pengujian terhadap optimisasi ini dibandingkan dengan versi bawaan TensorFlow.
+Demikian penjelasan mengenai implementasi \en{improvement} \en{memory swapping} di TensorFlow. Berikutnya dilakukan pengujian terhadap \en{improvement} ini dibandingkan dengan versi bawaan TensorFlow.
 
 \section{Pengujian}
 
-Pada bagian ini dijelaskan mengenai pengujian terhadap optimisasi \en{memory swapping} di TensorFlow yang telah diimplementasikan. Berikut dijelaskan lingkungan pengujian, metode pengujian, dan hasil pengujian dalam berbagai kasus pengujian.
+Pada bagian ini dijelaskan mengenai pengujian terhadap \en{improvement} \en{memory swapping} di TensorFlow yang telah diimplementasikan. Berikut dijelaskan lingkungan pengujian, metode pengujian, dan hasil pengujian dalam berbagai kasus pengujian.
 
 \subsection{Lingkungan Pengujian}
 
@@ -192,13 +192,13 @@ Tabel~\ref{tbl:Specification} memaparkan spesifikasi lingkungan yang digunakan p
 
 \subsection{Metode Pengujian} \label{ExperimentMethod}
 
-Setiap pengujian dilakukan dengan beberapa kali melakukan \en{training} suatu model RNN menggunakan TensorFlow yang asli dan yang teroptimisasi, kemudian durasi \en{training} kedua perlakuan dibandingkan dan dihitung rataannya. Selain itu, dilakukan uji statistik lain seperti \en{t-test} untuk memastikan bahwa durasi \en{training} kedua perlakuan memang berbeda.
+Setiap pengujian dilakukan dengan beberapa kali melakukan \en{training} suatu model RNN menggunakan TensorFlow versi asli dan versi \en{improved}, kemudian durasi \en{training} kedua perlakuan dibandingkan dan dihitung rataannya. Selain itu, dilakukan uji statistik lain seperti \en{t-test} untuk memastikan bahwa durasi \en{training} kedua perlakuan memang berbeda.
 
 Model yang digunakan untuk pengujian adalah Char-RNN berdasarkan \citep{karpathy2015unreasonable}, namun telah diadaptasi ke TensorFlow. Secara singkat, char-rnn adalah model RNN yang menerima sekuens teks kemudian membangkitkan sekuens teks lanjutannya, karakter per karakter.
 
 Implementasi model tersebut dengan TensorFlow menggunakan kelas \code{dynamic\_rnn} (disebutkan di Bagian~\ref{WhyRNN}) dengan parameter \code{swap\_memory=True} untuk mengijinkan TensorFlow melakukan \en{memory swapping}. Selain itu, parameter-parameter yang digunakan dalam menjalankan pengujian dipilih sedemikian rupa agar ukuran memori yang dibutuhkan melebihi ukuran memori yang ada, sehingga TensorFlow terpaksa melakukan \en{memory swapping}.
 
-Terdapat dua \en{dataset} yang digunakan untuk pengujian. Yang pertama adalah teks berisi 291.268 karakter (285 KB), setelahnya disebut data kecil. Yang kedua adalah teks berisi 4.573.338 karakter (4.4 MB), setelahnya disebut data besar. Kedua data yang berbeda ukuran ini dipilih untuk membandingkan kinerja optimisasi terhadap data dalam berbagai ukuran. Selain itu, isi kedua data juga berbeda (data kecil bukan \en{subset} dari data besar).
+Terdapat dua \en{dataset} yang digunakan untuk pengujian. Yang pertama adalah teks berisi 291.268 karakter (285 KB), setelahnya disebut data kecil. Yang kedua adalah teks berisi 4.573.338 karakter (4.4 MB), setelahnya disebut data besar. Kedua data yang berbeda ukuran ini dipilih untuk membandingkan kinerja \en{improvement} terhadap data dalam berbagai ukuran. Selain itu, isi kedua data juga berbeda (data kecil bukan \en{subset} dari data besar).
 
 Pengujian model dilakukan dengan berbagai variasi nilai parameter, yaitu jumlah \en{timestep}, ukuran \en{batch}, dan jumlah \en{epoch}. Pengujian terhadap berbagai jumlah \en{timestep} dilakukan karena jumlah \en{timestep} mempengaruhi ukuran \en{stack}, seperti yang dijelaskan di Bagian~\ref{Stack}. Ukuran \en{batch} pada dasarnya menyesuaikan jumlah \en{timestep}, agar kebutuhan memori TensorFlow relatif konsisten dari kasus ke kasus. Terakhir, variasi jumlah \en{epoch} bertujuan menguji \en{training} dalam berbagai durasi, karena jumlah \en{epoch} secara langsung mempengaruhi durasi \en{training} model. Pada semua kasus, model memiliki 8 \en{hidden layer} yang masing-masing memiliki 512 neuron.
 
@@ -235,11 +235,11 @@ B9            & 75                       & 2500                  & 40           
 
 \subsection{Hasil Pengujian}
 
-Bagian ini berisi hasil setiap kasus pengujian, diikuti dengan pembahasan hasil pengujian pada bagian selanjutnya. Pada setiap pengujian, ditampilkan durasi \en{training} (dalam satuan detik) kedua perlakuan (TensorFlow asli dan teroptimisasi) pada masing-masing 10 kali percobaan.
+Bagian ini berisi hasil setiap kasus pengujian, diikuti dengan pembahasan hasil pengujian pada bagian selanjutnya. Pada setiap pengujian, ditampilkan durasi \en{training} (dalam satuan detik) kedua perlakuan (TensorFlow asli dan \en{improved}) pada masing-masing 10 kali percobaan.
 
 \subsubsection{Kasus A1}
 
-Tabel~\ref{tbl:A1} menunjukkan hasil pengujian kasus A1. Dengan \en{t-test} didapat \en{p-value} 0.86, sehingga tidak dapat dikatakan bahwa versi teroptimisasi berbeda secara signifikan dengan versi asli.
+Tabel~\ref{tbl:A1} menunjukkan hasil pengujian kasus A1. Dengan \en{t-test} didapat \en{p-value} 0.86, sehingga tidak dapat dikatakan bahwa versi \en{improved} berbeda secara signifikan dengan versi asli.
 
 \begin{table}[htp]
 \centering
@@ -265,7 +265,7 @@ Tabel~\ref{tbl:A1} menunjukkan hasil pengujian kasus A1. Dengan \en{t-test} dida
 
 \subsubsection{Kasus A2}
 
-Tabel~\ref{tbl:A2} menunjukkan hasil pengujian kasus A2. Meski versi teroptimisasi memiliki rataan sedikit lebih rendah, \en{p-value} dari \en{t-test} masih 0.14, sehingga sama seperti kasus sebelumnya, tidak dapat dikatakan bahwa versi teroptimisasi berbeda secara signifikan dengan versi asli.
+Tabel~\ref{tbl:A2} menunjukkan hasil pengujian kasus A2. Meski versi \en{improved} memiliki rataan sedikit lebih rendah, \en{p-value} dari \en{t-test} masih 0.14, sehingga sama seperti kasus sebelumnya, tidak dapat dikatakan bahwa versi \en{improved} berbeda secara signifikan dengan versi asli.
 
 \begin{table}[htp]
 \centering
@@ -291,7 +291,7 @@ Tabel~\ref{tbl:A2} menunjukkan hasil pengujian kasus A2. Meski versi teroptimisa
 
 \subsubsection{Kasus A3}
 
-Tabel~\ref{tbl:A3} menunjukkan hasil pengujian kasus A3. Meski versi teroptimisasi memiliki rataan sedikit lebih rendah, \en{p-value} dari \en{t-test} masih 0.14, sehingga sama seperti kasus sebelumnya, tidak dapat dikatakan bahwa versi teroptimisasi berbeda secara signifikan dengan versi asli.
+Tabel~\ref{tbl:A3} menunjukkan hasil pengujian kasus A3. Meski versi \en{improved} memiliki rataan sedikit lebih rendah, \en{p-value} dari \en{t-test} masih 0.14, sehingga sama seperti kasus sebelumnya, tidak dapat dikatakan bahwa versi \en{improved} berbeda secara signifikan dengan versi asli.
 
 \begin{table}[htp]
 \centering
@@ -317,7 +317,7 @@ Tabel~\ref{tbl:A3} menunjukkan hasil pengujian kasus A3. Meski versi teroptimisa
 
 \subsubsection{Kasus A4}
 
-Tabel~\ref{tbl:A4} menunjukkan hasil pengujian kasus A4. Tidak seperti kasus-kasus sebelumnya, mulai dari kasus ini \en{p-value} dari \en{t-test} sangat kecil yaitu 8.78e-10, sehingga versi teroptimisasi dapat dikatakan berbeda secara signifikan dengan versi asli. Selain itu, versi teroptimisasi berhasil mengurangi durasi \en{training} sebesar 2.6\%.
+Tabel~\ref{tbl:A4} menunjukkan hasil pengujian kasus A4. Tidak seperti kasus-kasus sebelumnya, mulai dari kasus ini \en{p-value} dari \en{t-test} sangat kecil yaitu 8.78e-10, sehingga versi \en{improved} dapat dikatakan berbeda secara signifikan dengan versi asli. Selain itu, versi \en{improved} berhasil mengurangi durasi \en{training} sebesar 2.6\%.
 
 \begin{table}[htp]
 \centering
@@ -343,7 +343,7 @@ Tabel~\ref{tbl:A4} menunjukkan hasil pengujian kasus A4. Tidak seperti kasus-kas
 
 \subsubsection{Kasus A5}
 
-Tabel~\ref{tbl:A5} menunjukkan hasil pengujian kasus A5. Pada kasus ini, versi teroptimisasi mengurangi durasi \en{training} lebih jauh dari sebelumnya, yaitu sebesar 2.98\%. Hal ini didukung dengan \en{p-value} dari \en{t-test} yang bernilai 3.73e-16.
+Tabel~\ref{tbl:A5} menunjukkan hasil pengujian kasus A5. Pada kasus ini, versi \en{improved} mengurangi durasi \en{training} lebih jauh dari sebelumnya, yaitu sebesar 2.98\%. Hal ini didukung dengan \en{p-value} dari \en{t-test} yang bernilai 3.73e-16.
 
 \begin{table}[htp]
 \centering
@@ -369,7 +369,7 @@ Tabel~\ref{tbl:A5} menunjukkan hasil pengujian kasus A5. Pada kasus ini, versi t
 
 \subsubsection{Kasus A6}
 
-Tabel~\ref{tbl:A6} menunjukkan hasil pengujian kasus A6. Pada kasus ini, pengurangan durasi \en{training} dari versi teroptimisasi mengalami penurunan menjadi 2.6\%. Selain itu, \en{p-value} dari \en{t-test} bernilai 8.65e-10.
+Tabel~\ref{tbl:A6} menunjukkan hasil pengujian kasus A6. Pada kasus ini, pengurangan durasi \en{training} dari versi \en{improved} mengalami penurunan menjadi 2.6\%. Selain itu, \en{p-value} dari \en{t-test} bernilai 8.65e-10.
 
 \begin{table}[htp]
 \centering
@@ -395,7 +395,7 @@ Tabel~\ref{tbl:A6} menunjukkan hasil pengujian kasus A6. Pada kasus ini, pengura
 
 \subsubsection{Kasus A7}
 
-Tabel~\ref{tbl:A7} menunjukkan hasil pengujian kasus A7. Pada kasus ini, versi teroptimisasi mengurangi durasi \en{training} sebesar 3.13\%. Menurut \en{t-test}, \en{p-value} kasus ini bernilai 1.5e-10.
+Tabel~\ref{tbl:A7} menunjukkan hasil pengujian kasus A7. Pada kasus ini, versi \en{improved} mengurangi durasi \en{training} sebesar 3.13\%. Menurut \en{t-test}, \en{p-value} kasus ini bernilai 1.5e-10.
 
 \begin{table}[htp]
 \centering
@@ -421,7 +421,7 @@ Tabel~\ref{tbl:A7} menunjukkan hasil pengujian kasus A7. Pada kasus ini, versi t
 
 \subsubsection{Kasus A8}
 
-Tabel~\ref{tbl:A8} menunjukkan hasil pengujian kasus A8. Pada kasus ini, versi teroptimisasi mengurangi durasi \en{training} sebesar 2.63\%. Menurut \en{t-test}, \en{p-value} kasus ini bernilai 2.98e-13.
+Tabel~\ref{tbl:A8} menunjukkan hasil pengujian kasus A8. Pada kasus ini, versi \en{improved} mengurangi durasi \en{training} sebesar 2.63\%. Menurut \en{t-test}, \en{p-value} kasus ini bernilai 2.98e-13.
 
 \begin{table}[htp]
 \centering
@@ -447,7 +447,7 @@ Tabel~\ref{tbl:A8} menunjukkan hasil pengujian kasus A8. Pada kasus ini, versi t
 
 \subsubsection{Kasus A9}
 
-Tabel~\ref{tbl:A9} menunjukkan hasil pengujian kasus A9. Pada kasus ini, versi teroptimisasi mengurangi durasi \en{training} sebesar 2.84\%. Menurut \en{t-test}, \en{p-value} kasus ini bernilai 3.83e-17.
+Tabel~\ref{tbl:A9} menunjukkan hasil pengujian kasus A9. Pada kasus ini, versi \en{improved} mengurangi durasi \en{training} sebesar 2.84\%. Menurut \en{t-test}, \en{p-value} kasus ini bernilai 3.83e-17.
 
 \begin{table}[htp]
 \centering
@@ -473,7 +473,7 @@ Tabel~\ref{tbl:A9} menunjukkan hasil pengujian kasus A9. Pada kasus ini, versi t
 
 \subsubsection{Kasus B1}
 
-Tabel~\ref{tbl:B1} menunjukkan hasil pengujian kasus B1. Dengan \en{t-test} didapat \en{p-value} 0.26, sehingga tidak dapat dikatakan bahwa versi teroptimisasi berbeda secara signifikan dengan versi asli.
+Tabel~\ref{tbl:B1} menunjukkan hasil pengujian kasus B1. Dengan \en{t-test} didapat \en{p-value} 0.26, sehingga tidak dapat dikatakan bahwa versi \en{improved} berbeda secara signifikan dengan versi asli.
 
 \begin{table}[htp]
 \centering
@@ -499,7 +499,7 @@ Tabel~\ref{tbl:B1} menunjukkan hasil pengujian kasus B1. Dengan \en{t-test} dida
 
 \subsubsection{Kasus B2}
 
-Tabel~\ref{tbl:B2} menunjukkan hasil pengujian kasus B2. Pada kasus ini, versi teroptimisasi hanya mengurangi durasi \en{training} sebesar 0.37\%. Meskipun begitu, menurut \en{t-test}, \en{p-value} bernilai 0.0009 sehingga dapat dikatakan kedua perlakuan berbeda secara signifikan.
+Tabel~\ref{tbl:B2} menunjukkan hasil pengujian kasus B2. Pada kasus ini, versi \en{improved} hanya mengurangi durasi \en{training} sebesar 0.37\%. Meskipun begitu, menurut \en{t-test}, \en{p-value} bernilai 0.0009 sehingga dapat dikatakan kedua perlakuan berbeda secara signifikan.
 
 \begin{table}[htp]
 \centering
@@ -525,7 +525,7 @@ Tabel~\ref{tbl:B2} menunjukkan hasil pengujian kasus B2. Pada kasus ini, versi t
 
 \subsubsection{Kasus B3}
 
-Tabel~\ref{tbl:B3} menunjukkan hasil pengujian kasus B3. Pada kasus ini, versi teroptimisasi hanya mengurangi durasi \en{training} sebesar 0.7\%. Meskipun begitu, menurut \en{t-test}, \en{p-value} bernilai 0.0005 sehingga dapat dikatakan kedua perlakuan berbeda secara signifikan.
+Tabel~\ref{tbl:B3} menunjukkan hasil pengujian kasus B3. Pada kasus ini, versi \en{improved} hanya mengurangi durasi \en{training} sebesar 0.7\%. Meskipun begitu, menurut \en{t-test}, \en{p-value} bernilai 0.0005 sehingga dapat dikatakan kedua perlakuan berbeda secara signifikan.
 
 \begin{table}[htp]
 \centering
@@ -551,7 +551,7 @@ Tabel~\ref{tbl:B3} menunjukkan hasil pengujian kasus B3. Pada kasus ini, versi t
 
 \subsubsection{Kasus B4}
 
-Tabel~\ref{tbl:B4} menunjukkan hasil pengujian kasus B4. Pada kasus ini, versi teroptimisasi mengurangi durasi \en{training} sebesar 3.02\%. Berdasarkan \en{t-test}, nilai \en{p-value} kasus ini adalah 7.73e-19.
+Tabel~\ref{tbl:B4} menunjukkan hasil pengujian kasus B4. Pada kasus ini, versi \en{improved} mengurangi durasi \en{training} sebesar 3.02\%. Berdasarkan \en{t-test}, nilai \en{p-value} kasus ini adalah 7.73e-19.
 
 \begin{table}[htp]
 \centering
@@ -577,7 +577,7 @@ Tabel~\ref{tbl:B4} menunjukkan hasil pengujian kasus B4. Pada kasus ini, versi t
 
 \subsubsection{Kasus B5}
 
-Tabel~\ref{tbl:B5} menunjukkan hasil pengujian kasus B5. Pada kasus ini, versi teroptimisasi mengurangi durasi \en{training} sebesar 2.92\%. Berdasarkan \en{t-test}, nilai \en{p-value} kasus ini adalah 1.03e-21.
+Tabel~\ref{tbl:B5} menunjukkan hasil pengujian kasus B5. Pada kasus ini, versi \en{improved} mengurangi durasi \en{training} sebesar 2.92\%. Berdasarkan \en{t-test}, nilai \en{p-value} kasus ini adalah 1.03e-21.
 
 \begin{table}[htp]
 \centering
@@ -603,7 +603,7 @@ Tabel~\ref{tbl:B5} menunjukkan hasil pengujian kasus B5. Pada kasus ini, versi t
 
 \subsubsection{Kasus B6}
 
-Tabel~\ref{tbl:B6} menunjukkan hasil pengujian kasus B6. Pada kasus ini, versi teroptimisasi mengurangi durasi \en{training} sebesar 2.87\%. Berdasarkan \en{t-test}, nilai \en{p-value} kasus ini adalah 7.24e-16.
+Tabel~\ref{tbl:B6} menunjukkan hasil pengujian kasus B6. Pada kasus ini, versi \en{improved} mengurangi durasi \en{training} sebesar 2.87\%. Berdasarkan \en{t-test}, nilai \en{p-value} kasus ini adalah 7.24e-16.
 
 \begin{table}[htp]
 \centering
@@ -629,7 +629,7 @@ Tabel~\ref{tbl:B6} menunjukkan hasil pengujian kasus B6. Pada kasus ini, versi t
 
 \subsubsection{Kasus B7}
 
-Tabel~\ref{tbl:B7} menunjukkan hasil pengujian kasus B7. Pada kasus ini, versi teroptimisasi mengurangi durasi \en{training} sebesar 2.54\%. Menurut \en{t-test}, \en{p-value} kasus ini bernilai 2.44e-9.
+Tabel~\ref{tbl:B7} menunjukkan hasil pengujian kasus B7. Pada kasus ini, versi \en{improved} mengurangi durasi \en{training} sebesar 2.54\%. Menurut \en{t-test}, \en{p-value} kasus ini bernilai 2.44e-9.
 
 \begin{table}[htp]
 \centering
@@ -655,7 +655,7 @@ Tabel~\ref{tbl:B7} menunjukkan hasil pengujian kasus B7. Pada kasus ini, versi t
 
 \subsubsection{Kasus B8}
 
-Tabel~\ref{tbl:B8} menunjukkan hasil pengujian kasus B8. Pada kasus ini, versi teroptimisasi mengurangi durasi \en{training} sebesar 2.71\%. Menurut \en{t-test}, \en{p-value} kasus ini bernilai 2.8e-18.
+Tabel~\ref{tbl:B8} menunjukkan hasil pengujian kasus B8. Pada kasus ini, versi \en{improved} mengurangi durasi \en{training} sebesar 2.71\%. Menurut \en{t-test}, \en{p-value} kasus ini bernilai 2.8e-18.
 
 \begin{table}[htp]
 \centering
@@ -681,7 +681,7 @@ Tabel~\ref{tbl:B8} menunjukkan hasil pengujian kasus B8. Pada kasus ini, versi t
 
 \subsubsection{Kasus B9}
 
-Tabel~\ref{tbl:B9} menunjukkan hasil pengujian kasus B9. Pada kasus ini, versi teroptimisasi mengurangi durasi \en{training} sebesar 2.66\%. Menurut \en{t-test}, \en{p-value} kasus ini bernilai 4.73e-17.
+Tabel~\ref{tbl:B9} menunjukkan hasil pengujian kasus B9. Pada kasus ini, versi \en{improved} mengurangi durasi \en{training} sebesar 2.66\%. Menurut \en{t-test}, \en{p-value} kasus ini bernilai 4.73e-17.
 
 \begin{table}[htp]
 \centering
@@ -740,14 +740,14 @@ B9            & 1977.07522                                         & 1924.45449 
 
 Pembahasan dilakukan dengan melihat hasil pengujian, terutama bagaimana variabel-variabel seperti jumlah \en{timestep}, jumlah \en{epoch}, dan ukuran \en{dataset} mempengaruhi selisih durasi \en{training} antara kedua perlakuan.
 
-Kedua perlakuan tidak berbeda secara signifikan hanya pada kasus A1, A2, A3, dan B1. Persamaan dari kasus-kasus tersebut adalah jumlah \en{timestep} yang relatif kecil, yaitu 25. Pada semua kasus dengan jumlah \en{timestep} lebih besar, seperti 50 dan 75, kedua perlakuan berbeda secara signifikan. Kesimpulan yang dapat diambil adalah jumlah \en{timestep} perlu melewati batas tertentu agar versi teroptimisasi dapat membuat perbedaan yang signifikan.
+Kedua perlakuan tidak berbeda secara signifikan hanya pada kasus A1, A2, A3, dan B1. Persamaan dari kasus-kasus tersebut adalah jumlah \en{timestep} yang relatif kecil, yaitu 25. Pada semua kasus dengan jumlah \en{timestep} lebih besar, seperti 50 dan 75, kedua perlakuan berbeda secara signifikan. Kesimpulan yang dapat diambil adalah jumlah \en{timestep} perlu melewati batas tertentu agar versi \en{improved} dapat membuat perbedaan yang signifikan.
 
-Pada kasus A1, A2, A3, B1, B2, dan B3, selisih durasi \en{training} kurang dari 0.7\%, sedangkan pada kasus-kasus sisanya selisih konsisten antara 2.5\% hingga 3.2\%. Sama seperti sebelumnya, pada kasus-kasus ini digunakan jumlah \en{timestep} yang relatif kecil, sehingga memang setelah \en{timestep} tertentu barulah versi teroptimisasi dapat mengurangi durasi \en{training} secara signifikan.
+Pada kasus A1, A2, A3, B1, B2, dan B3, selisih durasi \en{training} kurang dari 0.7\%, sedangkan pada kasus-kasus sisanya selisih konsisten antara 2.5\% hingga 3.2\%. Sama seperti sebelumnya, pada kasus-kasus ini digunakan jumlah \en{timestep} yang relatif kecil, sehingga memang setelah \en{timestep} tertentu barulah versi \en{improved} dapat mengurangi durasi \en{training} secara signifikan.
 
 Penjelasan kedua fenomena tersebut terkait dengan Bagian~\ref{Stack} yang menjelaskan bahwa jumlah \en{timestep} berbanding lurus dengan jumlah elemen \en{stack}. Jumlah elemen \en{stack} yang lebih besar memberikan waktu lebih bagi "\en{future tensors}" untuk di-\en{swap in} secara \en{asynchronous} bersamaan dengan komputasi, seperti yang dijelaskan di Bagian~\ref{SwappingInModification}.
 
-Selanjutnya, pengujian dilakukan terhadap jumlah \en{epoch} yang berbeda-beda untuk mengamati apakah lama durasi \en{training} mempengaruhi selisihnya antara kedua perlakuan. Dari hasil pengujian yang didapat, antara \en{jumlah epoch} yang kecil dan besar, selisih dapat naik (A8 ke A9) maupun turun (A8 ke B6). Maka dari itu, tidak dapat disimpulkan bahwa \en{jumlah epoch} mempengaruhi selisih antara versi asli dan versi teroptimisasi.
+Selanjutnya, pengujian dilakukan terhadap jumlah \en{epoch} yang berbeda-beda untuk mengamati apakah lama durasi \en{training} mempengaruhi selisihnya antara kedua perlakuan. Dari hasil pengujian yang didapat, antara \en{jumlah epoch} yang kecil dan besar, selisih dapat naik (A8 ke A9) maupun turun (A8 ke B6). Maka dari itu, tidak dapat disimpulkan bahwa \en{jumlah epoch} mempengaruhi selisih antara versi asli dan versi \en{improved}.
 
-Kemudian, antara kasus dengan prefiks "A" dan prefiks "B", hanya berbeda pada \en{dataset} yang digunakan, yaitu data kecil dan besar (disebut di Bagian~\ref{ExperimentMethod}). Dengan mengamati hasil pengujian, tidak terlihat pola yang menunjukkan bahwa jenis \en{dataset} mempengaruhi selisih durasi \en{training}. Artinya, versi teroptimisasi dapat bekerja untuk berbagai jenis \en{dataset}.
+Kemudian, antara kasus dengan prefiks "A" dan prefiks "B", hanya berbeda pada \en{dataset} yang digunakan, yaitu data kecil dan besar (disebut di Bagian~\ref{ExperimentMethod}). Dengan mengamati hasil pengujian, tidak terlihat pola yang menunjukkan bahwa jenis \en{dataset} mempengaruhi selisih durasi \en{training}. Artinya, versi \en{improved} dapat bekerja untuk berbagai jenis \en{dataset}.
 
-Secara keseluruhan, dari hasil pengujian dapat disimpulkan bahwa selisih durasi \en{training} antara versi asli dan versi teroptimisasi paling dipengaruhi oleh jumlah \en{timestep}, sedangkan jumlah \en{epoch} dan jenis \en{dataset} tidak terlalu membawa pengaruh. Di bawah jumlah \en{timestep} tertentu, durasi \en{training} versi teroptimisasi tidak jauh berbeda dengan versi asli, sedangkan di atas jumlah \en{timestep} tertentu, versi teroptimisasi secara konsisten mengurangi durasi \en{training} sebesar 2.5\% hingga 3.2\%.
+Secara keseluruhan, dari hasil pengujian dapat disimpulkan bahwa selisih durasi \en{training} antara versi asli dan versi \en{improved} paling dipengaruhi oleh jumlah \en{timestep}, sedangkan jumlah \en{epoch} dan jenis \en{dataset} tidak terlalu membawa pengaruh. Di bawah jumlah \en{timestep} tertentu, durasi \en{training} versi \en{improved} tidak jauh berbeda dengan versi asli, sedangkan di atas jumlah \en{timestep} tertentu, versi \en{improved} secara konsisten mengurangi durasi \en{training} sebesar 2.5\% hingga 3.2\%.
