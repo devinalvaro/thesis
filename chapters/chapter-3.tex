@@ -127,7 +127,7 @@ Meskipun pemindahan dilakukan secara \en{asynchronous} (tidak mem-\en{block} CPU
 
 Kembali menelaah kedua kode tersebut, dapat diambil beberapa kesimpulan. Terdapat heuristik yang harus dipenuhi untuk menentukan apakah sebuah \en{tensor} layak di-\en{swap out} ke CPU, yaitu ketika ukuran \en{tensor} melebihi \code{kCopyThreshold} (2048 \en{bytes}) dan persentase penggunaan memori GPU melebihi \code{kOccupancy} (70\%). Hal yang perlu diperhatikan juga adalah ketika heuristik terpenuhi, \en{tensor} yang di-\en{swap out} adalah \en{tensor} yang baru akan diletakkan ke atas \code{stack} (\en{tensor} terbaru). Selain itu, dari Kode~\ref{lst:SwapIn} terlihat bahwa \en{swap in} sebuah \en{tensor} baru dilakukan saat \en{tensor} tersebut akan dipakai.
 
-\subsection{Potensi peningkatan kinerja dengan \en{Memory Swapping}} \label{OptimizationPotential}
+\subsection{Potensi Peningkatan Kinerja dengan \en{Memory Swapping}} \label{OptimizationPotential}
 
 Pada umumnya, pelatihan model \en{deep learning} dilakukan dengan teknik \en{backpropagation}. Secara singkat, satu iterasi pelatihan terdiri dari 2 tahap, \en{forward pass} dan \en{backpropagation}. Saat \en{forward pass}, \en{input layer} menerima input kemudian mempropagasinya \en{layer} demi \en{layer} hingga didapatkan \en{output} di \en{output layer}. Setelahnya, \en{output} dibandingkan dengan label, kemudian dari selisihnya (\en{loss}) tersebut disesuaikanlah parameter-parameter model (bobot dan bias) dari \en{output layer} hingga \en{input layer} sedemikian rupa sehingga secara keseluruhan, \en{loss} bernilai minimum. Mengenai \en{backpropagation} dijelaskan secara lebih mendalam pada Bagian~\ref{Backpropagation} dan \ref{BPTT}.
 
@@ -145,7 +145,7 @@ Arsitektur \en{deep neural network} yang dipilih untuk menjadi fokus peningkatan
 
 Alasan utama pemilihan arsitektur RNN adalah karena fitur \en{memory swapping} di TensorFlow hanya terdapat pada \code{tf.nn.dynamic\_rnn} (kelas RNN dinamis), sehingga dengan memilih model berarsitektur RNN, \en{memory swapping} hasil peningkatan kinerja dapat dibandingkan dengan \en{memory swapping} bawaan dari TensorFlow.
 
-Alasan lainnya adalah karena topologi RNN yang dinamis menurut panjang \en{input} atau \en{output}, penggunaan memori tidak dapat diprediksi sebelum eksekusi, sehingga peningkatan kinerja memori pun menjadi lebih krusial.
+Alasan lainnya adalah karena topologi RNN yang dinamis menurut panjang \en{input} atau \en{output}, penggunaan memori tidak dapat diprediksi sebelum eksekusi, sehingga optimisasi memori pun menjadi lebih krusial.
 
 Selain itu, seperti yang dijelaskan pada Bagian~\ref{BPTT}, pelatihan RNN dengan \en{backpropagation through time} lebih kompleks dan sulit dari \en{backpropagation} biasa, karena perhitungan harus ikut memperhitungkan \en{timestep} yang ada. Faktor ini membuat pelatihan RNN cenderung membutuhkan lebih banyak waktu dan memori dari arsitektur lainnya.
 
@@ -153,7 +153,7 @@ Selain itu, seperti yang dijelaskan pada Bagian~\ref{BPTT}, pelatihan RNN dengan
 
 Setelah menganalisis permasalahan, didapatkan bahwa terdapat potensi peningkatan kinerja \en{memory swapping} di TensorFlow, dengan memprioritaskan \en{tensor} dengan interval waktu yang terlama hingga digunakannya kembali saat \en{backpropagation}. Selanjutnya, ide peningkatan kinerja tersebut perlu diimplementasikan ke TensorFlow.
 
-Seperti yang disebutkan pada Bagian~\ref{OptimizationPotential}, ide peningkatan kinerja tersebut terinspirasi dari \citep{meng2017training}. Namun, sebenarnya \en{paper} tersebut menceritakan mekanisme dari \en{memory swapping} yang diimplementasikan sendiri oleh para penulis (bukan bawaan TensorFlow) beserta peningkatan kinerja-nya (dijelaskan secara lebih detail di Bagian~\ref{RelatedWorks}). Sedangkan fokus tugas akhir ini adalah meningkatkan kinerja \en{memory swapping} bawaan TensorFlow, sehingga pendekatan dan detail peningkatan kinerja yang dilakukan di tugas akhir ini berbeda dari \en{paper} tersebut, karena memang implementasi \en{memory swapping} bawaan TensorFlow berbeda jauh dari implementasi \en{memory swapping} di \en{paper} tersebut.
+Seperti yang disebutkan pada Bagian~\ref{OptimizationPotential}, ide peningkatan kinerja tersebut terinspirasi dari \citep{meng2017training}. Namun, sebenarnya \en{paper} tersebut menceritakan mekanisme dari \en{memory swapping} yang diimplementasikan sendiri oleh para penulis (bukan bawaan TensorFlow) beserta peningkatan kinerjanya (dijelaskan secara lebih detail di Bagian~\ref{RelatedWorks}). Sedangkan fokus tugas akhir ini adalah meningkatkan kinerja \en{memory swapping} bawaan TensorFlow, sehingga pendekatan dan detail peningkatan kinerja yang dilakukan di tugas akhir ini berbeda dari \en{paper} tersebut, karena memang implementasi \en{memory swapping} bawaan TensorFlow berbeda jauh dari implementasi \en{memory swapping} di \en{paper} tersebut.
 
 Dengan demikian, diperlukan implementasi yang dapat meningkatkan kinerja sesuai ide tersebut, namun terhadap mekanisme \en{memory swapping} bawaan TensorFlow yang dijelaskan di Bagian~\ref{SwappingMechanism}. Berikut akan dijelaskan rancangan implementasi yang dibuat oleh penulis.
 
