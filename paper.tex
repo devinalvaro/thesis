@@ -49,11 +49,8 @@ imam@informatika.org}
 
 \begin{abstract}
     The ever-increasing sizes of deep learning models and datasets used increase the need for memory, as insufficient memory may abort a training process. Adding to this problem, deep learning trainings tend to use GPUs over CPUs for better training speed, where in general a GPU has significantly less memory than its CPU counterpart.
-
     One solution is \textit{memory swapping}, a way to free some memory by temporarily moving data to another memory pool, in this case moving data from a GPU memory to a CPU memory. However, since moving data takes time---the larger the data the more the time---performing memory swapping in a training can significantly increase the training duration. Therefore, an ideal memory swapping has to be selective on how much and which data to swap.
-
     TensorFlow, a machine learning framework, features memory swapping that, based on our analysis over its implementation, can be improved to reduce the increase on training duration it causes. The improvement is done is by prioritizing earlier tensors (\textit{tensor} is the basic data unit in TensorFlow) which, because of a certain backpropagation property, allows the asynchronicity of program execution to increase, ultimately reducing training duration.
-
     Based on our experiments on Char-RNN models with various hyperparameters and datasets (of size 285 KB and 4.4 MB), the improvement reduces up to around 3\% of training duration on certain cases.
 \end{abstract}
 
