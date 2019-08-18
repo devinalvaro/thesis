@@ -221,7 +221,7 @@ In the experiments, we compare the training duration (in seconds) between the or
 
 We use the \textit{Char-RNN} model as described in \cite{karpathy}, implemented in TensorFlow using \texttt{tf.nn.dynamic\_rnn} (mentioned in Section~\ref{sec:memoryswapping}) with \texttt{swap\_memory=True} to allow memory swapping. In short, Char-RNN is an RNN model that takes a sequence of characters, then generates the next sequence of characters.
 
-The experiment cases can be divided into two parts, the ones using the small dataset and the ones using the large dataset. The small dataset is a text containing 291,268 characters (285 KB) while the large dataset is a text containing 4,573,338 characters (4.4 MB). We deem the contents of the text unimportant for the paper's context, but between both datasets, the contents are different.
+The experiment cases can be divided into two parts, the ones using the small dataset and the ones using the large dataset. The small dataset is a text containing 291,268 characters (285 KB) while the large dataset is a text containing 4,573,338 characters (4.4 MB). We deem the contents of the text unimportant for the paper's purpose, but between both datasets, the contents are different.
 
 The variable (hyper)parameters are timestep, batch size, and epoch. Timestep is an experiment variable because we want to observe how it affects the improvement, since timestep is related to \texttt{stack} size. Meanwhile, the batch size's role as an experiment variable is to keep the memory usage relatively constant in all cases, as we want to keep the memory usage above the GPU memory capacity (to force memory swapping). Epoch is also an experiment variable because the number of epoch highly affects training duration (the larger the epoch the longer the training).
 
@@ -257,7 +257,7 @@ B9          & 75                & 2500                & 40             & 4.4 MB 
 \end{tabular}
 \end{table}
 
-The experiment results are shown in \autoref{tbl:Overview}, where each case is respective to the one having the same ID in \autoref{tbl:Cases}.
+\autoref{tbl:Overview} shows the means of execution times of all cases, with IDs respective to the ones in \autoref{tbl:Cases}.
 
 \begin{table}[htp]
 \centering
@@ -287,7 +287,7 @@ B9          & 1977.07522                                      & 1924.45449      
 \end{tabular}
 \end{table}
 
-In all cases, means of both versions are statistically different according to t-test, except for cases A1, A2, A3, and B1. The similarity of those four cases is that they use low timestep. The other two cases with low timestep (B2 and B3) also yield low improvements. Meanwhile, all cases with medium and high timesteps yield significant improvements. These reasons lead us to conclude that the timestep need to exceed a certain threshold to yield significant improvements.
+In all cases, means of both versions are statistically different according to t-test, except for cases A1, A2, A3, and B1. The similarity of those four cases is that they use a low timestep. The other two cases with low timestep (B2 and B3) also yield low improvements. Meanwhile, all cases with medium and high timesteps yield significant improvements. These reasons lead us to conclude that the timestep need to exceed a certain threshold to yield significant improvements. To make it clearer, even though case A1 yields a negative result, means of both versions in the case are not statistically different, and therefore not a concern to us.
 
 The explanation for this is that since higher timestep leads to larger \texttt{stack} size, this let more swapped tensors to be asynchronously swapped in along with the computation. We explained this more deeply in Section~\ref{sec:designimplementation}.
 
